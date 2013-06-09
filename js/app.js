@@ -29,52 +29,52 @@ jQuery(document).ready(function() {
           enableHighAccuracy: true,
         };
 
-// couchdb functions
-    var design = "tour",
-        db = $.couch.db("tour"),
-        changesRunning = false;
+// // couchdb functions
+//     var design = "tour",
+//         db = $.couch.db("tour"),
+//         changesRunning = false;
+// 
+//     var contentUpdate = function (){
+//         if (current_click_script){
+//             route_view(current_click_script);                     
+//         } 
+//      };
+// 
+//     var setupChanges = function (since) {
+//         if (!changesRunning) {
+//             var changeHandler = db.changes(since);
+//             changesRunning = true;
+//             changeHandler.onChange(contentUpdate);
+//         }
+//     };
+//     var view_router = {};
 
-    var contentUpdate = function (){
-        if (current_click_script){
-            route_view(current_click_script);                     
-        } 
-     };
-
-    var setupChanges = function (since) {
-        if (!changesRunning) {
-            var changeHandler = db.changes(since);
-            changesRunning = true;
-            changeHandler.onChange(contentUpdate);
-        }
-    };
-    var view_router = {};
-
-    var route_view = function (hash){
-        var dfd = new $.Deferred();
-        var this_hash=view_router[hash],
-        ajax_data=this_hash.ajax_data ||{ descending : true};
-        if (this_hash){
-            $.ajax({
-              url: "_list/"+this_hash.list+"/"+this_hash.view,
-              data:ajax_data
-              })
-            .done( function(data) {
-                  setupChanges(data.update_seq);
-                  current_click_script=hash;
-                  
-                  if (this_hash.load_function){
-                      this_hash.load_function(this_hash,data);
-                  } else{
-                      $(this_hash.destination).html(data);
-                  }
-                  dfd.resolve();
-              }
-            );
-        }
-        return dfd.promise();
-    };
- 
-    var id, target, option;
+    // var route_view = function (hash){
+    //     var dfd = new $.Deferred();
+    //     var this_hash=view_router[hash],
+    //     ajax_data=this_hash.ajax_data ||{ descending : true};
+    //     if (this_hash){
+    //         $.ajax({
+    //           url: "_list/"+this_hash.list+"/"+this_hash.view,
+    //           data:ajax_data
+    //           })
+    //         .done( function(data) {
+    //               setupChanges(data.update_seq);
+    //               current_click_script=hash;
+    //               
+    //               if (this_hash.load_function){
+    //                   this_hash.load_function(this_hash,data);
+    //               } else{
+    //                   $(this_hash.destination).html(data);
+    //               }
+    //               dfd.resolve();
+    //           }
+    //         );
+    //     }
+    //     return dfd.promise();
+    // };
+    //  
+    // var id, target, option;
 
 // map functions
 
@@ -82,19 +82,19 @@ jQuery(document).ready(function() {
         ttown= ttown || new tulsa_map(document.getElementById("map_content")),
         geo=google.maps.geometry.spherical;
         
-    viewport="M 1197,512 h -109 q -26,0 -45,19 -19,19 -19,45 v 128 q 0,26 19,45 19,19 45,19 h 109 Q 1165,876 1084.5,956.5 1004,1037 896,1069 V 960 q 0,-26 -19,-45 -19,-19 -45,-19 H 704 q -26,0 -45,19 -19,19 -19,45 v 109 Q 532,1037 451.5,956.5 371,876 339,768 h 109 q 26,0 45,-19 19,-19 19,-45 V 576 q 0,-26 -19,-45 -19,-19 -45,-19 H 339 Q 371,404 451.5,323.5 532,243 640,211 v 109 q 0,26 19,45 19,19 45,19 h 128 q 26,0 45,-19 19,-19 19,-45 V 211 q 108,32 188.5,112.5 Q 1165,404 1197,512 z m 339,192 V 576 q 0,-26 -19,-45 -19,-19 -45,-19 H 1329 Q 1292,351 1174.5,233.5 1057,116 896,79 V -64 q 0,-26 -19,-45 -19,-19 -45,-19 H 704 q -26,0 -45,19 -19,19 -19,45 V 79 Q 479,116 361.5,233.5 244,351 207,512 H 64 Q 38,512 19,531 0,550 0,576 v 128 q 0,26 19,45 19,19 45,19 H 207 Q 244,929 361.5,1046.5 479,1164 640,1201 v 143 q 0,26 19,45 19,19 45,19 h 128 q 26,0 45,-19 19,-19 19,-45 v -143 q 161,-37 278.5,-154.5 Q 1292,929 1329,768 h 143 q 26,0 45,-19 19,-19 19,-45 z";
-
-    goldstar='M 125,5 155,90 245,90 175,145 200,230 125,180 50,230 75,145 5,90 95,90 z';
-
-    //custom symbol
-    var goldStar = {
-      path: goldstar,
-      fillColor: "green",
-      fillOpacity: .1,
-      scale: .5,
-      strokeColor: "black",
-      strokeWeight: 1
-    };
+    // viewport="M 1197,512 h -109 q -26,0 -45,19 -19,19 -19,45 v 128 q 0,26 19,45 19,19 45,19 h 109 Q 1165,876 1084.5,956.5 1004,1037 896,1069 V 960 q 0,-26 -19,-45 -19,-19 -45,-19 H 704 q -26,0 -45,19 -19,19 -19,45 v 109 Q 532,1037 451.5,956.5 371,876 339,768 h 109 q 26,0 45,-19 19,-19 19,-45 V 576 q 0,-26 -19,-45 -19,-19 -45,-19 H 339 Q 371,404 451.5,323.5 532,243 640,211 v 109 q 0,26 19,45 19,19 45,19 h 128 q 26,0 45,-19 19,-19 19,-45 V 211 q 108,32 188.5,112.5 Q 1165,404 1197,512 z m 339,192 V 576 q 0,-26 -19,-45 -19,-19 -45,-19 H 1329 Q 1292,351 1174.5,233.5 1057,116 896,79 V -64 q 0,-26 -19,-45 -19,-19 -45,-19 H 704 q -26,0 -45,19 -19,19 -19,45 V 79 Q 479,116 361.5,233.5 244,351 207,512 H 64 Q 38,512 19,531 0,550 0,576 v 128 q 0,26 19,45 19,19 45,19 H 207 Q 244,929 361.5,1046.5 479,1164 640,1201 v 143 q 0,26 19,45 19,19 45,19 h 128 q 26,0 45,-19 19,-19 19,-45 v -143 q 161,-37 278.5,-154.5 Q 1292,929 1329,768 h 143 q 26,0 45,-19 19,-19 19,-45 z";
+    // 
+    // goldstar='M 125,5 155,90 245,90 175,145 200,230 125,180 50,230 75,145 5,90 95,90 z';
+    // 
+    // //custom symbol
+    // var goldStar = {
+    //   path: goldstar,
+    //   fillColor: "green",
+    //   fillOpacity: .1,
+    //   scale: .5,
+    //   strokeColor: "black",
+    //   strokeWeight: 1
+    // };
 
     // icon:{
     //     anchor: (0,0),
@@ -189,38 +189,38 @@ jQuery(document).ready(function() {
 
 // page behavior functions
 
-    var locationsLoaded = function (this_hash,data){
-        $(this_hash.destination).html(data);
-        $('i.row-delete').unbind('click');
-        $('i.row-delete').click(function (event) {
-            event.preventDefault();
-            var thisDOC = $(this).closest('tr');
-            db.removeDoc({   _id: thisDOC.attr('id'),
-                            _rev: thisDOC.data('rev')})
-            }
-        );
-        load_markers(ttown);
-    };
-    
-    view_router.locations={
-            "title": "Saved Locations",
-            "list": "jqm_table",
-            "view": "locations",
-            "destination": "#locationTable",
-            "load_function":locationsLoaded,
-            "ajax_data":{ descending : false ,reduce:false}
-        };
-
-
-    // make new position form a  couchform
-    $('#newLocation').couchForm({
-        beforeSave : function(doc) {
-            doc.lat=currentLatlng.lat();
-            doc.lng=currentLatlng.lng();
-            doc.created_at = new Date();
-            return doc;
-        }
-    });
+    // var locationsLoaded = function (this_hash,data){
+    //     $(this_hash.destination).html(data);
+    //     $('i.row-delete').unbind('click');
+    //     $('i.row-delete').click(function (event) {
+    //         event.preventDefault();
+    //         var thisDOC = $(this).closest('tr');
+    //         db.removeDoc({   _id: thisDOC.attr('id'),
+    //                         _rev: thisDOC.data('rev')})
+    //         }
+    //     );
+    //     load_markers(ttown);
+    // };
+    // 
+    // view_router.locations={
+    //         "title": "Saved Locations",
+    //         "list": "jqm_table",
+    //         "view": "locations",
+    //         "destination": "#locationTable",
+    //         "load_function":locationsLoaded,
+    //         "ajax_data":{ descending : false ,reduce:false}
+    //     };
+    // 
+    // 
+    // // make new position form a  couchform
+    // $('#newLocation').couchForm({
+    //     beforeSave : function(doc) {
+    //         doc.lat=currentLatlng.lat();
+    //         doc.lng=currentLatlng.lng();
+    //         doc.created_at = new Date();
+    //         return doc;
+    //     }
+    // });
 
     $('#saveLocation').click(function (event) { 
         event.preventDefault();
