@@ -291,11 +291,10 @@ var currentGoal  = currentGoal || new google.maps.LatLng(36.159598343107994,-95.
     });
 
     //     $.event.special.tap.tapholdThreshold=1500;
-    //     $( "#map_content" ).on( 'taphold', function ( event ) {
-    //  get_started = confirm("Start a search here?");
-    //         google.maps.event.trigger(ttown, 'dragend');
-    // 
-    // });    
+        // $( "#map_content" ).on( 'taphold', function ( event ) {
+        //      get_started = confirm("Start a search here?");
+        //      google.maps.event.trigger(ttown, 'dragend');
+        //  });    
   
   
   

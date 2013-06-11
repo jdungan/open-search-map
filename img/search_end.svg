@@ -82,7 +82,10 @@
        y="0"
        xlink:href="#use3037"
        inkscape:transform-center-x="-4.4527986"
-       inkscape:transform-center-y="16.371275"
-       id="use3039" />
+       inkscape:transform-center-y="-16.371275"
+       id="use3039"
+       transform="matrix(1,0,0,-1,0,63.454545)"
+       width="64"
+       height="64" />
   </g>
 </svg>
