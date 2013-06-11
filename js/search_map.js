@@ -1,24 +1,4 @@
 
-var tulsa_styles=[
-  {
-    "featureType": "landscape",
-    "stylers": [
-      { "invert_lightness": true }
-    ]
-  },{
-    "featureType": "road",
-    "stylers": [
-      { "invert_lightness": true },
-      { "lightness": 48 },
-      { "gamma": 0.8 },
-      { "color": "#808080" }
-    ]
-  },{
-    "featureType": "poi.park",
-    "elementType": "geometry"  },{
-  }
-];
-
 
 
 //  map object 
@@ -62,9 +42,10 @@ var tulsa_map= function (element) {
                         position: position,
                         visible:true,
                         icon:{
-                        anchor: new google.maps.Point(32, 32),
-                        size: new google.maps.Size(100,100, 'px', 'px'),
-                        url:"./img/search_end.svg"}
+                            anchor: new google.maps.Point(32, 32),
+                            scaledSize: new google.maps.Size(50,50,'px','px'),
+                            url:"./img/search_end.svg"
+                        }
                     });
                     
                     

@@ -65,7 +65,7 @@
 
               <li id="addSearch" >
                   <a  data-role="button">
-                      <i class="icon-pushpin icon-2x"></i>&nbsp;New Search</a>
+                      <i class="icon-pushpin"></i>&nbsp;New Search</a>
               </li>
 
               <li>
@@ -74,15 +74,6 @@
               </li>
 
 
-              <li>                
-                  <a href="#deviceorientationPage" data-role="button">
-                      <i class="icon-screenshot icon-2x"></i>&nbsp;DeviceOrientation</a>
-              </li>            
-
-              <li>                
-                  <a href="#mapPage" data-role="button">
-                      <i class="icon-globe icon-2x"></i>&nbsp;All</a>
-              </li>            
 
           </ul>
 
@@ -92,76 +83,7 @@
   </div> <!-- end page          -->
           
                 
-        <div id="directionsPage" 
-             data-role='page' 
-             data-theme='b'>
-            <div class="ui-header ui-bar-b ui-header-fixed"
-                 role="banner"
-                 data-role="header" 
-                 data-position="fixed"
-                 data-theme="b" 
-                 >
-                <a href="index.html"
-                   class="ui-btn-left ui-btn ui-btn-up-b ui-shadow ui-btn-corner-all" 
-                   data-rel="back" 
-                   data-ajax="false" 
-                   data-corners="true"
-                   data-shadow="true"
-                   data-iconshadow="true"
-                   data-wrapperels="span"
-                   data-theme="b">
-                   <span class="ui-btn-inner">
-                       <span class="ui-btn-text">
-                           <i class="icon-angle-left"></i>
-                       </span>
-                  </span></a>
-                <h1 class="ui-title" role="heading" aria-level="1">Directions</h1>
-            </div>
 
-            <div id='currentPos'
-                 data-role="content" class="ui-content" role="main">
-                <div id="eAlpha">Waiting for sensor data ... </div>
-                <div id="directionarrow" class="pointer"></div>
-
-
-            </div>         
-
-        </div>
-
-        <div id="deviceorientationPage" 
-             class="ui-page ui-body-b" 
-             data-role='page' data-theme='b'>
-            <div class="ui-header ui-bar-b ui-header-fixed"
-                 role="banner"
-                 data-role="header" 
-                 data-position="fixed"
-                 data-theme="b" 
-                 >
-                <a href="index.html"
-                   class="ui-btn-left ui-btn ui-btn-up-b ui-shadow ui-btn-corner-all" 
-                   data-rel="back" 
-                   data-ajax="false" 
-                   data-corners="true"
-                   data-shadow="true"
-                   data-iconshadow="true"
-                   data-wrapperels="span"
-                   data-theme="b">
-                   <span class="ui-btn-inner">
-                       <span class="ui-btn-text">
-                           <i class="icon-angle-left"></i>
-                       </span>
-                  </span></a>
-                <h1 class="ui-title" role="heading" aria-level="1">DeviceOrientationEvent</h1>
-            </div>
-
-            <div id='currentPos'
-                 data-role="content" class="ui-content" role="main">
-                <div id="deviceorientationEvent">Waiting for sensor data ... </div>
-
-
-            </div>         
-
-        </div>
         
          <div data-role='page' id='popupDialog' data-theme='a'>
           <div data-role='header' data-theme='b'>
@@ -184,37 +106,13 @@
           </div>
          </div>  
     
-         <div data-role='page' class="ui-page ui-body-b" id="locationPage" data-theme='b'>
-             <div data-role="header" data-position="fixed"data-theme="b" class="ui-header ui-bar-b ui-header-fixed" role="banner">
-                 <a 
-                      href="index.html"
-                      data-rel="back" 
-                      data-ajax="false" 
-                      class="ui-btn-left ui-btn ui-btn-up-b ui-shadow ui-btn-corner-all" 
-                      data-corners="true" 
-                      data-shadow="true" 
-                      data-iconshadow="true" 
-                      data-wrapperels="span" 
-                      data-theme="b">
-                      <span class="ui-btn-inner">
-                          <span class="ui-btn-text">
-                              <i class="icon-angle-left"></i>
-                          </span>
-                      </span>
-                  </a>
-                 <h1 class="ui-title" role="heading" aria-level="1">Saved Locations</h1>
-             </div>
-            <div id='locationTable' data-role="content" class="ui-content" role="main">
-            </div>         
-                             
-             
-        </div>
         
         
 
     	<!-- jQuery / jQueryMobile Scripts -->
         
         <script type="text/javascript"  src="http://maps.google.com/maps/api/js?key=AIzaSyBIN_IsvlHoxb6QQtIhB1OjisrFuuCixAQ&libraries=geometry&sensor=false"></script>
+        <script type="text/javascript" src="./js/markerclusterer_compiled.js"></script>
                 
         <script type="text/javascript" src="./js/markerwithlabel.js"></script>
         <script type="text/javascript" src="./js/search_map.js"></script>
