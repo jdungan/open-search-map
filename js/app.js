@@ -187,41 +187,6 @@ jQuery(document).ready(function() {
     };
 
 
-// page behavior functions
-
-    // var locationsLoaded = function (this_hash,data){
-    //     $(this_hash.destination).html(data);
-    //     $('i.row-delete').unbind('click');
-    //     $('i.row-delete').click(function (event) {
-    //         event.preventDefault();
-    //         var thisDOC = $(this).closest('tr');
-    //         db.removeDoc({   _id: thisDOC.attr('id'),
-    //                         _rev: thisDOC.data('rev')})
-    //         }
-    //     );
-    //     load_markers(ttown);
-    // };
-    // 
-    // view_router.locations={
-    //         "title": "Saved Locations",
-    //         "list": "jqm_table",
-    //         "view": "locations",
-    //         "destination": "#locationTable",
-    //         "load_function":locationsLoaded,
-    //         "ajax_data":{ descending : false ,reduce:false}
-    //     };
-    // 
-    // 
-    // // make new position form a  couchform
-    // $('#newLocation').couchForm({
-    //     beforeSave : function(doc) {
-    //         doc.lat=currentLatlng.lat();
-    //         doc.lng=currentLatlng.lng();
-    //         doc.created_at = new Date();
-    //         return doc;
-    //     }
-    // });
-
     $('#saveLocation').click(function (event) { 
         event.preventDefault();
         $('#newLocation').submit();
@@ -325,12 +290,12 @@ var currentGoal  = currentGoal || new google.maps.LatLng(36.159598343107994,-95.
     
     });
 
-    $.event.special.tap.tapholdThreshold=1500;
-    $( "#map_content" ).on( 'taphold', function ( event ) {
-		get_started = confirm("Start a search here?");
-        google.maps.event.trigger(ttown, 'dragend');
-
-	});    
+    //     $.event.special.tap.tapholdThreshold=1500;
+    //     $( "#map_content" ).on( 'taphold', function ( event ) {
+    //  get_started = confirm("Start a search here?");
+    //         google.maps.event.trigger(ttown, 'dragend');
+    // 
+    // });    
   
   
   
