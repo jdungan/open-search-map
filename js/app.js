@@ -266,7 +266,6 @@ var currentGoal  = currentGoal || new google.maps.LatLng(36.159598343107994,-95.
     };
  
     $("#mapPage").on("pageshow",function(){
-        route_view('locations');  
         google.maps.event.trigger(ttown, 'resize');
         // ttown.setCenter(currentLatlng);        
  
