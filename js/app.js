@@ -9,6 +9,7 @@ jQuery(document).ready(function() {
     });
     geoloqi.onAuthorize = function(response, error){
       console.log("You are a user!");
+      $.mobile.changePage('#mapPage');
     };
     geoloqi.onLoginError = function(error){
       console.log("You are not a user!");
@@ -204,9 +205,10 @@ jQuery(document).ready(function() {
 
 
     $('button#signin').click(function(){
-      var email = $('input#email').val(),
-          password = $('input#password').val();
-      geoloqi.login(email, password);
+      var auth={}; auth.username = $('input#email').val(),
+          auth.password = $('input#password').val();
+          
+          geoloqi.login(auth);
     });
 
     $('#saveLocation').click(function (event) { 
@@ -216,7 +218,7 @@ jQuery(document).ready(function() {
     });
 
     $("#locationPage").on("pageshow",function(){
-        route_view('locations');  
+        // route_view('locations');  
     });
 
 
