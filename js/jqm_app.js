@@ -16,8 +16,6 @@ jQuery(document).ready(function() {
           geoloqi.login(auth);
     });
 
- 
-
 
     $("#mapPage").on("pageshow",function(){
         google.maps.event.trigger(ttown, 'resize');
@@ -32,8 +30,6 @@ jQuery(document).ready(function() {
                 ttown.createMarker(search_loc);
                 
             };
-            
-            debugger;
             
             var group = new geoloqi.Socket('layer', '8neY');
 
@@ -59,7 +55,7 @@ jQuery(document).ready(function() {
         
         $( "#menu_panel" ).panel( "close" );
 
-        ttown.setOptions({ draggableCursor : "url(http://s3.amazonaws.com/besport.com_images/status-pin.png), auto" })
+        ttown.setOptions({ draggableCursor : "url(http://s3.amazonaws.com/besport.com_images/status-pin.png) 64 64, auto" })
         
         
         
