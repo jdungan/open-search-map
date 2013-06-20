@@ -66,6 +66,7 @@ var search_map= function (element) {
         };
         
        
+    var geo=google.maps.geometry.spherical;        
         
 
     var goodPositionChange = function(pos) {

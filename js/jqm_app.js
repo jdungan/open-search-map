@@ -2,8 +2,7 @@ jQuery(document).ready(function() {
 
     //init the map
     var currentLatlng  = currentLatlng || new google.maps.LatLng(36.1539,-95.9925),
-        ttown= ttown || new search_map(document.getElementById("map_content")),
-        geo=google.maps.geometry.spherical;
+        ttown= ttown || new search_map(document.getElementById("map_content"));
 
     // init geoloqi
     var geoapp = geoapp || new geoloqi_app();
@@ -87,6 +86,8 @@ jQuery(document).ready(function() {
         //  });    
   
   
+        $('#mapPage').trigger('pageshow');
+
   
     
 });
