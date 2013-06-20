@@ -1,8 +1,0 @@
-var mykey ='PASTE_YOUR_KEY_HERE';
-
-function loadGoogleMapScript() {
-  var script = document.createElement("script");
-  script.type = "text/javascript";
-  script.src = "http://maps.googleapis.com/maps/api/js?key='"+mykey+"'&sensor=true&callback=initialize";
-  document.body.appendChild(script);
-}
