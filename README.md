@@ -9,7 +9,7 @@ These descriptions are suggestions for managing the code.  We are not above fudg
 
 index.html  --  Contains markup for jqm pages
 
-geoloqi_app.js --  Any geoloqi related settings
+search_db.js --  Intermediate object for handling search data, current this is on geoloqi
 
 search_map.js -- map object for interacting with google maps api
 

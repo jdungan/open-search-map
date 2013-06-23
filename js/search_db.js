@@ -1,7 +1,9 @@
 "use strict";
 
-// This object contains all the relevant geoloqi setting, markers, etc.
-var geoloqi_app = function (){
+// This object contains all the relevant methods for retrieve information on searches
+// currently this data is stored with geoloqi so this is mainly a wrapper on geoloqi functions
+
+var search_db = function (){
     
     this.init = function (this_map){
         
@@ -33,4 +35,8 @@ var geoloqi_app = function (){
         });    
     };
     
+    this.get= geoloqi.get;
+    this.post=geoloqi.post;
+    this.login=geoloqi.login;
+        
 };
