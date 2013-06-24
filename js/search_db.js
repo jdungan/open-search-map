@@ -49,9 +49,6 @@ var search_db = function (){
     
     };
 
-
-
-    
     
     this.searches=search_list,
     this.searchers=searchers_list,
