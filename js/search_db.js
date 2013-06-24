@@ -4,7 +4,8 @@
 // currently this data is stored with geoloqi so this is mainly a wrapper on geoloqi functions
 
 var search_db = function (){
-    
+    var search_list={}, searchers_list={};
+         
     this.init = function (this_map){
         
         // initialize geoloqi
@@ -29,12 +30,31 @@ var search_db = function (){
 
         geoloqi.auth={'access_token':'fb75d-ddf59124a0403299ea67e6c001d14c676806459d'};
         
+        geoloqi.get("place/list", {
+          layer_id:"96yV"
+        }, function(response, error){
+            for (var i = 0; i < response.places.length; i++){
+                var p=response.places[i];
+                var search_loc = new google.maps.LatLng(p.latitude,p.longitude);
+                search_list[p.place_id] = this_map.addSearch(search_loc,p.place_id,p.extra);
+                this_map.panTo(search_loc);
+            };
+        });
+        
+        
         watch_user: new geoloqi.watchPosition({
           success: this_map.goodPositionChange,
           error: this_map.badPositionChange
         });    
-    };
     
+    };
+
+
+
+    
+    
+    this.searches=search_list,
+    this.searchers=searchers_list,
     this.get= geoloqi.get;
     this.post=geoloqi.post;
     this.login=geoloqi.login;
