@@ -49,8 +49,6 @@ var search_map= function (element) {
         return content_text;
     },
 
-
-
     set_search_click = function (marker, key, info_obj) {
         var infowindow = new google.maps.InfoWindow({
                 content:  search_info(key, info_obj),
@@ -62,7 +60,7 @@ var search_map= function (element) {
              if(endButton){
                  google.maps.event.addDomListener(endButton,'click', function(event){
                      event.preventDefault();
-                     $.event.trigger("endSearch",marker);
+                     $.event.trigger("endSearchButton",marker.search_key);
                      infowindow.close();
                  });
              }
@@ -74,7 +72,15 @@ var search_map= function (element) {
              //     infowindow.close();                        
              // });
              }
-         );  
+         );
+         
+         this_infowindow=infowindow;
+         infowindow.setSearchWindowContent = function(extra){
+             
+              this_infowindow.setContent(search_info(key,extra))
+         }
+         
+         return infowindow;  
     },
 
     addSearch = function (position,key,info_obj) {
@@ -95,9 +101,9 @@ var search_map= function (element) {
                   }
               });
             marker.search_key=key;
-            search_list[key] = marker;
-            set_search_click(marker, key, info_obj);
+            marker.search_window= set_search_click(marker, key, info_obj);
         }
+        return marker;
     };
         
 
@@ -112,9 +118,9 @@ var search_map= function (element) {
         user_marker.setPosition(currentLatlng);
         user_accuracy_circle.radius=crd.accuracy;
 
-        var ne=geo.computeOffset(currentLatlng, crd.accuracy*1.5, 45),
-          sw=geo.computeOffset(currentLatlng, crd.accuracy*1.5, 225);
-        var currentView= new google.maps.LatLngBounds(sw,ne);           
+        // var ne=geo.computeOffset(currentLatlng, crd.accuracy*1.5, 45),
+        //   sw=geo.computeOffset(currentLatlng, crd.accuracy*1.5, 225);
+        // var currentView= new google.maps.LatLngBounds(sw,ne);           
 
         // this_map.panToBounds(currentView);
         // this_map.setCenter(currentLatlng);
@@ -161,7 +167,6 @@ var search_map= function (element) {
     this.map.addSearch = addSearch;      
     this.map.goodPositionChange = goodPositionChange;
     this.map.badPositionChange = badPositionChange;
-    this.map.search_list=[];
     this_map=this.map;
     return this.map;
 };
