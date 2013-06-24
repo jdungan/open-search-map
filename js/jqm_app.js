@@ -15,15 +15,41 @@ jQuery(document).ready(function() {
       $.event.trigger(data.message.eventType,data.message.payload);
       
     });            
-    
-    //search events
+
+    //socket events
     $(document).on("newSearch", function(e,response){
         var search_loc = new google.maps.LatLng(response.latitude,response.longitude);
         search_data.searches[response.place_id]=ttown.addSearch(search_loc,response.place_id,response.extra);
     });
-        
+      
+    $(document).on("endSearch", function(e,response){
+        marker=search_data.searches[response.place_id];
+        marker.setIcon("./img/search_end.svg");
+        search_data.get(
+            'place/info/'+response.place_id,
+            function(response, error){
+                if(!error){
+                    marker.search_window.setSearchWindowContent(response.extra)
+                }
+        });   
+    });
     
-    $(document).on("endSearchButton", function(e,marker_key){
+    $(document).on("moveSearch", function(e,response){
+        marker=search_data.searches[response.place_id];
+        search_data.get(
+            'place/info/'+response.place_id,
+            function(response, error){
+                if(!error){
+                    var search_loc = new google.maps.LatLng(response.latitude,response.longitude);
+                    marker.setPosition(search_loc);
+                }
+        });   
+    });
+    
+    
+
+    //client events
+    $(document).on("endSearch_click", function(e,marker_key){
         search_data.post(
             'place/update/'+marker_key,
             {extra: {end_time:Date()}},
@@ -37,19 +63,20 @@ jQuery(document).ready(function() {
         });        
     });        
 
-    $(document).on("endSearch", function(e,response){
-        marker=search_data.searches[response.place_id];
-        marker.setIcon("./img/search_end.svg");
-        search_data.get(
-            'place/info/'+response.place_id,
+    $(document).on("search_position_changed", function(e,marker_key){
+        marker=search_data.searches[marker_key];
+        search_data.post(
+            'place/update/'+marker_key,
+            {latitude:  marker.position.lat(),
+             longitude: marker.position.lng()},
             function(response, error){
                 if(!error){
-                    marker.search_window.setSearchWindowContent(response.extra)
+                    socket.emit('message',{eventType: 'moveSearch', payload: response});                        
                 }
-        });   
+        });        
     });
-    
-    // click functions
+
+
     $('button#signin').click(function(){
       var auth={}; auth.username = $('input#email').val(),
           auth.password = $('input#password').val();
@@ -79,6 +106,10 @@ jQuery(document).ready(function() {
             });
         });
     });
+
+
+
+
 
 
     $("#mapPage").on("pageshow",function(){

@@ -60,7 +60,7 @@ var search_map= function (element) {
              if(endButton){
                  google.maps.event.addDomListener(endButton,'click', function(event){
                      event.preventDefault();
-                     $.event.trigger("endSearchButton",marker.search_key);
+                     $.event.trigger("endSearch_click",marker.search_key);
                      infowindow.close();
                  });
              }
@@ -68,11 +68,18 @@ var search_map= function (element) {
 
          google.maps.event.addListener(marker, 'click',function () {
              infowindow.open(this_map, marker);
+             //TODO: close info window on click but re-open on next click
              // google.maps.event.addListenerOnce(marker,'click',function(){
              //     infowindow.close();                        
              // });
              }
          );
+
+         google.maps.event.addListener(marker, 'dragend',function () {
+              $.event.trigger("search_position_changed",marker.search_key);
+             }
+         );
+         
          
          this_infowindow=infowindow;
          infowindow.setSearchWindowContent = function(extra){
