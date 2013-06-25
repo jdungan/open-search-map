@@ -1,33 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-      <link rel="stylesheet" href="css/jquery-ui-1.10.3.custom.min.css" id='jQMnDColor' />
+    <link rel="stylesheet" href="css/jquery-ui-1.10.3.custom.min.css" id='jQMnDColor' />
 
 
-      <meta charset="utf-8">
-      <meta name="description" content="open-search-map">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-		<meta name="apple-mobile-web-app-capable" content="yes">
-		
-		<!-- FontAwesome - http://fortawesome.github.io/Font-Awesome/ -->
-      <link rel="stylesheet" href="css/font-awesome.min.css" />
+    <meta charset="utf-8">
+    <meta name="description" content="open-search-map">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
 
-		<!-- jQueryMobileCSS - original without styling -->
-      <link rel="stylesheet" href="css/jquerymobile.css" />
+    <!-- FontAwesome - http://fortawesome.github.io/Font-Awesome/ -->
+    <!-- <link rel="stylesheet" href="css/font-awesome.min.css" /> -->
 
-		<!-- nativeDroid core CSS -->
-      <link rel="stylesheet" href="css/jquerymobile.nativedroid.css" />
+    <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
 
-		<!-- nativeDroid: Light/Dark -->
-      <link rel="stylesheet" href="css/jquerymobile.nativedroid.light.css"  id='jQMnDTheme' />
+    <!-- jQueryMobileCSS - original without styling -->
+    <link rel="stylesheet" href="css/jquerymobile.css" />
 
-		<!-- nativeDroid: Color Schemes -->
-      <link rel="stylesheet" href="css/jquerymobile.nativedroid.color.red.css" id='jQMnDColor' />
+    <!-- nativeDroid core CSS -->
+    <link rel="stylesheet" href="css/jquerymobile.nativedroid.css" />
+
+    <!-- nativeDroid: Light/Dark -->
+    <link rel="stylesheet" href="css/jquerymobile.nativedroid.light.css"  id='jQMnDTheme' />
+
+    <!-- nativeDroid: Color Schemes -->
+    <link rel="stylesheet" href="css/jquerymobile.nativedroid.color.red.css" id='jQMnDColor' />
 
 
-      <link rel="stylesheet"  href="css/extras.css" rel="stylesheet">
+    <link rel="stylesheet"  href="css/extras.css" rel="stylesheet">
 
-         <title>Open-Search & Rescue</title>
+    <title>Open-Search & Rescue</title>
 
 <!-- Load jquery and jquerymobile before jqm pages to avoid flash of ugly on loading -->
          <script src= "http://code.jquery.com/jquery-1.10.0.min.js"></script>
@@ -47,10 +49,20 @@
                      data-role="header"
                      data-position="fixed"
                      data-theme="b">
-                     <a href='#menu_panel' data-role='button' data-iconpos='left' data-inline='true'><i id="dragPin" class="icon-tasks icon-2x"></i></a> 
-                     <h1 style='margin-left:5%'>Open Search & Rescue</h1>
+                     <div data-role='container' >
+                         <a href='#menu_panel' data-role='button'  data-inline='true'>
+                              <span class="icon-stack">
+                                <i class="icon-circle icon-stack-base"></i>
+                                <i class="icon-backward icon-light"></i>
+                              </span>
+                              
+                              Open Search & Rescue
+                              
+                          </a>
 
-                </div><!-- end header         -->
+                        
+                     </div>
+                     </div><!-- end header         -->
 
                <div id="map_holder">
                    <div id="map_content"
@@ -72,13 +84,13 @@
                   </li>
 
                   <li>
-                      <a href='#popupDialog' data-role="button">
+                      <a id="viewSearches" data-role="button">
                           <i class="icon-globe icon-2x"></i>&nbsp;All</a>
                   </li>
 
                   <li>
-                      <a href='#popupDialog' data-role="button">
-                          <i class="icon-search icon-2x"></i>&nbsp;Find</a>
+                      <a id='viewUser' data-role="button">
+                          <i class="icon-user icon-2x"></i>&nbsp;You</a>
                   </li>
 
                   <li>
