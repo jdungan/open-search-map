@@ -113,31 +113,6 @@ var search_map= function (element) {
         return marker;
     };
         
-
-    var goodPositionChange = function(pos) {
-        var crd = pos.coords;
-
-        currentLatlng = new google.maps.LatLng(crd.latitude, crd.longitude);          
-
-        console.log(pos);
-        //update map
-
-        user_marker.setPosition(currentLatlng);
-        user_accuracy_circle.radius=crd.accuracy;
-
-        // var ne=geo.computeOffset(currentLatlng, crd.accuracy*1.5, 45),
-        //   sw=geo.computeOffset(currentLatlng, crd.accuracy*1.5, 225);
-        // var currentView= new google.maps.LatLngBounds(sw,ne);           
-
-        // this_map.panToBounds(currentView);
-        // this_map.setCenter(currentLatlng);
-
-    };
-
-     var badPositionChange = function (err) {
-      console.warn('ERROR(' + err.code + '): ' + err.message);
-    };
-
     if (element !== map_element){
         map_element = element;
         google.maps.visualRefresh=true;
@@ -171,9 +146,9 @@ var search_map= function (element) {
          user_accuracy_circle.bindTo('center', user_marker, 'position');        
     }
     
+    this.map.user = user_marker;
+    this.map.user.accuracy=user_accuracy_circle.radius;
     this.map.addSearch = addSearch;      
-    this.map.goodPositionChange = goodPositionChange;
-    this.map.badPositionChange = badPositionChange;
     this_map=this.map;
     return this.map;
 };

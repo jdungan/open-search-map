@@ -4,8 +4,29 @@
 // currently this data is stored with geoloqi so this is mainly a wrapper on geoloqi functions
 
 var search_db = function (){
-    var search_list={}, searchers_list={};
-         
+    var search_list={}, searchers_list={},user_list={};
+
+    this.searchBounds = function (arrayLatlng){        
+        // Based on Google Maps API v3 
+        // Purpose: given an array of Latlng's return a LatlngBounds
+        // Why: This is helpful when using fitBounds, panTo
+        var newBounds = new google.maps.LatLngBounds,p=0;
+
+        for (var m in search_list){
+            newBounds.extend(search_list[m].position);
+        }
+        return newBounds;
+    };
+
+
+    this.user_guid = function(){
+        var guid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+             return v.toString(16);
+        });     
+        return guid;
+    };
+
     this.init = function (this_map){
         
         // initialize geoloqi

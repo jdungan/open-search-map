@@ -7,6 +7,7 @@ jQuery(document).ready(function() {
     // init search data
     var search_data = search_data || new search_db();
     search_data.init(ttown);
+    var user_guid = user_guid || search_data.user_guid();
 
     //init socket
     var socket = io.connect('http://206.214.164.229');
@@ -25,28 +26,16 @@ jQuery(document).ready(function() {
     $(document).on("endSearch", function(e,response){
         marker=search_data.searches[response.place_id];
         marker.setIcon("./img/search_end.svg");
-        search_data.get(
-            'place/info/'+response.place_id,
-            function(response, error){
-                if(!error){
-                    marker.search_window.setSearchWindowContent(response.extra)
-                }
-        });   
+        marker.search_window.setSearchWindowContent(response.extra)        
     });
     
     $(document).on("moveSearch", function(e,response){
         marker=search_data.searches[response.place_id];
-        search_data.get(
-            'place/info/'+response.place_id,
-            function(response, error){
-                if(!error){
-                    var search_loc = new google.maps.LatLng(response.latitude,response.longitude);
-                    marker.setPosition(search_loc);
-                }
-        });   
+        var search_loc = new google.maps.LatLng(response.latitude,response.longitude);
+        marker.setPosition(search_loc);
     });
     
-    
+
 
     //client events
     $(document).on("endSearch_click", function(e,marker_key){
@@ -63,6 +52,8 @@ jQuery(document).ready(function() {
         });        
     });        
 
+
+
     $(document).on("search_position_changed", function(e,marker_key){
         marker=search_data.searches[marker_key];
         search_data.post(
@@ -76,13 +67,7 @@ jQuery(document).ready(function() {
         });        
     });
 
-
-    $('button#signin').click(function(){
-      var auth={}; auth.username = $('input#email').val(),
-          auth.password = $('input#password').val();
-          search_data.login(auth);
-    });    
-
+//panel menu choices
     $("#addSearch").on('click',function(){
         $( "#menu_panel" ).panel( "close" );
 
@@ -106,16 +91,44 @@ jQuery(document).ready(function() {
             });
         });
     });
+    
+    $('a#viewSearches').click(function(){
+        $( "#menu_panel" ).panel( "close" );
+        ttown.fitBounds(search_data.searchBounds());
+    });    
+
+    $('a#viewUser').click(function(){
+         $( "#menu_panel" ).panel( "close" );
+        ttown.setZoom(18);
+        ttown.panTo(ttown.user.position);
+    });    
+
+    $('button#signin').click(function(){
+      var auth={}; auth.username = $('input#email').val(),
+          auth.password = $('input#password').val();
+          search_data.login(auth);
+    });    
 
 
+    var userPositionChange = function(pos) {
+        var crd = pos.coords;
+        currentLatlng = new google.maps.LatLng(crd.latitude, crd.longitude);          
+        ttown.user.setPosition(currentLatlng);
+        ttown.user_accuracy=crd.accuracy;
+        ttown.setCenter(currentLatlng);
+    };
 
-
-
+     var errorPositionChange = function (err) {
+      console.warn('ERROR(' + err.code + '): ' + err.message);
+    };
+    
+    posOptions = {enableHighAccuracy: true}; 
+        
+    distWatchID = navigator.geolocation.watchPosition(userPositionChange, errorPositionChange, posOptions);       
 
     $("#mapPage").on("pageshow",function(){
         google.maps.event.trigger(ttown, 'resize');
     });
- 
  
   
   $('#mapPage').trigger('pageshow');
