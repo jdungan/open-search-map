@@ -115,7 +115,6 @@ jQuery(document).ready(function() {
         currentLatlng = new google.maps.LatLng(crd.latitude, crd.longitude);          
         ttown.user.setPosition(currentLatlng);
         ttown.user_accuracy=crd.accuracy;
-        ttown.setCenter(currentLatlng);
     };
 
      var errorPositionChange = function (err) {
