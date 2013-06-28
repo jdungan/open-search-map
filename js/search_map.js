@@ -120,20 +120,13 @@ var search_map= function (element) {
 
        var user_marker = user_marker || new google.maps.Marker({
             map: this.map,
-            visible:false,
+            visible:true,
+            icon:{
+                anchor: new google.maps.Point(32,32),
+                scaledSize: new google.maps.Size(64,64,'px','px'),
+                url: "./img/searcher.svg"                
+            }
         });
-
-        // user circle
-         var user_circle = new google.maps.Circle({
-           map: this.map,
-           radius: 2,  
-           fillColor: 'blue',
-           fillOpacity: 1,
-           strokeColor:"white",
-           strokeOpacity:1
-         });
-         user_circle.bindTo('center', user_marker, 'position');
-
         // Add circle overlay and bind to marker
          var user_accuracy_circle = new google.maps.Circle({
            map: this.map,
@@ -144,6 +137,18 @@ var search_map= function (element) {
            strokeOpacity:0
          });
          user_accuracy_circle.bindTo('center', user_marker, 'position');        
+
+        // user circle
+         // var user_circle = new google.maps.Circle({
+         //   map: this.map,
+         //   radius: 2,  
+         //   fillColor: 'blue',
+         //   fillOpacity: 1,
+         //   strokeColor:"white",
+         //   strokeOpacity:1
+         // });
+         // user_circle.bindTo('center', user_marker, 'position');
+
     }
     
     this.map.user = user_marker;

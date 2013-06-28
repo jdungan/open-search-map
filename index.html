@@ -29,7 +29,7 @@
 
     <link rel="stylesheet"  href="css/extras.css" rel="stylesheet">
 
-    <title>Open-Search & Rescue</title>
+    <title>OS&R Map</title>
 
 <!-- Load jquery and jquerymobile before jqm pages to avoid flash of ugly on loading -->
          <script src= "http://code.jquery.com/jquery-1.10.0.min.js"></script>
@@ -56,7 +56,7 @@
                                 <i class="icon-backward icon-light"></i>
                               </span>
                               
-                              Open Search & Rescue
+                              Open Search & Rescue Map
                               
                           </a>
 
@@ -80,7 +80,7 @@
 
                   <li id="addSearch" >
                       <a  data-role="button">
-                          <i class="icon-pushpin icon-2x"></i>&nbsp;Search</a>
+                          <i class="icon-pushpin icon-2x"></i>&nbsp;New</a>
                   </li>
 
                   <li>
@@ -116,23 +116,29 @@
           <input type="text" name="email" id="email" placeholder="Email"/>
           <label for="password">Password</label>
           <input type="password" name="password" id="password" placeholder="Password"/>
-          <button class="ui-btn-hidden" type="submit" id="signin" data-inline="true">Sign in</button>
-          <a id="linkDialog" href="#registerDialog" data-rel="dialog" data-transition="flip" style="display:none;"></a>
+          <button class="ui-btn-hidden" type="submit" 
+                id="signin" data-inline="true">Sign in</button>
+          <a id="linkDialog" 
+            href="#registerDialog" data-rel="dialog" 
+            data-transition="flip" style="display:none;"></a>
         </div>
       </div>
     </div>
 
-    <div data-role="page" id="registerDialog">
+    <div id="registerDialog" data-role="page" data-theme="b" >
         <div data-role="header" data-close-btn="right">
             <h2>Register</h2>
           </div>
         
       <div data-role="content">
         <h1>Are you a new user?</h1>
-        <a href="#signin_page" data-role="button" data-inline="true">No</a>
-        <a href="#mapPage" data-role="button" data-inline="true">Yes</a>
+        <a href="#signin_page" data-role="button" data-inline="true">No, I'll try again.</a>
+        <a href="#mapPage" data-role="button" data-inline="true">Yes, let me sign up</a>
       </div>
     </div>
+
+
+
 
           
                 

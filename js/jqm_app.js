@@ -1,15 +1,14 @@
 jQuery(document).ready(function() {
 
-    //init the map
+//init the map
     var currentLatlng  = currentLatlng || new google.maps.LatLng(36.1539,-95.9925),
         ttown= ttown || new search_map(document.getElementById("map_content"));
 
-    // init search data
+// init search data
     var search_data = search_data || new search_db();
-    search_data.init(ttown);
-    var user_guid = user_guid || search_data.user_guid();
+    search_data.stored_searches(ttown);
 
-    //init socket
+//init socket
     var socket = io.connect('http://206.214.164.229');
     socket.on('message', function (data) {
       console.log(data);
@@ -17,7 +16,7 @@ jQuery(document).ready(function() {
       
     });            
 
-    //socket events
+//socket events
     $(document).on("newSearch", function(e,response){
         var search_loc = new google.maps.LatLng(response.latitude,response.longitude);
         search_data.searches[response.place_id]=ttown.addSearch(search_loc,response.place_id,response.extra);
@@ -37,7 +36,8 @@ jQuery(document).ready(function() {
     
 
 
-    //client events
+//client events
+
     $(document).on("endSearch_click", function(e,marker_key){
         search_data.post(
             'place/update/'+marker_key,
@@ -75,10 +75,12 @@ jQuery(document).ready(function() {
         
         google.maps.event.addListenerOnce(ttown, "click",function(e){
             ttown.setOptions({ draggableCursor : "" })
+
+
             search_data.post("place/create", {
               latitude: e.latLng.lat(),
               longitude: e.latLng.lng(),
-              layer_id:"96yV",
+              layer_id:search_data.layer_id,
               name:e.latLng.lat()+e.latLng.lng(),
               radius: 100,
               extra: {start_time:Date()}
@@ -99,9 +101,12 @@ jQuery(document).ready(function() {
 
     $('a#viewUser').click(function(){
          $( "#menu_panel" ).panel( "close" );
-        ttown.setZoom(18);
-        ttown.panTo(ttown.user.position);
+         ttown.setZoom(22);
+         ttown.user.setAnimation(google.maps.Animation.DROP);
     });    
+
+
+//authentication
 
     $('button#signin').click(function(){
       var auth={}; auth.username = $('input#email').val(),
@@ -109,13 +114,24 @@ jQuery(document).ready(function() {
           search_data.login(auth);
     });    
 
+    search_data.onAuthorize = function(response, error){
+      console.log("You are a user!");
+      $.mobile.changePage('#mapPage');
+    };
+    
+    search_data.onLoginError = function(error){
+      console.log("You are not a user!");
+      $('#linkDialog').click();
+    }
 
+//watch position init 
     var userPositionChange = function(pos) {
         var crd = pos.coords;
         currentLatlng = new google.maps.LatLng(crd.latitude, crd.longitude);          
         ttown.user.setPosition(currentLatlng);
         ttown.user_accuracy=crd.accuracy;
-        ttown.setCenter(currentLatlng);
+        // ttown.panTo(ttown.user.position);
+        
     };
 
      var errorPositionChange = function (err) {
@@ -128,10 +144,10 @@ jQuery(document).ready(function() {
 
     $("#mapPage").on("pageshow",function(){
         google.maps.event.trigger(ttown, 'resize');
+
     });
  
-  
-  $('#mapPage').trigger('pageshow');
+    $('#mapPage').trigger('pageshow');
     
 });
 
