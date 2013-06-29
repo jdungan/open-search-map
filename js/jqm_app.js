@@ -6,15 +6,26 @@ jQuery(document).ready(function() {
 
 // init search data
     var search_data = search_data || new search_db();
-    search_data.stored_searches(ttown);
+    search_data.display_searches(ttown);
+
+// load layer panel
+    search_data.layers.each(function(){
+
+       $('#layer_list').append( 
+           "<li>\
+               <a href='chgLayer' data-role='button' data-rel='dialog'>\
+                   <i class='icon-copy icon-2x'' ></i>&nbsp;Layers</a>\
+           </li>"           
+        );
+    });
+
 
 //init socket
     var socket = io.connect('http://206.214.164.229');
     socket.on('message', function (data) {
       console.log(data);
-      $.event.trigger(data.message.eventType,data.message.payload);
-      
-    });            
+      $.event.trigger(data.message.eventType,data.message.payload);      
+    });  
 
 //socket events
     $(document).on("newSearch", function(e,response){
@@ -33,7 +44,6 @@ jQuery(document).ready(function() {
         var search_loc = new google.maps.LatLng(response.latitude,response.longitude);
         marker.setPosition(search_loc);
     });
-    
 
 
 //client events
@@ -52,8 +62,6 @@ jQuery(document).ready(function() {
         });        
     });        
 
-
-
     $(document).on("search_position_changed", function(e,marker_key){
         marker=search_data.searches[marker_key];
         search_data.post(
@@ -70,27 +78,10 @@ jQuery(document).ready(function() {
 //panel menu choices
     $("#addSearch").on('click',function(){
         $( "#menu_panel" ).panel( "close" );
-
-        ttown.setOptions({ draggableCursor : "url(http://s3.amazonaws.com/besport.com_images/status-pin.png) 64 64, auto" })
-        
+        ttown.setOptions({ draggableCursor : "url(http://s3.amazonaws.com/besport.com_images/status-pin.png) 64 64, auto" })        
         google.maps.event.addListenerOnce(ttown, "click",function(e){
             ttown.setOptions({ draggableCursor : "" })
-
-
-            search_data.post("place/create", {
-              latitude: e.latLng.lat(),
-              longitude: e.latLng.lng(),
-              layer_id:search_data.layer_id,
-              name:e.latLng.lat()+e.latLng.lng(),
-              radius: 100,
-              extra: {start_time:Date()}
-            }, function(response, error){
-                console.log(response, error)
-                if(!error){
-                    search_data.searches[response.place_id]=ttown.addSearch(e.latLng,response.place_id,response.extra);
-                    socket.emit('message', {eventType: 'newSearch', payload: response});
-                }
-            });
+            search_data.newSearch(ttown,e.latLng.lat(), e.latLng.lng())
         });
     });
     
