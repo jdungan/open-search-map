@@ -6,17 +6,23 @@ jQuery(document).ready(function() {
 
 // init search data
     var search_data = search_data || new search_db();
-    search_data.display_searches(ttown);
 
 // load layer panel
-    search_data.layers.each(function(){
-
+    search_data.layers.each(function(layer){
        $('#layer_list').append( 
-           "<li>\
-               <a href='chgLayer' data-role='button' data-rel='dialog'>\
-                   <i class='icon-copy icon-2x'' ></i>&nbsp;Layers</a>\
+           "<li class='viewLayer' data-layer_id="+layer.layer_id+">\
+               <a  data-role='button' data-rel='dialog'>\
+                   <i class='icon-copy' ></i>&nbsp;"+layer.name+"</a>\
            </li>"           
-        );
+        ).listview('refresh').trigger( "create" )
+    }).done(function(){
+        // search_data.display_searches(ttown);
+        $("li.viewLayer").on('click',function(){
+            $( "#menu_panel" ).panel( "close" );
+            layer_id=$(this).data('layer_id')
+            search_data.display_searches(ttown,{layer_id:layer_id});
+        });
+        
     });
 
 
@@ -95,6 +101,8 @@ jQuery(document).ready(function() {
          ttown.setZoom(22);
          ttown.user.setAnimation(google.maps.Animation.DROP);
     });    
+
+
 
 
 //authentication

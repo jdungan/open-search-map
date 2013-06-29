@@ -57,10 +57,15 @@ var search_db = function (){
     //     return guid;
     // };
 
-    geoloqi.display_searches = function (this_map,next_offset){
-        var next_offset = next_offset || 0;
+    geoloqi.display_searches = function (this_map,options){
+        var next_offset=0;
+        var layer_id=geoloqi.layer_id;
+        if (options){
+            next_offset = options.next_offset || 0;
+            layer_id = options.layer_id || geoloqi.layer_id; 
+        }
         geoloqi.get("place/list", {
-            layer_id: geoloqi.layer_id,
+            layer_id: layer_id,
             offset:next_offset,
             limit: 25}, 
             function(response, error){
@@ -71,12 +76,16 @@ var search_db = function (){
                         geoloqi.search_list[p.place_id] = this_map.addSearch(search_loc,p.place_id,p.extra);                
                     };
                     if (response.paging.next_offset){
-                        geoloqi.display_searches(this_map,response.paging.next_offset);
+                        geoloqi.display_searches(this_map,{next_offset:response.paging.next_offset});
                     }
                 }
             }
         );
     };
+    
+    
+    
+    
     
     var layers = function (id){
         id = id || '';        
@@ -87,21 +96,33 @@ var search_db = function (){
                 if(error){
                     return dfd.reject();
                 } else{
+                    
                     return dfd.resolve(response);
                 }
             });
             return dfd.promise();
         };
+        
         this.each = function(callback){
+            var dfd= new $.Deferred()
             var this_callback=callback;
-            all_layers().done(function(response){
+            all_layers()
+              .done(function(response){
                 for (var i = 0; i < response.layers.length; i++){
-                    var layer=response.layers[i];
-                    if (this_callback){
-                        this_callback(layer);
-                    };
-                };                
-            });
+                   var layer=response.layers[i];
+                    // keep the users from seeing Geonotes and Users layers
+                    if(layer.name != 'Geonotes' && layer.name!='Users'){
+                        if (this_callback){
+                            this_callback(layer);
+                        }
+                    }
+                };
+                return dfd.resolve();                
+              })
+              .fail(function(){
+                  dfd.reject();
+              });
+            return dfd.promise();
         };
     };
     
