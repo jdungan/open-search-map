@@ -16,11 +16,11 @@ jQuery(document).ready(function() {
            </li>"           
         ).listview('refresh').trigger( "create" )
     }).done(function(){
-        // search_data.display_searches(ttown);
         $("li.viewLayer").on('click',function(){
             $( "#menu_panel" ).panel( "close" );
             layer_id=$(this).data('layer_id')
             search_data.display_searches(ttown,{layer_id:layer_id});
+            $('a#viewSearches').trigger('click');
         });
         
     });
@@ -68,7 +68,7 @@ jQuery(document).ready(function() {
         });        
     });        
 
-    $(document).on("search_position_changed", function(e,marker_key){
+    $(document).on("markerMove", function(e,marker_key){
         marker=search_data.searches[marker_key];
         search_data.post(
             'place/update/'+marker_key,
@@ -102,6 +102,10 @@ jQuery(document).ready(function() {
          ttown.user.setAnimation(google.maps.Animation.DROP);
     });    
 
+    $('a#clearLayers').click(function(){
+        ttown= new search_map(document.getElementById("map_content"));
+        search_db.searches={};
+    });    
 
 
 

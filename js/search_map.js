@@ -76,7 +76,7 @@ var search_map= function (element) {
          );
 
          google.maps.event.addListener(marker, 'dragend',function () {
-              $.event.trigger("search_position_changed",marker.search_key);
+              $.event.trigger("markerMove",marker.search_key);
              }
          );
          
