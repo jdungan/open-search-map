@@ -5,19 +5,39 @@
 var search_db = function (){
     var searchers_list={},
     user_list={};
-    geoloqi.search_list={};
-    geoloqi.layer_id='8neY';
-
-    // initialize geoloqi
-    // d8fa36c91c761155e82795a6745b4e23 j
-    // dd261f12d13b5817c631826b5c209c57 l
-    geoloqi.init({
-      client_id: 'd8fa36c91c761155e82795a6745b4e23',
-      package_name: 'Open Search & Rescue',
-      package_verison: '0.1',
-      persist: 'cookies'
-    });
-
+    geoloqi.search_list={},
+    geoloqi.layer_id='8neY';;
+ 
+    var geoloqi_caller = function (){
+        // initialize geoloqi
+        // d8fa36c91c761155e82795a6745b4e23 j
+        // dd261f12d13b5817c631826b5c209c57 l
+        
+        geoloqi.init({
+           client_id: 'd8fa36c91c761155e82795a6745b4e23',
+           package_name: 'Open Search & Rescue',
+           package_verison: '0.1',
+           persist: 'cookies'
+         });
+         geoloqi.auth={'access_token':'fb75d-ddf59124a0403299ea67e6c001d14c676806459d'};
+        
+         var call_obj = function(type,url){
+             var dfd = new $.Deferred()
+             geoloqi[type](url,function(response,error){
+                 if(error){
+                     return dfd.reject(error);
+                 } else{
+                     return dfd.resolve(response);
+                 }
+             });
+             return dfd.promise();
+         };
+         return call_obj
+    };
+ 
+    var GEOLOGI = new geoloqi_caller();
+     
+ 
     geoloqi.searchBounds = function (arrayLatlng){        
         // Based on Google Maps API v3 
         // Purpose: given an array of Latlng's return a LatlngBounds
@@ -83,9 +103,12 @@ var search_db = function (){
         );
     };
     
-    
-    
-    
+    var places = function(){
+        
+        
+        
+        
+    };
     
     var layers = function (id){
         id = id || '';        
@@ -127,7 +150,6 @@ var search_db = function (){
     };
     
     geoloqi.layers=new layers();
-    geoloqi.auth={'access_token':'fb75d-ddf59124a0403299ea67e6c001d14c676806459d'};
     geoloqi.searches=geoloqi.search_list,
     geoloqi.searchers=searchers_list;
     return geoloqi;
