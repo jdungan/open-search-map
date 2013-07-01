@@ -102,7 +102,7 @@ var search_map= function (element) {
                   visible:true,
                   icon:{
                       anchor: new google.maps.Point(32, 32),
-                      scaledSize: new google.maps.Size(50,50,'px','px'),
+                      scaledSize: new google.maps.Size(64,64,'px','px'),
                       url: search_icon
                       
                   }

@@ -41,7 +41,9 @@ jQuery(document).ready(function() {
       
     $(document).on("endSearch", function(e,response){
         marker=search_data.searches[response.place_id];
-        marker.setIcon("./img/search_end.svg");
+        marker.icon.url="./img/search_end.svg";
+        // force icon to re-render
+        marker.setMap(ttown);
         marker.search_window.setSearchWindowContent(response.extra)        
     });
     
@@ -52,6 +54,9 @@ jQuery(document).ready(function() {
     });
 
 
+
+
+
 //client events
 
     $(document).on("endSearch_click", function(e,marker_key){
@@ -60,9 +65,7 @@ jQuery(document).ready(function() {
             {extra: {end_time:Date()}},
             function(response, error){
                 if(!error){
-                    marker=search_data.searches[marker_key];
-                    marker.setIcon("./img/search_end.svg");
-                    marker.search_window.setSearchWindowContent(response.extra)
+                    $.event.trigger("endSearch",response);
                     socket.emit('message',{eventType: 'endSearch', payload: response});                        
                 }
         });        
