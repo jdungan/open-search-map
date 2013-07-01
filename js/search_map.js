@@ -151,8 +151,28 @@ var search_map= function (element) {
 
     }
     
+    
+    google.maps.event.addListener(this.map, 'zoom_changed',function () {
+        // scaledSize: new google.maps.Size(64,64,'px','px')
+        var zoom_scale = function(z){
+            if (z<=8 )
+                {return new google.maps.Size(8,8,'px','px')}
+            if (z<=12 )
+                {return new google.maps.Size(16,16,'px','px')}
+            if (z<=14 )
+                {return new google.maps.Size(32,32,'px','px')}
+            if (z>15)
+                {return new google.maps.Size(64,64,'px','px')}        
+        };
+        
+        for (var s in search_list){
+            search_list[s].icon.scaledSize=zoom_scale(this_map.zoom)
+        };
+    });
+    
     this.map.user = user_marker;
     this.map.user.accuracy=user_accuracy_circle.radius;
+    this.map.searches=search_list;
     this.map.addSearch = addSearch;      
     this_map=this.map;
     return this.map;

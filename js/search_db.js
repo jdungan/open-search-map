@@ -93,7 +93,7 @@ var search_db = function (){
                     for (var i = 0; i < response.places.length; i++){
                         var p=response.places[i];
                         var search_loc = new google.maps.LatLng(p.latitude,p.longitude);
-                        geoloqi.search_list[p.place_id] = this_map.addSearch(search_loc,p.place_id,p.extra);                
+                        this_map.searches[p.place_id] = this_map.addSearch(search_loc,p.place_id,p.extra);                
                     };
                     if (response.paging.next_offset){
                         geoloqi.display_searches(this_map,{next_offset:response.paging.next_offset});

@@ -9,22 +9,21 @@ jQuery(document).ready(function() {
 
 // load layer panel
     search_data.layers.each(function(layer){
-       $('#layer_list').append( 
+        $('#layer_list').append( 
            "<li class='viewLayer' data-layer_id="+layer.layer_id+">\
                <a  data-role='button' data-rel='dialog'>\
                    <i class='icon-copy' ></i>&nbsp;"+layer.name+"</a>\
            </li>"           
-        ).listview('refresh').trigger( "create" )
-    }).done(function(){
-        $("li.viewLayer").on('click',function(){
-            $( "#menu_panel" ).panel( "close" );
-            layer_id=$(this).data('layer_id')
-            search_data.display_searches(ttown,{layer_id:layer_id});
-            $('a#viewSearches').trigger('click');
+        )})
+        .done(function(){
+            $("#layer_list").listview('refresh').trigger("create");
+            $("li.viewLayer").on('click',function(){
+                $( "#layer_panel" ).panel( "close" );
+                layer_id=$(this).data('layer_id')
+                search_data.display_searches(ttown,{layer_id:layer_id});
+                $('a#viewSearches').trigger('click');
+            });
         });
-        
-    });
-
 
 //init socket
     var socket = io.connect('http://206.214.164.229');
