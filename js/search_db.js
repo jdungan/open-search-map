@@ -5,7 +5,6 @@
 var search_db = function (){
     var searchers_list={},
     user_list={};
-    geoloqi.search_list={},
     geoloqi.layer_id='8neY';;
  
     var geoloqi_caller = function (){
@@ -38,17 +37,6 @@ var search_db = function (){
     var GEOLOGI = new geoloqi_caller();
      
  
-    geoloqi.searchBounds = function (arrayLatlng){        
-        // Based on Google Maps API v3 
-        // Purpose: given an array of Latlng's return a LatlngBounds
-        // Why: This is helpful when using fitBounds, panTo
-        var newBounds = new google.maps.LatLngBounds,p=0;
-
-        for (var m in geoloqi.search_list){
-            newBounds.extend(geoloqi.search_list[m].position);
-        };
-        return newBounds;
-    };
 
     geoloqi.newSearch = function(this_map,lat,lng){
         geoloqi.post("place/create", {
@@ -77,6 +65,10 @@ var search_db = function (){
     //     return guid;
     // };
 
+
+
+
+
     geoloqi.display_searches = function (this_map,options){
         var next_offset=0;
         var layer_id=geoloqi.layer_id;
@@ -94,17 +86,20 @@ var search_db = function (){
                         var p=response.places[i];
                         var search_loc = new google.maps.LatLng(p.latitude,p.longitude);
                         this_map.searches[p.place_id] = this_map.addSearch(search_loc,p.place_id,p.extra);                
+                        this_map.panTo(search_loc)
                     };
                     if (response.paging.next_offset){
-                        geoloqi.display_searches(this_map,{next_offset:response.paging.next_offset});
+                        options.next_offset=response.paging.next_offset;
+                        geoloqi.display_searches(this_map,options);
                     }
                 }
             }
         );
     };
     
-    var places = function(){
+    var places = function(layer,options){
         
+        GEOLOGI.call_obj('get',layer,options).done();
         
         
         

@@ -21,7 +21,6 @@ jQuery(document).ready(function() {
                 $( "#layer_panel" ).panel( "close" );
                 layer_id=$(this).data('layer_id')
                 search_data.display_searches(ttown,{layer_id:layer_id});
-                $('a#viewSearches').trigger('click');
             });
         });
 
@@ -35,11 +34,11 @@ jQuery(document).ready(function() {
 //socket events
     $(document).on("newSearch", function(e,response){
         var search_loc = new google.maps.LatLng(response.latitude,response.longitude);
-        search_data.searches[response.place_id]=ttown.addSearch(search_loc,response.place_id,response.extra);
+        ttown.searches[response.place_id]=ttown.addSearch(search_loc,response.place_id,response.extra);
     });
       
     $(document).on("endSearch", function(e,response){
-        marker=search_data.searches[response.place_id];
+        marker=ttown.searches[response.place_id];
         marker.icon.url="./img/search_end.svg";
         // force icon to re-render
         marker.setMap(ttown);
@@ -47,7 +46,7 @@ jQuery(document).ready(function() {
     });
     
     $(document).on("moveSearch", function(e,response){
-        marker=search_data.searches[response.place_id];
+        marker=ttown.searches[response.place_id];
         var search_loc = new google.maps.LatLng(response.latitude,response.longitude);
         marker.setPosition(search_loc);
     });
@@ -71,7 +70,7 @@ jQuery(document).ready(function() {
     });        
 
     $(document).on("markerMove", function(e,marker_key){
-        marker=search_data.searches[marker_key];
+        marker=ttown.searches[marker_key];
         search_data.post(
             'place/update/'+marker_key,
             {latitude:  marker.position.lat(),
@@ -95,7 +94,7 @@ jQuery(document).ready(function() {
     
     $('a#viewSearches').click(function(){
         $( "#menu_panel" ).panel( "close" );
-        ttown.fitBounds(search_data.searchBounds());
+        ttown.fitBounds(ttown.searchBounds());
     });    
 
     $('a#viewUser').click(function(){
@@ -106,7 +105,7 @@ jQuery(document).ready(function() {
 
     $('a#clearLayers').click(function(){
         ttown= new search_map(document.getElementById("map_content"));
-        search_db.searches={};
+        ttown.searches={};
     });    
 
 

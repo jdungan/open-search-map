@@ -151,22 +151,38 @@ var search_map= function (element) {
 
     }
     
+    this.map.searchBounds = function (){        
+        // Based on Google Maps API v3 
+        // Purpose: given an array of Latlng's return a LatlngBounds
+        // Why: This is helpful when using fitBounds, panTo
+        var newBounds = new google.maps.LatLngBounds,p=0;
+
+        for (var m in search_list){
+            newBounds.extend(search_list[m].position);
+        };
+        return newBounds;
+    };
     
     google.maps.event.addListener(this.map, 'zoom_changed',function () {
         // scaledSize: new google.maps.Size(64,64,'px','px')
         var zoom_scale = function(z){
-            if (z<=8 )
-                {return new google.maps.Size(8,8,'px','px')}
-            if (z<=12 )
-                {return new google.maps.Size(16,16,'px','px')}
-            if (z<=14 )
-                {return new google.maps.Size(32,32,'px','px')}
-            if (z>15)
-                {return new google.maps.Size(64,64,'px','px')}        
+            if (z<=2 )
+                {return 8;}
+            if (z<=20 )
+                {return 64*(z/21);}
+            if (z>=21)
+                {return 64;}  
         };
         
-        for (var s in search_list){
-            search_list[s].icon.scaledSize=zoom_scale(this_map.zoom)
+        
+        for (var m in search_list){
+            (function(zoom){
+                ns=zoom_scale(zoom);
+                na=ns/2;
+                console.log ('zoom: '+zoom +' ns: '+ns)
+                search_list[m].icon.scaledSize = new google.maps.Size(ns,ns,'px','px');
+                search_list[m].icon.anchor=new google.maps.Point(na,na)
+            })(this_map.zoom);
         };
     });
     
