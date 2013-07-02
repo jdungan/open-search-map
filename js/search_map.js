@@ -179,7 +179,6 @@ var search_map= function (element) {
             (function(zoom){
                 ns=zoom_scale(zoom);
                 na=ns/2;
-                console.log ('zoom: '+zoom +' ns: '+ns)
                 search_list[m].icon.scaledSize = new google.maps.Size(ns,ns,'px','px');
                 search_list[m].icon.anchor=new google.maps.Point(na,na)
             })(this_map.zoom);

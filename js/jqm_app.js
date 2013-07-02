@@ -88,7 +88,8 @@ jQuery(document).ready(function() {
         ttown.setOptions({ draggableCursor : "url(http://s3.amazonaws.com/besport.com_images/status-pin.png) 64 64, auto" })        
         google.maps.event.addListenerOnce(ttown, "click",function(e){
             ttown.setOptions({ draggableCursor : "" })
-            search_data.newSearch(ttown,e.latLng.lat(), e.latLng.lng())
+            response=search_data.newSearch(ttown,e.latLng.lat(), e.latLng.lng())
+            socket.emit('message', {eventType: 'newSearch', payload: response});
         });
     });
     

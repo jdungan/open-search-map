@@ -50,8 +50,8 @@ var search_db = function (){
             console.log(response, error)
             if(!error){
                 var search_loc = new google.maps.LatLng(response.latitude,response.longitude);
-                geoloqi.searches[response.place_id]=this_map.addSearch(search_loc,response.place_id,response.extra);
-                socket.emit('message', {eventType: 'newSearch', payload: response});
+                this_map.searches[response.place_id]=this_map.addSearch(search_loc,response.place_id,response.extra);
+                return response;
             }
         });
     };
@@ -145,7 +145,6 @@ var search_db = function (){
     };
     
     geoloqi.layers=new layers();
-    geoloqi.searches=geoloqi.search_list,
     geoloqi.searchers=searchers_list;
     return geoloqi;
         
