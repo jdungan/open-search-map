@@ -20,7 +20,7 @@ var search_db = function (){
          });
          geoloqi.auth={'access_token':'fb75d-ddf59124a0403299ea67e6c001d14c676806459d'};
         
-         var call_obj = function(type,url){
+         var call_obj = function(type,url,options){
              var dfd = new $.Deferred()
              geoloqi[type](url,options,function(response,error){
                  if(error){
@@ -34,7 +34,7 @@ var search_db = function (){
          return call_obj
     };
  
-    var GEOLOGI = new geoloqi_caller();
+    var GEODB = new geoloqi_caller();
      
  
 
@@ -98,29 +98,34 @@ var search_db = function (){
     };
     
     var places = function(){
-        var dfd = new $.Deferred();
         
-        this.all = function (layer,options){
+        this.all = function (options){
+            var dfd = new $.Deferred(),all_places={};
+            var places_obj=this;
+            if (!options.layer_id){
+                dfd.reject("layer_id required");
+            }
             
-            
-            
-            GEOLOGI.call_obj('get',"place/list", layer,options)
-            .done(function(){
-                if (!response.paging.next_offset){
-                    dfd.resolve(response);
-                } else {
-                    
-                    this.all
-                }
-                
-                
-            });
+            GEODB('get',"place/list",options)
+                .done(function(response){
+                    if (!response.paging.next_offset){
+                        dfd.resolve(all_places);
+                        all_places={};
+                    } else {
+                        for (var i = 0; i < response.places.length; i++){
+                            var p=response.places[i];
+                            all_places[p.place_id]=p;
+                        };
+                        options.offset=response.paging.next_offset;
+                        places_obj.all(options);
+                    }
+                })
+                .fail(function(error){
+                    all_places={};
+                    dfd.reject(error);
+                });
+            return dfd.promise();
         };
-        
-        
-        
-        
-        
     };
     
     
@@ -164,7 +169,9 @@ var search_db = function (){
         };
     };
     
-    geoloqi.layers=new layers();
+    geoloqi.layers = new layers();
+    geoloqi.places = new places();
+
     geoloqi.searchers=searchers_list;
     return geoloqi;
         

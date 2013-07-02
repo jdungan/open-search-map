@@ -24,6 +24,19 @@ jQuery(document).ready(function() {
             });
         });
 
+debugger;
+
+search_data.places.all({layer_id:'96yV'}).done(function(response){
+    
+    console.log (response)
+    
+    
+}).fail(function(error){
+    
+  console.log(error);  
+});
+
+
 //init socket
     var socket = io.connect('http://206.214.164.229');
     socket.on('message', function (data) {
