@@ -51,10 +51,6 @@ jQuery(document).ready(function() {
         marker.setPosition(search_loc);
     });
 
-
-
-
-
 //client events
 
     $(document).on("endSearch_click", function(e,marker_key){

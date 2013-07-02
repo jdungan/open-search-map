@@ -22,7 +22,7 @@ var search_db = function (){
         
          var call_obj = function(type,url){
              var dfd = new $.Deferred()
-             geoloqi[type](url,function(response,error){
+             geoloqi[type](url,options,function(response,error){
                  if(error){
                      return dfd.reject(error);
                  } else{
@@ -97,18 +97,38 @@ var search_db = function (){
         );
     };
     
-    var places = function(layer,options){
+    var places = function(){
+        var dfd = new $.Deferred();
         
-        GEOLOGI.call_obj('get',layer,options).done();
+        this.all = function (layer,options){
+            
+            
+            
+            GEOLOGI.call_obj('get',"place/list", layer,options)
+            .done(function(){
+                if (!response.paging.next_offset){
+                    dfd.resolve(response);
+                } else {
+                    
+                    this.all
+                }
+                
+                
+            });
+        };
+        
+        
         
         
         
     };
     
+    
+
     var layers = function (id){
         id = id || '';        
         
-        function all_layers (){
+        this.all = function (){
             var dfd = new $.Deferred()
             geoloqi.get('layer/list',function(response,error){
                 if(error){
@@ -124,7 +144,7 @@ var search_db = function (){
         this.each = function(callback){
             var dfd= new $.Deferred()
             var this_callback=callback;
-            all_layers()
+            this.all()
               .done(function(response){
                 for (var i = 0; i < response.layers.length; i++){
                    var layer=response.layers[i];
