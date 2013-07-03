@@ -1,33 +1,3 @@
-
-// map functions
-
-
-
-    // var placeLocationTitle = function (map,title,loc_postion){
-    // 
-    //     var marker1 = new MarkerWithLabel({
-    //       position: loc_postion,
-    //       map: map,
-    //       labelContent: title,
-    //       labelAnchor: new google.maps.Point(22, 0),
-    //       labelClass: "loc_labels", // the CSS class for the label
-    //       labelStyle: {opacity: 1},
-    //       visible: true,
-    //       icon:{}
-    //     });
-    // };
-    // 
-    // var placeLocationCircle = function (map,marker){
-    //     var location_circle = new google.maps.Circle({
-    //       map: map,
-    //       radius: 2,  
-    //       fillColor: 'silver',
-    //       fillOpacity: 1,
-    //       strokeOpacity:.1
-    //     });
-    //     location_circle.bindTo('center', marker, 'position');
-    // };
-
 //  map object 
 var search_map= function (element) {    
     // 'tulsa 36.1539,-95.9925'
@@ -35,9 +5,9 @@ var search_map= function (element) {
         search_overlay,
         map_element = null,
         tulsaLatlng =  tulsaLatlng ||  new google.maps.LatLng(36.1539,-95.9925),
-        dispatchMapOptions = {
+        searchMapOptions = {
             visualRefresh:true,
-            zoom: 12,
+            zoom: 18,
             mapTypeId: google.maps.MapTypeId.ROADMAP,
             center:tulsaLatlng,
             panControl: false,
@@ -59,76 +29,104 @@ var search_map= function (element) {
                 style: google.maps.ZoomControlStyle.SMALL,
                 position: google.maps.ControlPosition.RIGHT_CENTER,
             },
-        };
-        
+        },
        
-    var geo=google.maps.geometry.spherical;        
+    geo=google.maps.geometry.spherical,    
+    
+    search_list = {},
+
+    search_info = function (key,info_obj) {
+        var response = [];
+        i=0;
+        for (var p in info_obj){
+            response[i] = "<p>"+p+": "+info_obj[p]+"</p>";
+            i+=1;
+        };
+        content_text=response.join("") 
+        if (!info_obj.end_time){
+            content_text +="</br><button id='"+key+"_button'>End Search</button"
+        }
+        return content_text;
+    },
+
+    set_search_click = function (marker, key, info_obj) {
+        var infowindow = new google.maps.InfoWindow({
+                content:  search_info(key, info_obj),
+                position: marker.LatLng                     
+         });
+
+         google.maps.event.addListener(infowindow, 'domready',function(){
+             var endButton = document.getElementById(marker.search_key+'_button');
+             if(endButton){
+                 google.maps.event.addDomListener(endButton,'click', function(event){
+                     event.preventDefault();
+                     $.event.trigger("endSearch_click",marker.search_key);
+                     infowindow.close();
+                 });
+             }
+         });
+
+         google.maps.event.addListener(marker, 'click',function () {
+             infowindow.open(this_map, marker);
+             //TODO: close info window on click but re-open on next click
+             // google.maps.event.addListenerOnce(marker,'click',function(){
+             //     infowindow.close();                        
+             // });
+             }
+         );
+
+         google.maps.event.addListener(marker, 'dragend',function () {
+              $.event.trigger("markerMove",marker.search_key);
+             }
+         );
+         
+         
+         this_infowindow=infowindow;
+         infowindow.setSearchWindowContent = function(extra){
+             
+              this_infowindow.setContent(search_info(key,extra))
+         }
+         
+         return infowindow;  
+    },
+
+    addSearch = function (position,key,info_obj) {
         
-
-    var goodPositionChange = function(pos) {
-        var crd = pos.coords;
-
-        currentLatlng = new google.maps.LatLng(crd.latitude, crd.longitude);          
-
-        console.log(pos);
-        //update map
-
-        user_marker.setPosition(currentLatlng);
-        user_accuracy_circle.radius=crd.accuracy;
-
-        var ne=geo.computeOffset(currentLatlng, crd.accuracy*1.5, 45),
-          sw=geo.computeOffset(currentLatlng, crd.accuracy*1.5, 225);
-        var currentView= new google.maps.LatLngBounds(sw,ne);           
-
-        this_map.panToBounds(currentView);
-        this_map.setCenter(currentLatlng);
-
+        search_icon= (info_obj.end_time && "./img/search_end.svg") || "./img/search_start.svg";
+        
+        if (!search_list[key]) {
+            var marker = new google.maps.Marker({
+                  draggable:true,
+                  map: this_map,
+                  position: position,
+                  visible:true,
+                  icon:{
+                      anchor: new google.maps.Point(32, 32),
+                      scaledSize: new google.maps.Size(64,64,'px','px'),
+                      url: search_icon
+                      
+                  }
+              });
+            marker.search_key=key;
+            marker.search_window= set_search_click(marker, key, info_obj);
+        }
+        return marker;
     };
-
-     var badPositionChange = function (err) {
-      console.warn('ERROR(' + err.code + '): ' + err.message);
-    };
-
-    var createMarker = function (position){
-              var marker = new google.maps.Marker({
-                    draggable:true,
-                    map: this_map,
-                    position: position,
-                    visible:true,
-                    icon:{
-                        anchor: new google.maps.Point(32, 32),
-                        scaledSize: new google.maps.Size(50,50,'px','px'),
-                        url:"./img/search_end.svg"
-                    }
-                });
-                
-                
-           // this_map.panTo(marker.getPosition());               
-    };
-
-
-
+        
     if (element !== map_element){
         map_element = element;
         google.maps.visualRefresh=true;
-        this.map = new google.maps.Map(element, dispatchMapOptions); 
+        this.map = new google.maps.Map(element, searchMapOptions); 
 
        var user_marker = user_marker || new google.maps.Marker({
             map: this.map,
-            visible:false,
+            visible:true,
+            icon:{
+                anchor: new google.maps.Point(32,32),
+                scaledSize: new google.maps.Size(64,64,'px','px'),
+                url: "./img/searcher.svg"                
+            }
         });
-
-        // user circle
-         var user_circle = new google.maps.Circle({
-           map: this.map,
-           radius: 2,  
-           fillColor: 'blue',
-           fillOpacity: 1,
-           strokeColor:"white",
-           strokeOpacity:1
-         });
-         user_circle.bindTo('center', user_marker, 'position');
-
         // Add circle overlay and bind to marker
          var user_accuracy_circle = new google.maps.Circle({
            map: this.map,
@@ -139,11 +137,58 @@ var search_map= function (element) {
            strokeOpacity:0
          });
          user_accuracy_circle.bindTo('center', user_marker, 'position');        
+
+        // user circle
+         // var user_circle = new google.maps.Circle({
+         //   map: this.map,
+         //   radius: 2,  
+         //   fillColor: 'blue',
+         //   fillOpacity: 1,
+         //   strokeColor:"white",
+         //   strokeOpacity:1
+         // });
+         // user_circle.bindTo('center', user_marker, 'position');
+
     }
     
-    this.map.createMarker = createMarker;      
-    this.map.goodPositionChange = goodPositionChange;
-    this.map.badPositionChange = badPositionChange;
+    this.map.searchBounds = function (){        
+        // Based on Google Maps API v3 
+        // Purpose: given an array of Latlng's return a LatlngBounds
+        // Why: This is helpful when using fitBounds, panTo
+        var newBounds = new google.maps.LatLngBounds,p=0;
+
+        for (var m in search_list){
+            newBounds.extend(search_list[m].position);
+        };
+        return newBounds;
+    };
+    
+    google.maps.event.addListener(this.map, 'zoom_changed',function () {
+        // scaledSize: new google.maps.Size(64,64,'px','px')
+        var zoom_scale = function(z){
+            if (z<=2 )
+                {return 8;}
+            if (z<=20 )
+                {return 64*(z/21);}
+            if (z>=21)
+                {return 64;}  
+        };
+        
+        
+        for (var m in search_list){
+            (function(zoom){
+                ns=zoom_scale(zoom);
+                na=ns/2;
+                search_list[m].icon.scaledSize = new google.maps.Size(ns,ns,'px','px');
+                search_list[m].icon.anchor=new google.maps.Point(na,na)
+            })(this_map.zoom);
+        };
+    });
+    
+    this.map.user = user_marker;
+    this.map.user.accuracy=user_accuracy_circle.radius;
+    this.map.searches=search_list;
+    this.map.addSearch = addSearch;      
     this_map=this.map;
     return this.map;
 };

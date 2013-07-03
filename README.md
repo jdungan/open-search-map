@@ -9,14 +9,18 @@ These descriptions are suggestions for managing the code.  We are not above fudg
 
 index.html  --  Contains markup for jqm pages
 
-geoloqi_app.js --  Any geoloqi related settings
+search_db.js --  Intermediate object for handling search data, currently we use geoloqi
 
 search_map.js -- map object for interacting with google maps api
 
 jqm_app.js -- Any jqm interactions 
 
 
-NOTE:  GeoJSON.js, markerwithclusterer_compiled.js, and markerwithlabel.js are unused sofar but hanging around just in case.
+Libraries:
+socket.io.min.ja for sharing map changes
+
+
+NOTE:  GeoJSON.js, markerwithclusterer_compiled.js, and markerwithlabel.js are unused so far but hanging around just in case.
 _
 
 
