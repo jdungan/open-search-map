@@ -124,6 +124,7 @@ var search_db = function (){
                     get_all.all_places=[];
                     get_all.dfd.reject(error);
                 });
+                
             return get_all.dfd.promise();
         };
         function each_place(options,callback){
@@ -156,14 +157,13 @@ var search_db = function (){
         
         this.all = function (){
             var dfd = new $.Deferred()
-            geoloqi.get('layer/list',function(response,error){
-                if(error){
-                    return dfd.reject();
-                } else{
-                    
+            GEODB('get','layer/list')
+                .done(function(response){
                     return dfd.resolve(response);
-                }
-            });
+                })
+                .fail(function(error){
+                    return dfd.reject(error);
+                });
             return dfd.promise();
         };
         
@@ -184,7 +184,7 @@ var search_db = function (){
                 return dfd.resolve();                
               })
               .fail(function(){
-                  dfd.reject();
+                  dfd.reject(error);
               });
             return dfd.promise();
         };
