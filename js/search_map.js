@@ -1,8 +1,4 @@
 
-
-
-
-
 // map functions
 
 

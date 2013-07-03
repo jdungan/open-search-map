@@ -45,9 +45,6 @@ jQuery(document).ready(function() {
             
         });
  
- 
- 
- 
     });   
  
     $("#addSearch").on('click',function(){
@@ -55,8 +52,6 @@ jQuery(document).ready(function() {
         $( "#menu_panel" ).panel( "close" );
 
         ttown.setOptions({ draggableCursor : "url(http://s3.amazonaws.com/besport.com_images/status-pin.png) 64 64, auto" })
-        
-        
         
         google.maps.event.addListenerOnce(ttown, "click",function(e){
         
@@ -75,8 +70,6 @@ jQuery(document).ready(function() {
             ttown.createMarker(e.latLng);            
         });
         
-    
-    
     });
 
     //     $.event.special.tap.tapholdThreshold=1500;
@@ -88,7 +81,5 @@ jQuery(document).ready(function() {
   
         $('#mapPage').trigger('pageshow');
 
-  
-    
 });
 
