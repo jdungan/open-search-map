@@ -69,69 +69,90 @@ var search_db = function (){
 
 
 
-    geoloqi.display_searches = function (this_map,options){
-        var next_offset=0;
-        var layer_id=geoloqi.layer_id;
-        if (options){
-            next_offset = options.next_offset || 0;
-            layer_id = options.layer_id || geoloqi.layer_id; 
-        }
-        geoloqi.get("place/list", {
-            layer_id: layer_id,
-            offset:next_offset,
-            limit: 25}, 
-            function(response, error){
-                if(!error){
-                    for (var i = 0; i < response.places.length; i++){
-                        var p=response.places[i];
-                        var search_loc = new google.maps.LatLng(p.latitude,p.longitude);
-                        this_map.searches[p.place_id] = this_map.addSearch(search_loc,p.place_id,p.extra);                
-                        this_map.panTo(search_loc)
-                    };
-                    if (response.paging.next_offset){
-                        options.next_offset=response.paging.next_offset;
-                        geoloqi.display_searches(this_map,options);
-                    }
-                }
-            }
-        );
-    };
+    // geoloqi.display_searches = function (this_map,options){
+    //     var next_offset=0;
+    //     var layer_id=geoloqi.layer_id;
+    //     if (options){
+    //         next_offset = options.next_offset || 0;
+    //         layer_id = options.layer_id || geoloqi.layer_id; 
+    //     }
+    //     geoloqi.get("place/list", {
+    //         layer_id: layer_id,
+    //         offset:next_offset,
+    //         limit: 25}, 
+    //         function(response, error){
+    //             if(!error){
+    //                 for (var i = 0; i < response.places.length; i++){
+    //                     var p=response.places[i];
+    //                     var search_loc = new google.maps.LatLng(p.latitude,p.longitude);
+    //                     this_map.searches[p.place_id] = this_map.addSearch(search_loc,p.place_id,p.extra);                
+    //                     this_map.panTo(search_loc)
+    //                 };
+    //                 if (response.paging.next_offset){
+    //                     options.next_offset=response.paging.next_offset;
+    //                     geoloqi.display_searches(this_map,options);
+    //                 }
+    //             }
+    //         }
+    //     );
+    // };
     
     var places = function(){
         
-        this.all = function (options){
-            var dfd = new $.Deferred(),all_places={};
-            var places_obj=this;
+         function get_all(options){
+            get_all.dfd = get_all.dfd || new $.Deferred();
+            get_all.all_places= get_all.all_places || [];
             if (!options.layer_id){
-                dfd.reject("layer_id required");
+                get_all.dfd.reject("layer_id required");
             }
             
             GEODB('get',"place/list",options)
                 .done(function(response){
+                    for (var i = 0; i < response.places.length; i++){
+                        var p=response.places[i];
+                        get_all.all_places.push(p);
+                    };
                     if (!response.paging.next_offset){
-                        dfd.resolve(all_places);
-                        all_places={};
+                        get_all.dfd.resolve({places:get_all.all_places});
+                        get_all.all_places=[];
                     } else {
-                        for (var i = 0; i < response.places.length; i++){
-                            var p=response.places[i];
-                            all_places[p.place_id]=p;
-                        };
                         options.offset=response.paging.next_offset;
-                        places_obj.all(options);
+                        get_all(options);
                     }
                 })
                 .fail(function(error){
-                    all_places={};
-                    dfd.reject(error);
+                    get_all.all_places=[];
+                    get_all.dfd.reject(error);
                 });
+            return get_all.dfd.promise();
+        };
+        function each_place(options,callback){
+            var dfd= new $.Deferred()
+            var this_callback=callback;
+            get_all(options)
+              .done(function(response){
+                for (var i = 0; i < response.places.length; i++){
+                   var place=response.places[i];
+                    if (this_callback){
+                        this_callback(place);
+                    }
+                };
+                return dfd.resolve();                
+              })
+              .fail(function(){
+                  dfd.reject();
+              });
             return dfd.promise();
         };
+        
+        this.each= each_place;
+        this.all= get_all;
+        return this;
     };
     
     
 
-    var layers = function (id){
-        id = id || '';        
+    var layers = function (){
         
         this.all = function (){
             var dfd = new $.Deferred()

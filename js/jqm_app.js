@@ -20,21 +20,21 @@ jQuery(document).ready(function() {
             $("li.viewLayer").on('click',function(){
                 $( "#layer_panel" ).panel( "close" );
                 layer_id=$(this).data('layer_id')
-                search_data.display_searches(ttown,{layer_id:layer_id});
+                // search_data.display_searches(ttown,{layer_id:layer_id});
+                addLayer(layer_id);
             });
         });
 
-debugger;
-
-search_data.places.all({layer_id:'96yV'}).done(function(response){
-    
-    console.log (response)
-    
-    
-}).fail(function(error){
-    
-  console.log(error);  
-});
+    function addLayer(layer_id){
+        search_data.places.each({layer_id:layer_id},function(p){
+            var search_loc = new google.maps.LatLng(p.latitude,p.longitude);
+            ttown.searches[p.place_id] = ttown.addSearch(search_loc,p.place_id,p.extra);                
+        })
+        .done(function(){
+            $('a#viewSearches').trigger('click');
+        });
+        
+    }
 
 
 //init socket
