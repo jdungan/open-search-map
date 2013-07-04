@@ -108,7 +108,7 @@ jQuery(document).ready(function() {
 
     $('a#viewUser').click(function(){
          $( "#menu_panel" ).panel( "close" );
-         ttown.setZoom(22);
+         ttown.panTo(ttown.user.position);
          ttown.user.setAnimation(google.maps.Animation.DROP);
     });    
 
