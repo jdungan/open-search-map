@@ -109,8 +109,8 @@ var search_map= function (element) {
               });
             marker.search_key=key;
             marker.search_window= set_search_click(marker, key, info_obj);
+            search_list[key]=marker;
         }
-        return marker;
     };
         
     if (element !== map_element){
@@ -137,17 +137,6 @@ var search_map= function (element) {
            strokeOpacity:0
          });
          user_accuracy_circle.bindTo('center', user_marker, 'position');        
-
-        // user circle
-         // var user_circle = new google.maps.Circle({
-         //   map: this.map,
-         //   radius: 2,  
-         //   fillColor: 'blue',
-         //   fillOpacity: 1,
-         //   strokeColor:"white",
-         //   strokeOpacity:1
-         // });
-         // user_circle.bindTo('center', user_marker, 'position');
 
     }
     
