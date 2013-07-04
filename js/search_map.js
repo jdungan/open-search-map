@@ -104,7 +104,6 @@ var search_map= function (element) {
                       anchor: new google.maps.Point(32, 32),
                       scaledSize: new google.maps.Size(64,64,'px','px'),
                       url: search_icon
-                      
                   }
               });
             marker.search_key=key;
@@ -155,21 +154,27 @@ var search_map= function (element) {
     google.maps.event.addListener(this.map, 'zoom_changed',function () {
         // scaledSize: new google.maps.Size(64,64,'px','px')
         var zoom_scale = function(z){
-            if (z<=2 )
-                {return 8;}
-            if (z<=20 )
-                {return 64*(z/21);}
-            if (z>=21)
-                {return 64;}  
+            zoom_scale.answer= zoom_scale.answer || {};
+            if (!zoom_scale.answer[z]){
+                var ns=Math.floor(64*(z/21));
+                zoom_scale.answer[z]=new google.maps.Size(ns,ns,'px','px');
+            }
+            return zoom_scale.answer[z]
         };
-        
-        
+        var zoom_anchor = function(z){
+            zoom_anchor.answer= zoom_anchor.answer || {};
+            if (!zoom_anchor.answer[z]){
+                var na=Math.floor(32*(z/21));
+                zoom_anchor.answer[z]=new google.maps.Point(na,na);
+            }
+            return zoom_anchor.answer[z]
+        };
+
         for (var m in search_list){
             (function(zoom){
-                ns=zoom_scale(zoom);
-                na=ns/2;
-                search_list[m].icon.scaledSize = new google.maps.Size(ns,ns,'px','px');
-                search_list[m].icon.anchor=new google.maps.Point(na,na)
+                search_list[m].icon.scaledSize = zoom_scale(zoom);
+                search_list[m].icon.size = zoom_scale(zoom);
+                search_list[m].icon.anchor = zoom_anchor(zoom);
             })(this_map.zoom);
         };
     });

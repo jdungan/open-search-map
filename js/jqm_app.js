@@ -7,60 +7,31 @@ jQuery(document).ready(function() {
 // init search data
     var search_data = search_data || new search_db();
 
-    //init socket
-        var socket = io.connect('http://206.214.164.229');
-        socket.on('message', function (data) {
-          console.log(data);
-          $.event.trigger(data.message.eventType,data.message.payload);      
-        });  
+//init socket
+    var socket = io.connect('http://206.214.164.229');
+    socket.on('message', function (data) {
+      console.log(data);
+      $.event.trigger(data.message.eventType,data.message.payload);      
+    });  
 
-    //socket events
-        $(document).on("newSearch", function(e,response){
-            var search_loc = new google.maps.LatLng(response.latitude,response.longitude);
-            ttown.searches[response.place_id]=ttown.addSearch(search_loc,response.place_id,response.extra);
-        });
+//socket events
+    $(document).on("newSearch", function(e,response){
+        var search_loc = new google.maps.LatLng(response.latitude,response.longitude);
+        ttown.searches[response.place_id]=ttown.addSearch(search_loc,response.place_id,response.extra);
+    });
 
-        $(document).on("endSearch", function(e,response){
-            marker=ttown.searches[response.place_id];
-            marker.icon.url="./img/search_end.svg";
-            // force icon to re-render
-            marker.setMap(ttown);
-            marker.search_window.setSearchWindowContent(response.extra)        
-        });
+    $(document).on("endSearch", function(e,response){
+        marker=ttown.searches[response.place_id];
+        marker.icon.url="./img/search_end.svg";
+        marker.setMap(ttown)// force icon to re-render;
+        marker.search_window.setSearchWindowContent(response.extra)        
+    });
 
-        $(document).on("moveSearch", function(e,response){
-            marker=ttown.searches[response.place_id];
-            var search_loc = new google.maps.LatLng(response.latitude,response.longitude);
-            marker.setPosition(search_loc);
-        });
-
-// load layer panel
-    search_data.layers.each(function(layer){
-        $('#layer_list').append( 
-           "<li class='viewLayer' data-layer_id="+layer.layer_id+">\
-               <a  data-role='button' data-rel='dialog'>\
-                   <i class='icon-copy' ></i>&nbsp;"+layer.name+"&nbsp; "+layer.layer_id+"  </a>\
-           </li>"           
-        )})
-        .done(function(){
-            $("#layer_list").listview('refresh').trigger("create");
-            $("li.viewLayer").on('click',function(){
-                $( "#layer_panel" ).panel( "close" );
-                layer_id=$(this).data('layer_id')
-                displayLayer(layer_id);
-            });
-        });
-
-    function displayLayer(layer_id){
-        search_data.places.each({layer_id:layer_id},function(p){
-            var search_loc = new google.maps.LatLng(p.latitude,p.longitude);
-            ttown.addSearch(search_loc,p.place_id,p.extra);                
-        })
-        .done(function(){
-            $('a#viewSearches').trigger('click');
-        });   
-    }
-
+    $(document).on("moveSearch", function(e,response){
+        marker=ttown.searches[response.place_id];
+        var search_loc = new google.maps.LatLng(response.latitude,response.longitude);
+        marker.setPosition(search_loc);
+    });
 
 //client events
     $(document).on("endSearch_click", function(e,marker_key){
@@ -81,6 +52,33 @@ jQuery(document).ready(function() {
             socket.emit('message',{eventType: 'moveSearch', payload: response});                        
         });        
     });
+
+// load layer panel
+    search_data.layers.each(function(layer){
+        $('#layer_list').append( 
+           "<li class='viewLayer' data-layer_id="+layer.layer_id+">\
+               <a  data-role='button' data-rel='dialog'>\
+                   <i class='icon-copy' ></i>&nbsp;"+layer.name+"&nbsp; "+layer.layer_id+"  </a>\
+           </li>"           
+        )})
+        .done(function(){
+            $("#layer_list").listview('refresh').trigger("create");
+            $("li.viewLayer").on('click',function(){
+                $( "#layer_panel" ).panel( "close" );
+                layer_id=$(this).data('layer_id')
+                displayLayer(layer_id);
+            });
+        });
+
+    function displayLayer(layer_id){
+        search_data.places.each({layer_id:layer_id},function(response){
+            var search_loc = new google.maps.LatLng(response.latitude,response.longitude);
+            ttown.addSearch(search_loc,response.place_id,response.extra);                
+        })
+        .done(function(){
+            $('a#viewSearches').trigger('click');
+        });   
+    }
 
 //panel menu choices
     $("#addSearch").on('click',function(){
