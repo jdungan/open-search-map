@@ -200,6 +200,7 @@ var search_db = function (){
     geo_db.layers = new layers();
     geo_db.places = new places();
     geo_db.place = new place();
+    geo_db.login = geoloqi.login;
     return geo_db;
         
 };

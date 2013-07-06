@@ -53,6 +53,12 @@ jQuery(document).ready(function() {
         });        
     });
 
+//jqm page events 
+    $("#mapPage").on("pageshow",function(){
+        google.maps.event.trigger(ttown, 'resize');
+
+    });
+
 // load layer panel
     search_data.layers.each(function(layer){
         $('#layer_list').append( 
@@ -95,7 +101,7 @@ jQuery(document).ready(function() {
                 .done(function(response){
                     ttown.setOptions({ draggableCursor : "" });
                     search_loc=new google.maps.LatLng(response.latitude,response.longitude);
-                    ttown.addSearch(search_loc,response.place_id,response.extra);
+                    ttown.addSearch(search_loc,response.place_id,response.extra);                    
                     socket.emit('message', {eventType: 'newSearch', payload: response});
                 });
         });
@@ -147,20 +153,14 @@ jQuery(document).ready(function() {
         // ttown.panTo(ttown.user.position);
         
     };
-
      var errorPositionChange = function (err) {
       console.warn('ERROR(' + err.code + '): ' + err.message);
     };
     
     posOptions = {enableHighAccuracy: true}; 
-        
     distWatchID = navigator.geolocation.watchPosition(userPositionChange, errorPositionChange, posOptions);       
 
-    $("#mapPage").on("pageshow",function(){
-        google.maps.event.trigger(ttown, 'resize');
-
-    });
- 
+// GO!
     $('#mapPage').trigger('pageshow');
     
 });

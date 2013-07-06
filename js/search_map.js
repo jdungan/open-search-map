@@ -103,7 +103,7 @@ var search_map= function (element) {
                   icon:{
                       anchor: new google.maps.Point(32, 32),
                       scaledSize: new google.maps.Size(64,64,'px','px'),
-                      url: search_icon
+                      url: search_icon+'# '+key
                   }
               });
             marker.search_key=key;
