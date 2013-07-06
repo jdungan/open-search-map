@@ -56,7 +56,6 @@ jQuery(document).ready(function() {
 //jqm page events 
     $("#mapPage").on("pageshow",function(){
         google.maps.event.trigger(ttown, 'resize');
-
     });
 
 // load layer panel
@@ -131,15 +130,33 @@ jQuery(document).ready(function() {
     $('button#signin').click(function(){
       var auth={}; auth.username = $('input#email').val(),
           auth.password = $('input#password').val();
-          search_data.login(auth);
+          if ($('#retypePassword').attr('type')!='hidden'){
+              auth.retype=$('input#retypePassword').val();
+              if (auth.password!=auth.retype){
+                  $('#signin_msg').text('Passwords do not match')                  
+              } else {
+                  search_data.login(auth);
+              }
+              
+          } else {
+              search_data.login(auth);
+          }          
     });    
 
-    search_data.onAuthorize = function(response, error){
+    $('a#btnStartRegister').click(function(){
+        $('#retypePassword').attr('type','password');
+        $('#signin_page').trigger("create");
+        $.mobile.changePage('#signin_page');
+    });    
+
+
+
+    geoloqi.onAuthorize = function(response, error){
       console.log("You are a user!");
       $.mobile.changePage('#mapPage');
     };
     
-    search_data.onLoginError = function(error){
+    geoloqi.onLoginError = function(error){
       console.log("You are not a user!");
       $('#linkDialog').click();
     }

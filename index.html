@@ -131,10 +131,11 @@
             </h2>
         </div>
         <div data-role="content">
+            <p id='signin_msg' style='visible:hidden'>Message</p>
             <div data-role="fieldcontain" class="ui-hide-label">
                 <label for="email">Email</label> <input type="text" name="email" id="email" placeholder="Email"> 
                 <label for="password">Password</label> <input type="password" name="password" id="password" placeholder="Password"> 
-                <label for="password">Password</label> <input type="password" name="password" id="password" placeholder="Password"> 
+                <label for="password">Retype Password</label> <input id="retypePassword" type="hidden" name="password" id="password" placeholder="Rettype password"> 
                 <button class="ui-btn-hidden" type="submit" id="signin" data-inline="true">Sign in</button> 
                 <a id="linkDialog" href="#registerDialog" data-rel="dialog" data-transition="flip" style="display:none;" name="linkDialog"></a>
             </div>
@@ -149,7 +150,7 @@
       <div data-role="content">
         <h1>Are you a new user?</h1>
         <a href="#signin_page" data-role="button" data-inline="true">No, I'll try again.</a>
-        <a href="#mapPage" data-role="button" data-inline="true">Yes, let me sign up</a>
+        <a id="btnStartRegister" data-role="button" data-inline="true">Yes, let me sign up</a>
       </div>
     </div>
 
