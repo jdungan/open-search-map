@@ -47,9 +47,9 @@ var search_db = function (){
           radius: 100,
           extra: {start_time:Date()}
         }, function(response, error){
-            console.log(response, error)
             if(!error){
-                var search_loc = new google.maps.LatLng(response.latitude,response.longitude);
+               console.log(response); 
+               var search_loc = [response.latitude, response.longitude];
                 this_map.searches[response.place_id]=this_map.addSearch(search_loc,response.place_id,response.extra);
                 return response;
             }
@@ -190,6 +190,33 @@ var search_db = function (){
         };
     };
     
+    var groups = function(){
+        this.all = function(){
+            var dfd = $.Deferred(); 
+            GEODB('get', 'group/list')
+                .done(function(response){
+                    return dfd.resolve(response); 
+                })
+                .fail(function(){
+                    dfd.reject(error);
+                });
+            return dfd.promise(); 
+        };
+        
+        this.createGroup = function(){
+           var dfd = $.Deferred();  
+           GEODB('post', 'group/create', {'title':'TESTcth', 'visibility':'open', 'publish_access':'open'})
+                .done(function(response){
+                    return dfd.resolve(response);
+                })
+                .fail(function(){
+                    return dfd.reject(error);
+                });  
+           return dfd.promise(); 
+        };
+    };
+   
+    geoloqi.groups = new groups();  
     geoloqi.layers = new layers();
     geoloqi.places = new places();
 

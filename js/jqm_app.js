@@ -1,9 +1,15 @@
 jQuery(document).ready(function() {
 
 //init the map
-    var currentLatlng  = currentLatlng || new google.maps.LatLng(36.1539,-95.9925),
-        ttown= ttown || new search_map(document.getElementById("map_content"));
-
+      var currentLatlng = currentLatlng || [36.1539, -95.9925];   
+      var options = {
+         center: currentLatlng,
+         zoomLevel: 18,
+         mapElement: $('#map_content')[0]
+      };
+      var ttown = ttown || openMap;
+      ttown.map(options);
+      ttown.addMapListeners();
 // init search data
     var search_data = search_data || new search_db();
 
@@ -27,15 +33,13 @@ jQuery(document).ready(function() {
 
     function addLayer(layer_id){
         search_data.places.each({layer_id:layer_id},function(p){
-            var search_loc = new google.maps.LatLng(p.latitude,p.longitude);
+            var search_loc = [p.latitude, p.longitude];
             ttown.searches[p.place_id] = ttown.addSearch(search_loc,p.place_id,p.extra);                
         })
         .done(function(){
             $('a#viewSearches').trigger('click');
         });
-        
     }
-
 
 //init socket
     var socket = io.connect('http://206.214.164.229');
@@ -94,12 +98,14 @@ jQuery(document).ready(function() {
 //panel menu choices
     $("#addSearch").on('click',function(){
         $( "#menu_panel" ).panel( "close" );
-        ttown.setOptions({ draggableCursor : "url(http://s3.amazonaws.com/besport.com_images/status-pin.png) 64 64, auto" })        
-        google.maps.event.addListenerOnce(ttown, "click",function(e){
-            ttown.setOptions({ draggableCursor : "" })
-            response=search_data.newSearch(ttown,e.latLng.lat(), e.latLng.lng())
-            socket.emit('message', {eventType: 'newSearch', payload: response});
-        });
+            ttown.setCursor('http://s3.amazonaws.com/besport.com_images/status-pin.png');
+
+            ttown.addEventListenerOnce('click', function(e){
+               ttown.setCursor('');
+               response=search_data.newSearch(ttown,e.latLng.lat(), e.latLng.lng())
+               socket.emit('message', {eventType: 'newSearch', payload: response});
+            });
+    
     });
     
     $('a#viewSearches').click(function(){
@@ -118,7 +124,19 @@ jQuery(document).ready(function() {
         ttown.searches={};
     });    
 
+    $('a#groups').click(function(){
+        var dfd = search_data.groups.all();
+        dfd.done(function(response){
+            console.log(response);
+        }); 
+    });
 
+    $('button#createGroup').click(function(){
+       var dfd = search_data.groups.createGroup();
+       dfd.done(function(response){
+           console.log(response);
+        });        
+    });
 
 //authentication
 
@@ -139,7 +157,7 @@ jQuery(document).ready(function() {
     }
 
 //watch position init 
-    var userPositionChange = function(pos) {
+/*    var userPositionChange = function(pos) {
         var crd = pos.coords;
         currentLatlng = new google.maps.LatLng(crd.latitude, crd.longitude);          
         ttown.user.setPosition(currentLatlng);
@@ -155,13 +173,15 @@ jQuery(document).ready(function() {
     posOptions = {enableHighAccuracy: true}; 
         
     distWatchID = navigator.geolocation.watchPosition(userPositionChange, errorPositionChange, posOptions);       
-
+*/
     $("#mapPage").on("pageshow",function(){
-        google.maps.event.trigger(ttown, 'resize');
-
+        //google.maps.event.trigger(ttown, 'resize');
     });
  
     $('#mapPage').trigger('pageshow');
-    
+   
+    $('#btnToggleMap').click(function(){
+       openMap.toggleMap();   
+   });
 });
 
