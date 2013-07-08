@@ -192,14 +192,44 @@ var search_db = function (){
     };
 
     var user = function(){
+        var client_id = client_id || 'd8fa36c91c761155e82795a6745b4e23',
+            client_secret='eb3c1d6ce7af8beb717b658743f4d139';
+            
         this.anon = function(){
-            return GEODB('post','user/anon',{client_id:'d8fa36c91c761155e82795a6745b4e23'})
-        }
+            return GEODB('post','user/anon',{client_id:client_id})
+        };
+        
+        this.create = function(options){
+            options.client_id=client_id;
+            return GEODB('post','user/create',options);
+        };
+
+        this.delete =function (user_id){
+            var options={};
+            options.client_id=client_id,
+            options.client_secret=client_secret;
+            return GEODB('post','user/delete/'+user_id,options);
+        };
     };
+    var users = function(){
+        var client_id = client_id || 'd8fa36c91c761155e82795a6745b4e23',
+            client_secret='eb3c1d6ce7af8beb717b658743f4d139';
+        
+        this.all =function (){
+            var options={};
+            options.client_id=client_id,
+            options.client_secret=client_secret;
+            return GEODB('post','user/list',options);
+        };
+    };
+
+
     
     geo_db.layers = new layers();
-    geo_db.places = new places();
     geo_db.place = new place();
+    geo_db.places = new places();
+    geo_db.user = new user();
+    geo_db.users = new users();
     geo_db.login = geoloqi.login;
     return geo_db;
         

@@ -99,7 +99,7 @@
                           <i class="icon-user icon-2x"></i>&nbsp;You</a>
                   </li>
                   <li>
-                      <a id='clearLayers' data-role="button" data-rel="dialog">
+                      <a id='clearLayers' data-role="button">
                           <i class="icon-minus-sign icon-2x" ></i>&nbsp;Clear Map</a>
                   </li>
 
@@ -107,50 +107,51 @@
                       <a href='#signin_page' data-role="button" data-rel="dialog">
                           <i class="icon-signin icon-2x" ></i>&nbsp;Sign In</a>
                   </li>
-                  
-
-
               </ul>
 
           </div>
 
 
-              <div data-role='panel' id='layer_panel' data-position="right"  data-display="push" data-theme='b'>
-
-                  <ul id='layer_list' class="tour-options" data-role="listview">
-                  </ul>
+            <div data-role='panel' id='layer_panel' data-position="right" data-display="push" data-theme='b'>
+                <ul id='layer_list' class="tour-options" data-role="listview"></ul>
             </div>
 
 
       </div> <!-- end page          -->
 
-    <div id="signin_page" data-role='page' data-theme="b">
-        <div data-role="header" data-close-btn="right">
-            <h2>
+
+
+    <div id="signin_page" data-role='page' data-theme="b" data-register-user='false'>
+        <div data-role="header" data-add-back-btn="true">
+            <h2 id ='signin_title'>
                 Sign In
             </h2>
         </div>
-        <div data-role="content">
-            <p id='signin_msg' style='visible:hidden'>Message</p>
-            <div data-role="fieldcontain" class="ui-hide-label">
+        <div data-role="content" >
+            <p id='signin_msg' ></p>
+            <div id='signin_fields' data-role="fieldcontain" class="ui-hide-label">
                 <label for="email">Email</label> <input type="text" name="email" id="email" placeholder="Email"> 
-                <label for="password">Password</label> <input type="password" name="password" id="password" placeholder="Password"> 
-                <label for="password">Retype Password</label> <input id="retypePassword" type="hidden" name="password" id="password" placeholder="Rettype password"> 
-                <button class="ui-btn-hidden" type="submit" id="signin" data-inline="true">Sign in</button> 
+                <label for="password">Password</label> <input id="password" type="password" name="password"  placeholder="Password"> 
+                <label id="retype" for="retypePassword"></label> <input id="retypePassword" type="password" placeholder="Confirm password"> 
                 <a id="linkDialog" href="#registerDialog" data-rel="dialog" data-transition="flip" style="display:none;" name="linkDialog"></a>
             </div>
+            <button class="ui-btn-hidden" type="submit" id="signin"  data-inline="true">Sign In</button> 
+            <button class="ui-btn-hidden" type="submit" id="signin_quit" data-inline="true">Cancel</button> 
         </div>
     </div>
 
+
+
+
     <div id="registerDialog" data-role="page" data-theme="b" >
         <div data-role="header" data-close-btn="right">
-            <h2>Register</h2>
+            <h2>Sign in failed</h2>
           </div>
         
       <div data-role="content">
-        <h1>Are you a new user?</h1>
-        <a href="#signin_page" data-role="button" data-inline="true">No, I'll try again.</a>
-        <a id="btnStartRegister" data-role="button" data-inline="true">Yes, let me sign up</a>
+        <h1>Would you like to register?</h1>
+        <a href="#signin_page" data-ajax="false" data-role="button" data-transition="flip" data-inline="true">No, I'll try again.</a>
+        <a href="#signin_page" data-ajax="false" data-role="button" data-transition="flip" data-inline="true" id="btnStartRegister" >Yes, let me sign up</a>
       </div>
     </div>
 
