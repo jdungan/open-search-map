@@ -18,8 +18,7 @@ openMap.map = function(options){
    openMap.mbMap = new mapboxMap().map(options);
    options.mapElement = gDiv[0];
    openMap.gMap = new googleMap().map(options); 
-   //mbDiv.toggle();
-   //openMap.mbMap.toggled = true;
+
 };
 
 openMap.mapOptions = {
@@ -30,7 +29,6 @@ openMap.mapOptions = {
 openMap.toggleMap = function(){
    console.log(this.mapOptions.center);
    console.log(this.mapOptions.zoomLevel);
-   //openMap.mbMap.setView(this.mapOptions.center, this.mapOptions.zoomLevel); 
    this.mbMap.setZoom(this.mapOptions.zoomLevel);
    this.mbMap.panTo(this.mapOptions.center);
    gDiv.toggle();
@@ -40,9 +38,11 @@ openMap.toggleMap = function(){
 var search_list = {};
 openMap.addSearch = function(position, key, info_obj){
    search_icon = (info_obj.end_time && './img/search_end.svg') || './img/search_start.svg';
-   openMap.mbMap.addSearch(search_icon, position, key, info_obj);   
-   openMap.gMap.addSearch(search_icon, position, key, info_obj);
-   
+   if(!searchList[key]){
+      var mbMarker = openMap.mbMap.addSearch(search_icon, position);   
+      var gMarker = openMap.gMap.addSearch(search_icon, position);
+      search_list[key] = [gMarker, mbMarker];
+   }
 };
 
 openMap.setCursor = function(url){
@@ -57,7 +57,6 @@ openMap.addEventListenerOnce = function(eventType, callback){
    });
    
    openMap.mbMap.addOneTimeEventListener('click', function(e){
-      console.log(e);
       var evObj = {};
       evObj.latLng = {};
       evObj.latLng.lat = function(){return e.latlng.lat;};

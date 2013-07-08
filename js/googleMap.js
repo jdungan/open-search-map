@@ -24,20 +24,18 @@ var googleMap = function(){
       google.maps.visualRefresh = true;
       var m = new google.maps.Map(gDiv[0], gOpts);
       
-      m.addSearch = function(search_icon, position, key, info_obj){
-
+      m.addSearch = function(search_icon, position){
          var marker = new google.maps.Marker({
             draggable:true,
             map:openMap.gMap,
-            position:new google.maps.LatLng(position),
+            position:new google.maps.LatLng(position[0], position[1]),
             icon:{
                anchor:new google.maps.Point(32,32),
                scaledSize:new google.maps.Size(64,64,'px','px'),
                url:search_icon
             }
          });  
-
-         marker.search_key = key;
+         
          return marker;
       };
       

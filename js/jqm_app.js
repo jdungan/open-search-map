@@ -26,7 +26,6 @@ jQuery(document).ready(function() {
             $("li.viewLayer").on('click',function(){
                 $( "#layer_panel" ).panel( "close" );
                 layer_id=$(this).data('layer_id')
-                // search_data.display_searches(ttown,{layer_id:layer_id});
                 addLayer(layer_id);
             });
         });
@@ -42,15 +41,16 @@ jQuery(document).ready(function() {
     }
 
 //init socket
-    var socket = io.connect('http://206.214.164.229');
-    socket.on('message', function (data) {
-      console.log(data);
-      $.event.trigger(data.message.eventType,data.message.payload);      
+  //  var socket = io.connect('http://206.214.164.229');
+   var socket = io.connect('http://unleashprometheus.com:8000'); 
+   socket.on('message', function (data) {
+       console.log(data);
+       $.event.trigger(data.eventType,data.payload);      
     });  
 
 //socket events
     $(document).on("newSearch", function(e,response){
-        var search_loc = new google.maps.LatLng(response.latitude,response.longitude);
+        var search_loc = [response.latitude,response.longitude];
         ttown.searches[response.place_id]=ttown.addSearch(search_loc,response.place_id,response.extra);
     });
 
@@ -123,11 +123,18 @@ jQuery(document).ready(function() {
     $("#addSearch").on('click',function(){
         $( "#menu_panel" ).panel( "close" );
             ttown.setCursor('http://s3.amazonaws.com/besport.com_images/status-pin.png');
-
             ttown.addEventListenerOnce('click', function(e){
                ttown.setCursor('');
-               response=search_data.newSearch(ttown,e.latLng.lat(), e.latLng.lng())
-               socket.emit('message', {eventType: 'newSearch', payload: response});
+               var geoOptions = {
+                     latitude:e.latLng.lat(),
+                     longitude:e.latLng.lng(),
+                     name:e.latLng.lat() + e.latLng.lng(),
+                     radius:100,
+                     extra:{start_time:Date()} 
+               };
+               response=search_data.place.add(geoOptions).done(function(res){
+                  socket.emit('message', {eventType: 'newSearch', payload: res});
+               });
             });
     
     });
