@@ -33,6 +33,26 @@ var search_db = function (){
     };
  
     var GEODB = new geoloqi_caller();
+     
+ 
+
+    geoloqi.newSearch = function(this_map,lat,lng){
+        geoloqi.post("place/create", {
+          latitude: lat,
+          longitude: lng,
+          layer_id: geoloqi.layer_id,
+          name:lat+lng,
+          radius: 100,
+          extra: {start_time:Date()}
+        }, function(response, error){
+            if(!error){
+               console.log(response); 
+               var search_loc = [response.latitude, response.longitude];
+                this_map.searches[response.place_id]=this_map.addSearch(search_loc,response.place_id,response.extra);
+                return response;
+            }
+        });
+    };
     
     // geoloqi.newSearch = function(this_map,lat,lng){
     //     geoloqi.post("place/create", {
@@ -190,6 +210,36 @@ var search_db = function (){
             return dfd.promise();
         };
     };
+    
+    var groups = function(){
+        this.all = function(){
+            var dfd = $.Deferred(); 
+            GEODB('get', 'group/list')
+                .done(function(response){
+                    return dfd.resolve(response); 
+                })
+                .fail(function(){
+                    dfd.reject(error);
+                });
+            return dfd.promise(); 
+        };
+        
+        this.createGroup = function(){
+           var dfd = $.Deferred();  
+           GEODB('post', 'group/create', {'title':'TESTcth', 'visibility':'open', 'publish_access':'open'})
+                .done(function(response){
+                    return dfd.resolve(response);
+                })
+                .fail(function(){
+                    return dfd.reject(error);
+                });  
+           return dfd.promise(); 
+        };
+    };
+   
+    geoloqi.groups = new groups();  
+    geoloqi.layers = new layers();
+    geoloqi.places = new places();
 
     var user = function(){
         var client_id = client_id || 'd8fa36c91c761155e82795a6745b4e23',

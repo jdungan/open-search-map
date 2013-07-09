@@ -1,26 +1,56 @@
 jQuery(document).ready(function() {
     
 //init the map
-    var currentLatlng  = currentLatlng || new google.maps.LatLng(36.1539,-95.9925),
-        ttown= ttown || new search_map(document.getElementById("map_content"));
-
+      var currentLatlng = currentLatlng || [36.1539, -95.9925];   
+      var options = {
+         center: currentLatlng,
+         zoomLevel: 18,
+         mapElement: $('#map_content')[0]
+      };
+      var ttown = ttown || openMap;
+      ttown.map(options);
+      ttown.addMapListeners();
 // init search data
     var search_data = search_data || new search_db();
-    
-    // search_data.users.all().done(function(r){
-    //     console.log(r);
-    //     });
+
+// load layer panel
+    search_data.layers.each(function(layer){
+        $('#layer_list').append( 
+           "<li class='viewLayer' data-layer_id="+layer.layer_id+">\
+               <a  data-role='button' data-rel='dialog'>\
+                   <i class='icon-copy' ></i>&nbsp;"+layer.name+"</a>\
+           </li>"           
+        )})
+        .done(function(){
+            $("#layer_list").listview('refresh').trigger("create");
+            $("li.viewLayer").on('click',function(){
+                $( "#layer_panel" ).panel( "close" );
+                layer_id=$(this).data('layer_id')
+                addLayer(layer_id);
+            });
+        });
+
+    function addLayer(layer_id){
+        search_data.places.each({layer_id:layer_id},function(p){
+            var search_loc = [p.latitude, p.longitude];
+            ttown.searches[p.place_id] = ttown.addSearch(search_loc,p.place_id,p.extra);                
+        })
+        .done(function(){
+            $('a#viewSearches').trigger('click');
+        });
+    }
 
 //init socket
-    var socket = io.connect('http://206.214.164.229');
-    socket.on('message', function (data) {
-      console.log(data);
-      $.event.trigger(data.message.eventType,data.message.payload);      
+  //  var socket = io.connect('http://206.214.164.229');
+   var socket = io.connect('http://unleashprometheus.com:8000'); 
+   socket.on('message', function (data) {
+       console.log(data);
+       $.event.trigger(data.eventType,data.payload);      
     });  
 
 //socket events
     $(document).on("newSearch", function(e,response){
-        var search_loc = new google.maps.LatLng(response.latitude,response.longitude);
+        var search_loc = [response.latitude,response.longitude];
         ttown.searches[response.place_id]=ttown.addSearch(search_loc,response.place_id,response.extra);
     });
 
@@ -92,22 +122,21 @@ jQuery(document).ready(function() {
 //panel menu choices
     $("#addSearch").on('click',function(){
         $( "#menu_panel" ).panel( "close" );
-        ttown.setOptions({ draggableCursor : "url(http://s3.amazonaws.com/besport.com_images/status-pin.png) 64 64, auto" })        
-        google.maps.event.addListenerOnce(ttown, "click",function(e){
-            search_data.place.add({
-                  latitude: e.latLng.lat(),
-                  longitude: e.latLng.lng(),
-                  layer_id: '8neY',
-                  radius: 100,
-                  extra: {start_time:Date()}
-                })
-                .done(function(response){
-                    ttown.setOptions({ draggableCursor : "" });
-                    search_loc=new google.maps.LatLng(response.latitude,response.longitude);
-                    ttown.addSearch(search_loc,response.place_id,response.extra);                    
-                    socket.emit('message', {eventType: 'newSearch', payload: response});
-                });
-        });
+            ttown.setCursor('http://s3.amazonaws.com/besport.com_images/status-pin.png');
+            ttown.addEventListenerOnce('click', function(e){
+               ttown.setCursor('');
+               var geoOptions = {
+                     latitude:e.latLng.lat(),
+                     longitude:e.latLng.lng(),
+                     name:e.latLng.lat() + e.latLng.lng(),
+                     radius:100,
+                     extra:{start_time:Date()} 
+               };
+               response=search_data.place.add(geoOptions).done(function(res){
+                  socket.emit('message', {eventType: 'newSearch', payload: res});
+               });
+            });
+    
     });
     
     $('a#viewSearches').click(function(){
@@ -117,8 +146,8 @@ jQuery(document).ready(function() {
 
     $('a#viewUser').click(function(){
          $( "#menu_panel" ).panel( "close" );
-         ttown.panTo(ttown.user.position);
-         ttown.user.setAnimation(google.maps.Animation.DROP);
+    //     ttown.panTo(ttown.user.position);
+    //   ttown.user.setAnimation(google.maps.Animation.DROP);
     });    
 
     $('a#clearLayers').click(function(){
@@ -210,7 +239,7 @@ jQuery(document).ready(function() {
     }
 
 //watch position init 
-    var userPositionChange = function(pos) {
+/*    var userPositionChange = function(pos) {
         var crd = pos.coords;
         currentLatlng = new google.maps.LatLng(crd.latitude, crd.longitude);          
         ttown.user.setPosition(currentLatlng);
@@ -222,9 +251,13 @@ jQuery(document).ready(function() {
     
     posOptions = {enableHighAccuracy: true}; 
     distWatchID = navigator.geolocation.watchPosition(userPositionChange, errorPositionChange, posOptions);       
+*/
+    $("#mapPage").on("pageshow",function(){
+        //google.maps.event.trigger(ttown, 'resize');
+    });
+ 
 
 // GO!
     $('#mapPage').trigger('pageshow');
-    
 });
 
