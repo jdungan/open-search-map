@@ -213,27 +213,11 @@ var search_db = function (){
     
     var groups = function(){
         this.all = function(){
-            var dfd = $.Deferred(); 
-            GEODB('get', 'group/list')
-                .done(function(response){
-                    return dfd.resolve(response); 
-                })
-                .fail(function(){
-                    dfd.reject(error);
-                });
-            return dfd.promise(); 
+            return GEODB('get', 'group/list');
         };
         
         this.createGroup = function(){
-           var dfd = $.Deferred();  
-           GEODB('post', 'group/create', {'title':'TESTcth', 'visibility':'open', 'publish_access':'open'})
-                .done(function(response){
-                    return dfd.resolve(response);
-                })
-                .fail(function(){
-                    return dfd.reject(error);
-                });  
-           return dfd.promise(); 
+           return GEODB('post', 'group/create', {'title':'TESTcth', 'visibility':'open', 'publish_access':'open'})
         };
     };
    
