@@ -14,31 +14,31 @@ jQuery(document).ready(function() {
     var search_data = search_data || new search_db();
 
 // load layer panel
-    search_data.layers.each(function(layer){
-        $('#layer_list').append( 
-           "<li class='viewLayer' data-layer_id="+layer.layer_id+">\
-               <a  data-role='button' data-rel='dialog'>\
-                   <i class='icon-copy' ></i>&nbsp;"+layer.name+"</a>\
-           </li>"           
-        )})
-        .done(function(){
-            $("#layer_list").listview('refresh').trigger("create");
-            $("li.viewLayer").on('click',function(){
-                $( "#layer_panel" ).panel( "close" );
-                layer_id=$(this).data('layer_id')
-                addLayer(layer_id);
-            });
-        });
-
-    function addLayer(layer_id){
-        search_data.places.each({layer_id:layer_id},function(p){
-            var search_loc = [p.latitude, p.longitude];
-            ttown.searches[p.place_id] = ttown.addSearch(search_loc,p.place_id,p.extra);                
-        })
-        .done(function(){
-            $('a#viewSearches').trigger('click');
-        });
-    }
+    // search_data.layers.each(function(layer){
+    //     $('#layer_list').append( 
+    //        "<li class='viewLayer' data-layer_id="+layer.layer_id+">\
+    //            <a  data-role='button' data-rel='dialog'>\
+    //                <i class='icon-copy' ></i>&nbsp;"+layer.name+"</a>\
+    //        </li>"           
+    //     )})
+    //     .done(function(){
+    //         $("#layer_list").listview('refresh').trigger("create");
+    //         $("li.viewLayer").on('click',function(){
+    //             $( "#layer_panel" ).panel( "close" );
+    //             layer_id=$(this).data('layer_id')
+    //             addLayer(layer_id);
+    //         });
+    //     });
+    // 
+    // function addLayer(layer_id){
+    //     search_data.places.each({layer_id:layer_id},function(p){
+    //         var search_loc = [p.latitude, p.longitude];
+    //         ttown.searches[p.place_id] = ttown.addSearch(search_loc,p.place_id,p.extra);                
+    //     })
+    //     .done(function(){
+    //         $('a#viewSearches').trigger('click');
+    //     });
+    // }
 
 //init socket
   //  var socket = io.connect('http://206.214.164.229');
