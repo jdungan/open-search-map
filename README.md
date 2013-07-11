@@ -11,9 +11,11 @@ index.html  --  Contains markup for jqm pages
 
 search_db.js --  Intermediate object for handling search data, currently we use geoloqi
 
-search_map.js -- map object for interacting with google maps api
+ggl_map.js -- map object for interacting with google maps api
 
-jqm_app.js -- Any jqm interactions 
+mapboxMap.js -- map object for mapbox interactions
+
+jqm_app.js -- Any jqm interactions.  This 
 
 
 Libraries:

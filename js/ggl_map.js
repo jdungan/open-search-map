@@ -1,5 +1,5 @@
 //  map object 
-var search_map= function (element) {    
+var googleMap= function (element) {    
     // 'tulsa 36.1539,-95.9925'
         var this_map,
         search_overlay,
@@ -34,6 +34,18 @@ var search_map= function (element) {
     geo=google.maps.geometry.spherical,    
     
     search_list = {},
+    
+    searchBounds = function (){        
+        // Based on Google Maps API v3 
+        // Purpose: given an array of Latlng's return a LatlngBounds
+        // Why: This is helpful when using fitBounds, panTo
+        var newBounds = new google.maps.LatLngBounds;
+
+        for (var m in search_list){
+            newBounds.extend(search_list[m].position);
+        };
+        return newBounds;
+    },    
 
     search_info = function (key,info_obj) {
         var response = [];
@@ -139,17 +151,6 @@ var search_map= function (element) {
 
     }
     
-    this.map.searchBounds = function (){        
-        // Based on Google Maps API v3 
-        // Purpose: given an array of Latlng's return a LatlngBounds
-        // Why: This is helpful when using fitBounds, panTo
-        var newBounds = new google.maps.LatLngBounds,p=0;
-
-        for (var m in search_list){
-            newBounds.extend(search_list[m].position);
-        };
-        return newBounds;
-    };
     
     google.maps.event.addListener(this.map, 'zoom_changed',function () {
         // scaledSize: new google.maps.Size(64,64,'px','px')
@@ -182,6 +183,7 @@ var search_map= function (element) {
     this.map.user = user_marker;
     this.map.user.accuracy=user_accuracy_circle.radius;
     this.map.searches=search_list;
+    this.map.searchBounds=searchBounds;
     this.map.addSearch = addSearch;      
     this_map=this.map;
     return this.map;

@@ -2,43 +2,32 @@ jQuery(document).ready(function() {
     
 //init the map
       var currentLatlng = currentLatlng || [36.1539, -95.9925];   
-      var options = {
+      
+      var map_types={};
+      var mb_options = {
          center: currentLatlng,
          zoomLevel: 18,
-         mapElement: $('#map_content')[0]
+         mapElement: document.getElementById("mapbox_content")
       };
-      var ttown = ttown || openMap;
-      ttown.map(options);
-      ttown.addMapListeners();
+      // var ttown = ttown || openMap;
+
+      // ttown= new googleMap(document.getElementById("map_content"));
+
+      ttown= new googleMap(document.getElementById('map_content'));
+      
+      mbtown = new mapboxMap().map(mb_options);
+      
+      $('#mapbox_content').hide();
+
+
+      // ttown.map(options);
+      // ttown.addMapListeners();
+
+
+
 // init search data
     var search_data = search_data || new search_db();
 
-// load layer panel
-    // search_data.layers.each(function(layer){
-    //     $('#layer_list').append( 
-    //        "<li class='viewLayer' data-layer_id="+layer.layer_id+">\
-    //            <a  data-role='button' data-rel='dialog'>\
-    //                <i class='icon-copy' ></i>&nbsp;"+layer.name+"</a>\
-    //        </li>"           
-    //     )})
-    //     .done(function(){
-    //         $("#layer_list").listview('refresh').trigger("create");
-    //         $("li.viewLayer").on('click',function(){
-    //             $( "#layer_panel" ).panel( "close" );
-    //             layer_id=$(this).data('layer_id')
-    //             addLayer(layer_id);
-    //         });
-    //     });
-    // 
-    // function addLayer(layer_id){
-    //     search_data.places.each({layer_id:layer_id},function(p){
-    //         var search_loc = [p.latitude, p.longitude];
-    //         ttown.searches[p.place_id] = ttown.addSearch(search_loc,p.place_id,p.extra);                
-    //     })
-    //     .done(function(){
-    //         $('a#viewSearches').trigger('click');
-    //     });
-    // }
 
 //init socket
   //  var socket = io.connect('http://206.214.164.229');
@@ -85,6 +74,19 @@ jQuery(document).ready(function() {
         .done(function(response){
             socket.emit('message',{eventType: 'moveSearch', payload: response});                        
         });        
+    });
+    
+    $('#btnToggleMap').on('click',function toggleMap(){
+        toggleMap.map_type=toggleMap.map_type||'google';
+        if (toggleMap.map_type==='google'){
+            $('#map_content').hide();
+            $('#mapbox_content').show();
+            toggleMap.map_type='mapbox'
+        } else {
+            $('#map_content').show();
+            $('#mapbox_content').hide();        
+            toggleMap.map_type='google'
+        }        
     });
 
 //jqm page events 
@@ -152,7 +154,7 @@ jQuery(document).ready(function() {
 
     $('a#clearLayers').click(function(){
         $( "#menu_panel" ).panel( "close" );
-        ttown= new search_map(document.getElementById("map_content"));
+        ttown= new googleMap(document.getElementById('map_content'));
         ttown.searches={};
     });    
 
@@ -253,7 +255,7 @@ jQuery(document).ready(function() {
     distWatchID = navigator.geolocation.watchPosition(userPositionChange, errorPositionChange, posOptions);       
 */
     $("#mapPage").on("pageshow",function(){
-        //google.maps.event.trigger(ttown, 'resize');
+        // google.maps.event.trigger(ttown, 'resize');
     });
  
 

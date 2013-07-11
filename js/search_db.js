@@ -54,59 +54,6 @@ var search_db = function (){
         });
     };
     
-    // geoloqi.newSearch = function(this_map,lat,lng){
-    //     geoloqi.post("place/create", {
-    //       latitude: lat,
-    //       longitude: lng,
-    //       layer_id: geoloqi.layer_id,
-    //       name:lat+lng,
-    //       radius: 100,
-    //       extra: {start_time:Date()}
-    //     }, function(response, error){
-    //         console.log(response, error)
-    //         if(!error){
-    //             return response;
-    //         }
-    //     });
-    // };
-
-
-    // geoloqi.user_guid = function(){
-    //     var guid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-    //         var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
-    //          return v.toString(16);
-    //     });     
-    //     return guid;
-    // };
-
-
-    // geoloqi.display_searches = function (this_map,options){
-    //     var next_offset=0;
-    //     var layer_id=geoloqi.layer_id;
-    //     if (options){
-    //         next_offset = options.next_offset || 0;
-    //         layer_id = options.layer_id || geoloqi.layer_id; 
-    //     }
-    //     geoloqi.get("place/list", {
-    //         layer_id: layer_id,
-    //         offset:next_offset,
-    //         limit: 25}, 
-    //         function(response, error){
-    //             if(!error){
-    //                 for (var i = 0; i < response.places.length; i++){
-    //                     var p=response.places[i];
-    //                     var search_loc = new google.maps.LatLng(p.latitude,p.longitude);
-    //                     this_map.searches[p.place_id] = this_map.addSearch(search_loc,p.place_id,p.extra);                
-    //                     this_map.panTo(search_loc)
-    //                 };
-    //                 if (response.paging.next_offset){
-    //                     options.next_offset=response.paging.next_offset;
-    //                     geoloqi.display_searches(this_map,options);
-    //                 }
-    //             }
-    //         }
-    //     );
-    // };
     
     var place = function(){
         this.add = function(options){

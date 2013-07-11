@@ -5,7 +5,7 @@ var mapboxMap = function(){
    obj.map = function(options){
       console.log(options.center);
       console.log(options.zoomLevel);
-      var m = L.mapbox.map(options.mapElement, 'examples.map-y7l23tes').setView(options.center, options.zoomLevel);
+      var m = L.mapbox.map(options.mapElement, 'jdungan.map-lc7x2770').setView(options.center, options.zoomLevel);
       
       m.addSearch = function(search_icon, position){
          var mbIcon = L.icon({
