@@ -38,10 +38,16 @@ openMap.toggleMap = function(){
 var search_list = {};
 openMap.addSearch = function(position, key, info_obj){
    search_icon = (info_obj.end_time && './img/search_end.svg') || './img/search_start.svg';
-   if(!searchList[key]){
-      var mbMarker = openMap.mbMap.addSearch(search_icon, position);   
-      var gMarker = openMap.gMap.addSearch(search_icon, position);
+   if(!search_list[key]){
+      var mbMarker = this.mbMap.addSearch(search_icon, position);   
+      var gMarker = this.gMap.addSearch(search_icon, position);
       search_list[key] = [gMarker, mbMarker];
+      mbMarker.on('click', function(e){
+         openMap.infoDiv(function(div){
+            div.css({'position':'absolute', 'top':e.latlng.lat, 'left':e.latlng.lng, 'background-color':'#ffffff', 'min-width':'200px', 'min-height':'75px'});
+         
+         });
+      });
    }
 };
 
@@ -63,6 +69,11 @@ openMap.addEventListenerOnce = function(eventType, callback){
       evObj.latLng.lng = function(){return e.latlng.lng;};
       callback(evObj);
    });
+};
+
+openMap.formatMarkerInfo = function(marker){
+   var infoDiv = $('<div>');
+   
 };
 
 openMap.addMapListeners = function(){

@@ -15,6 +15,7 @@ var mapboxMap = function(){
          });    
          console.log(search_icon); 
          var mbMarker = L.marker(position, {icon:mbIcon}).addTo(this);
+         return mbMarker;
       };
 
       m.getInfo = function(position, key, info_obj){
