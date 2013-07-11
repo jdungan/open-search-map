@@ -154,28 +154,24 @@ var googleMap= function (element) {
     
     google.maps.event.addListener(this.map, 'zoom_changed',function () {
         // scaledSize: new google.maps.Size(64,64,'px','px')
-        var zoom_scale = function(z){
-            zoom_scale.answer= zoom_scale.answer || {};
-            if (!zoom_scale.answer[z]){
+        var setzoom = function(z){
+            setzoom.answers= setzoom.answers || {};
+            if (!setzoom.answers[z]){
                 var ns=Math.floor(64*(z/21));
-                zoom_scale.answer[z]=new google.maps.Size(ns,ns,'px','px');
-            }
-            return zoom_scale.answer[z]
-        };
-        var zoom_anchor = function(z){
-            zoom_anchor.answer= zoom_anchor.answer || {};
-            if (!zoom_anchor.answer[z]){
                 var na=Math.floor(32*(z/21));
-                zoom_anchor.answer[z]=new google.maps.Point(na,na);
-            }
-            return zoom_anchor.answer[z]
+                setzoom.answers[z] ={
+                    scale  : new google.maps.Size(ns,ns,'px','px'),
+                    anchor : new google.maps.Point(na,na)
+                };
+            }   
+            return setzoom.answers[z]
         };
 
         for (var m in search_list){
-            (function(zoom){
-                search_list[m].icon.scaledSize = zoom_scale(zoom);
-                search_list[m].icon.size = zoom_scale(zoom);
-                search_list[m].icon.anchor = zoom_anchor(zoom);
+            (function (zoom){
+                search_list[m].icon.scaledSize = setzoom(zoom).scale;
+                search_list[m].icon.size = setzoom(zoom).scale;
+                search_list[m].icon.anchor = setzoom(zoom).anchor;
             })(this_map.zoom);
         };
     });
