@@ -30,9 +30,7 @@ var googleMap= function (element) {
                 position: google.maps.ControlPosition.RIGHT_CENTER,
             },
         },
-       
-    geo=google.maps.geometry.spherical,    
-    
+           
     search_list = {},
     
     searchBounds = function (){        
@@ -128,6 +126,19 @@ var googleMap= function (element) {
         map_element = element;
         google.maps.visualRefresh=true;
         this.map = new google.maps.Map(element, searchMapOptions); 
+        
+        
+        $(element).on('start_add_search', function(){
+            ttown.setOptions({ draggableCursor : "url(http://s3.amazonaws.com/besport.com_images/status-pin.png) 64 64, auto" })
+            this.map.addEventListenerOnce('click', function(e){
+               this.map.setOptions({ draggableCursor : "" })
+               $(element).trigger("stop_add_search")
+            });
+        });
+        
+        
+
+
 
        var user_marker = user_marker || new google.maps.Marker({
             map: this.map,

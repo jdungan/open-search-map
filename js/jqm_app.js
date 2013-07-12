@@ -86,7 +86,8 @@ jQuery(document).ready(function() {
             $('#map_content').show();
             $('#mapbox_content').hide();        
             toggleMap.map_type='google'
-        }        
+        }
+        $('#mapPage').trigger('pageshow');        
     });
 
 //jqm page events 
@@ -121,26 +122,30 @@ jQuery(document).ready(function() {
         });   
     }
 
+
+//map events
+
+$('.search_map').on('stop_add_search',function(){
+    var geoOptions = {
+          latitude:e.latLng.lat(),
+          longitude:e.latLng.lng(),
+          name:e.latLng.lat() + e.latLng.lng(),
+          radius:100,
+          extra:{start_time:Date()} 
+    };
+    $().trigger
+    search_data.place.add(geoOptions).done(function(response){
+       socket.emit('message', {eventType: 'newSearch', payload: response});
+    });
+})
+
 //panel menu choices
     $("#addSearch").on('click',function(){
         $( "#menu_panel" ).panel( "close" );
-            ttown.setCursor('http://s3.amazonaws.com/besport.com_images/status-pin.png');
-            ttown.addEventListenerOnce('click', function(e){
-               ttown.setCursor('');
-               var geoOptions = {
-                     latitude:e.latLng.lat(),
-                     longitude:e.latLng.lng(),
-                     name:e.latLng.lat() + e.latLng.lng(),
-                     radius:100,
-                     extra:{start_time:Date()} 
-               };
-               response=search_data.place.add(geoOptions).done(function(res){
-                  socket.emit('message', {eventType: 'newSearch', payload: res});
-               });
-            });
-    
+        $('.search_map').trigger('start_add_search');
+            
     });
-    
+
     $('a#viewSearches').click(function(){
         $( "#menu_panel" ).panel( "close" );
         ttown.fitBounds(ttown.searchBounds());
@@ -241,8 +246,10 @@ jQuery(document).ready(function() {
     }
 
 //watch position init 
-/*    var userPositionChange = function(pos) {
+    var userPositionChange = function(pos) {
         var crd = pos.coords;
+        
+        
         currentLatlng = new google.maps.LatLng(crd.latitude, crd.longitude);          
         ttown.user.setPosition(currentLatlng);
         ttown.user_accuracy=crd.accuracy;        
@@ -253,10 +260,7 @@ jQuery(document).ready(function() {
     
     posOptions = {enableHighAccuracy: true}; 
     distWatchID = navigator.geolocation.watchPosition(userPositionChange, errorPositionChange, posOptions);       
-*/
-    $("#mapPage").on("pageshow",function(){
-        // google.maps.event.trigger(ttown, 'resize');
-    });
+    
  
 
 // GO!
