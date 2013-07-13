@@ -135,14 +135,16 @@ var googleMap= function (element) {
         
         
         $(element).on('start_add_search', function(){
+            console.log('ggl start_add_search')
             this_map.setOptions({ draggableCursor : "url(http://s3.amazonaws.com/besport.com_images/status-pin.png) 64 64, auto" })
             google.maps.event.addListenerOnce(this_map,'click', function(e){
+            
                this_map.setOptions({ draggableCursor : "" })
                search_location={
                    latitude:e.latLng.lat(),
                    longitude:e.latLng.lng()
                };
-               $('.search_map').trigger("stop_add_search",[search_location])
+               $('#map_holder').trigger("stop_add_search",[search_location])
             });
         });
 
@@ -191,8 +193,21 @@ var googleMap= function (element) {
     $(element).on('display_all', function(e,response){
         this_map.fitBounds(this_map.searchBounds());                
     });
+
+    $(element).on('end_search', function(e,response){
+        marker=this_map.searches[response.place_id];
+        marker.icon.url="./img/search_end.svg";
+        marker.setMap(this_map)// force icon to re-render;
+        marker.search_window.setSearchWindowContent(response.extra)        
+    });
     
+    $(element).on('move_search', function(e,response){
+        marker=this_map.searches[response.place_id];
+        var search_loc = new google.maps.LatLng(response.latitude,response.longitude);
+        marker.setPosition(search_loc);                      
+    });
     
+
     
     google.maps.event.addListener(this.map, 'zoom_changed',function () {
         // scaledSize: new google.maps.Size(64,64,'px','px')
