@@ -122,7 +122,8 @@ jQuery(document).ready(function() {
 
 
 //map events
-$('.search_map').on('stop_add_search',function(e,search_location){
+$('#map_holder').on('stop_add_search',function(e,search_location){
+    console.log('on stop_add_search')
     var geoOptions = {
           layer_id: $('li#current_layer').data('current-layer'),
           latitude:search_location.latitude,

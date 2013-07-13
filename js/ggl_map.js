@@ -135,14 +135,16 @@ var googleMap= function (element) {
         
         
         $(element).on('start_add_search', function(){
+            console.log('ggl start_add_search')
             this_map.setOptions({ draggableCursor : "url(http://s3.amazonaws.com/besport.com_images/status-pin.png) 64 64, auto" })
             google.maps.event.addListenerOnce(this_map,'click', function(e){
+            
                this_map.setOptions({ draggableCursor : "" })
                search_location={
                    latitude:e.latLng.lat(),
                    longitude:e.latLng.lng()
                };
-               $('.search_map').trigger("stop_add_search",[search_location])
+               $('#map_holder').trigger("stop_add_search",[search_location])
             });
         });
 
