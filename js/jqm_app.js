@@ -28,26 +28,20 @@ jQuery(document).ready(function() {
    // var socket = io.connect('http://unleashprometheus.com:8000'); 
    socket.on('message', function (data) {
        console.log(data);
-       $.event.trigger(data.eventType,data.payload);      
+       $.event.trigger(data.message.eventType,data.message.payload);      
     });  
 
 //socket events
     $(document).on("newSearch", function(e,response){
-        var search_loc = [response.latitude,response.longitude];
-        ttown.searches[response.place_id]=ttown.addSearch(search_loc,response.place_id,response.extra);
+        $('.search_map').trigger('display_search',[response]); 
     });
 
     $(document).on("endSearch", function(e,response){
-        marker=ttown.searches[response.place_id];
-        marker.icon.url="./img/search_end.svg";
-        marker.setMap(ttown)// force icon to re-render;
-        marker.search_window.setSearchWindowContent(response.extra)        
+        $('.search_map').trigger('end_search',[response]); 
     });
 
     $(document).on("moveSearch", function(e,response){
-        marker=ttown.searches[response.place_id];
-        var search_loc = new google.maps.LatLng(response.latitude,response.longitude);
-        marker.setPosition(search_loc);
+        $('.search_map').trigger('move_search',[response]); 
     });
 
 //client events

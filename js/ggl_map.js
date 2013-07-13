@@ -193,8 +193,21 @@ var googleMap= function (element) {
     $(element).on('display_all', function(e,response){
         this_map.fitBounds(this_map.searchBounds());                
     });
+
+    $(element).on('end_search', function(e,response){
+        marker=this_map.searches[response.place_id];
+        marker.icon.url="./img/search_end.svg";
+        marker.setMap(this_map)// force icon to re-render;
+        marker.search_window.setSearchWindowContent(response.extra)        
+    });
     
+    $(element).on('move_search', function(e,response){
+        marker=this_map.searches[response.place_id];
+        var search_loc = new google.maps.LatLng(response.latitude,response.longitude);
+        marker.setPosition(search_loc);                      
+    });
     
+
     
     google.maps.event.addListener(this.map, 'zoom_changed',function () {
         // scaledSize: new google.maps.Size(64,64,'px','px')
