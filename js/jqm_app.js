@@ -1,11 +1,10 @@
 jQuery(document).ready(function() {
     
 //init the map
-      var currentLatlng = currentLatlng || [36.1539, -95.9925];   
       
       var map_types={};
       var mb_options = {
-         center: currentLatlng,
+         center: [36.1539, -95.9925],
          zoomLevel: 18,
          mapElement: document.getElementById("mapbox_content")
       };
@@ -101,42 +100,46 @@ jQuery(document).ready(function() {
         .done(function(){
             $("#layer_list").listview('refresh').trigger("create");
             $("li.viewLayer").on('click',function(){
-                $( "#layer_panel" ).panel( "close" );
-                layer_id=$(this).data('layer_id')
 
+                $( "#layer_panel" ).panel( "close" );
+                layer_id = $(this).data('layer_id');
+                layer_name = $(this).text()
+                $('li#current_layer').data('current-layer',layer_id);
+                $('li p#layer_label').text(layer_name);                
+                
                 displayLayer(layer_id);
             });
         });
 
     function displayLayer(layer_id){
         search_data.places.each({layer_id:layer_id},function(response){
-            
             $('.search_map').trigger('display_search',[response]);            
         })
         .done(function(){
-            $('a#viewSearches').trigger('click');
+            $('.search_map').trigger('display_all');
         });   
     }
 
 
 //map events
-//TODO: make available to .search_map class
-$('#map_content').on('stop_add_search',function(e,search_location){
+$('.search_map').on('stop_add_search',function(e,search_location){
     var geoOptions = {
+          layer_id: $('li#current_layer').data('current-layer'),
           latitude:search_location.latitude,
           longitude:search_location.longitude,
           radius:100,
           extra:{start_time:Date()} 
     };
-    
+
     search_data.place.add(geoOptions).done(function(response){
-        ttown.addSearch(response);
-        // $('.search_map').trigger('search_added');
+        $('.search_map').trigger('display_search',[response]);  
         socket.emit('message', {eventType: 'newSearch', payload: response});
     });
 })
 
 //panel menu choices
+
+
     $("#addSearch").on('click',function(){
         $( "#menu_panel" ).panel( "close" );
         $('.search_map').trigger('start_add_search');
@@ -145,7 +148,7 @@ $('#map_content').on('stop_add_search',function(e,search_location){
 
     $('a#viewSearches').click(function(){
         $( "#menu_panel" ).panel( "close" );
-        ttown.fitBounds(ttown.searchBounds());
+        $('.search_map').trigger('display_all');
     });    
 
     $('a#viewUser').click(function(){

@@ -14,7 +14,10 @@ i{
     height: 100%;
     overflow: hidden;
 }
-
+.header_button{
+    float:right;
+    margin-right:5%'
+}
 
 
 .loc_labels {

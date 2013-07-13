@@ -123,7 +123,7 @@ var googleMap= function (element) {
                   }
               });
             marker.search_key=key;
-            // marker.search_window= set_search_click(marker, key, response.extra);
+            marker.search_window= set_search_click(marker, key, response.extra);
             search_list[key]=marker;
         }
     };
@@ -172,7 +172,9 @@ var googleMap= function (element) {
 // listenters    
     $(element).on('show_user', function(){
         this_map.panTo(ttown.user.position);
-        this_map.user.setAnimation(google.maps.Animation.DROP);
+        this_map.setZoom(18);
+        this_map.user.setAnimation(google.maps.Animation.BOUNCE);
+        window.setTimeout(function(){ this_map.user.setAnimation(null); }, 3000);
     });
     
     $(element).on('clear_map', function(){
@@ -185,6 +187,12 @@ var googleMap= function (element) {
     $(element).on('display_search', function(e,response){
         this_map.addSearch(response);                
     });
+    
+    $(element).on('display_all', function(e,response){
+        this_map.fitBounds(this_map.searchBounds());                
+    });
+    
+    
     
     google.maps.event.addListener(this.map, 'zoom_changed',function () {
         // scaledSize: new google.maps.Size(64,64,'px','px')

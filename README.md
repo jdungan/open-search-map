@@ -26,19 +26,11 @@ NOTE:  GeoJSON.js, markerwithclusterer_compiled.js, and markerwithlabel.js are u
 _
 
 
-Map Object Rules
+Map Object 
+
 Contruct  e.g  coolmap = new coolMap(document.getElementById('map_content'))
-
-Properties
-    .searches -- Array of map markers 
-
-Methods
-    .addSearch   e.g.  ttown.addSearch(response);
-    adds a marker to the map and triggers a display_search event for other map objects
-    response is a the valid geoloqi response for a new place
     
-Events
-    Listeners
+Listen for these events:
     
         start_add_search: adds onetime listenter for next click on map, 
         triggers a 'stop_add_search' event and includes an object with
@@ -50,6 +42,8 @@ Events
         
         display_search: receive a valid geoloqi place response in the trigger.  
         Place it on the map. Add the marker to the search_list
+        
+        display_all: fit all searches on map in view
         
         
         

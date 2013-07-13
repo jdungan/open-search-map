@@ -60,24 +60,27 @@
                                     <i class="icon-circle icon-stack-base"></i>
                                     <i class="icon-backward icon-light"></i>
                                   </span>
-                             </a>
-                
-                             Open Search & Rescue Map
+                             </a>                            Open Search & Rescue Map
+                             
                           
-                             <a href='#layer_panel' data-role='button'  data-inline='true' style='float:right;margin-right:5%'>
+                             <a href='#layer_panel' data-role='button'  data-inline='true' class='header_button'>
                                 <span class="icon-stack">
                                      <i class="icon-circle icon-stack-base"></i>
                                      <i class="icon-forward icon-light"></i>
                                 </span>
                              </a>
 
-                             <a id="btnToggleMap"  data-role='button'  data-inline='true' style='float:right;margin-right:5%'>
+                             <a id="btnToggleMap"  data-role='button'  data-inline='true' class='header_button'>
                                 <span class="icon-stack">
                                      <i class="icon-circle icon-stack-base"></i>
                                      <i class="icon-picture icon-light"></i>
                                 </span>
                              </a>
                         
+                             <a id='viewUser' data-role="button" data-inline='true'  class='header_button'>
+                                   <i class="icon-user icon-2x"></i></a>
+
+
                          </div>
                      
                      </div><!-- end header         -->
@@ -114,10 +117,6 @@
                   </li>
 
                   <li>
-                      <a id='viewUser' data-role="button">
-                          <i class="icon-user icon-2x"></i>&nbsp;You</a>
-                  </li>
-                  <li>
                       <a id='clearLayers' data-role="button">
                           <i class="icon-minus-sign icon-2x" ></i>&nbsp;Clear Map</a>
                   </li>
@@ -132,7 +131,13 @@
 
 
             <div data-role='panel' id='layer_panel' data-position="right" data-display="push" data-theme='b'>
-                <ul id='layer_list' class="tour-options" data-role="listview"></ul>
+                <ul id='layer_list' class="tour-options" data-role="listview">
+                    <li>LAYERS</li>
+                    <li id='current_layer' data-current-layer=''>
+                        <p>Editing Layer:</p>
+                        <p id="layer_label"></p>
+                    </li>
+                </ul>
             </div>
 
 
