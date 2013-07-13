@@ -100,9 +100,16 @@ var googleMap= function (element) {
          return infowindow;  
     },
 
-    addSearch = function (position,key,info_obj) {
+    addSearch = function (response) {
         
-        search_icon= (info_obj.end_time && "./img/search_end.svg") || "./img/search_start.svg";
+        var position= new google.maps.LatLng(response.latitude,response.longitude),
+        key=response.place_id;
+        
+        if (response.extra){
+            search_icon= (response.extra.end_time && "./img/search_end.svg") || "./img/search_start.svg";
+        } else{
+            search_icon = "./img/search_start.svg";
+        }
         
         if (!search_list[key]) {
             var marker = new google.maps.Marker({
@@ -116,8 +123,9 @@ var googleMap= function (element) {
                       url: search_icon+'# '+key
                   }
               });
+              console.log(key);
             marker.search_key=key;
-            marker.search_window= set_search_click(marker, key, info_obj);
+            marker.search_window= set_search_click(marker, key, response.extra);
             search_list[key]=marker;
         }
     };
@@ -129,15 +137,16 @@ var googleMap= function (element) {
         
         
         $(element).on('start_add_search', function(){
-            ttown.setOptions({ draggableCursor : "url(http://s3.amazonaws.com/besport.com_images/status-pin.png) 64 64, auto" })
-            this.map.addEventListenerOnce('click', function(e){
-               this.map.setOptions({ draggableCursor : "" })
-               $(element).trigger("stop_add_search")
+            this_map.setOptions({ draggableCursor : "url(http://s3.amazonaws.com/besport.com_images/status-pin.png) 64 64, auto" })
+            google.maps.event.addListenerOnce(this_map,'click', function(e){
+               this_map.setOptions({ draggableCursor : "" })
+               search_location={
+                   latitude:e.latLng.lat(),
+                   longitude:e.latLng.lng()
+               };
+               $('.search_map').trigger("stop_add_search",[search_location])
             });
         });
-        
-        
-
 
 
        var user_marker = user_marker || new google.maps.Marker({
@@ -162,6 +171,27 @@ var googleMap= function (element) {
 
     }
     
+// listenters    
+    $(element).on('show_user', function(){
+        this_map.panTo(ttown.user.position);
+        this_map.user.setAnimation(google.maps.Animation.DROP);
+    });
+    
+    $(element).on('clear_map', function(){
+        for (var m in search_list){
+            search_list[m].setMap(null);
+        };        
+        ttown.searches={};
+    });
+
+    $(element).on('display_search', function(response){
+        this_map.addSearch(response);                
+    });
+
+
+
+
+
     
     google.maps.event.addListener(this.map, 'zoom_changed',function () {
         // scaledSize: new google.maps.Size(64,64,'px','px')

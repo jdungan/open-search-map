@@ -30,8 +30,8 @@ jQuery(document).ready(function() {
 
 
 //init socket
-  //  var socket = io.connect('http://206.214.164.229');
-   var socket = io.connect('http://unleashprometheus.com:8000'); 
+   var socket = io.connect('http://206.214.164.229');
+   // var socket = io.connect('http://unleashprometheus.com:8000'); 
    socket.on('message', function (data) {
        console.log(data);
        $.event.trigger(data.eventType,data.payload);      
@@ -114,8 +114,7 @@ jQuery(document).ready(function() {
 
     function displayLayer(layer_id){
         search_data.places.each({layer_id:layer_id},function(response){
-            var search_loc = new google.maps.LatLng(response.latitude,response.longitude);
-            ttown.addSearch(search_loc,response.place_id,response.extra);                
+            $('.search_map').trigger('display_search',response);            
         })
         .done(function(){
             $('a#viewSearches').trigger('click');
@@ -124,18 +123,19 @@ jQuery(document).ready(function() {
 
 
 //map events
-
-$('.search_map').on('stop_add_search',function(){
+//TODO: make available to .search_map class
+$('#map_content').on('stop_add_search',function(e,search_location){
     var geoOptions = {
-          latitude:e.latLng.lat(),
-          longitude:e.latLng.lng(),
-          name:e.latLng.lat() + e.latLng.lng(),
+          latitude:search_location.latitude,
+          longitude:search_location.longitude,
           radius:100,
           extra:{start_time:Date()} 
     };
-    $().trigger
+    
     search_data.place.add(geoOptions).done(function(response){
-       socket.emit('message', {eventType: 'newSearch', payload: response});
+        ttown.addSearch(response);
+        // $('.search_map').trigger('search_added');
+        socket.emit('message', {eventType: 'newSearch', payload: response});
     });
 })
 
@@ -153,14 +153,12 @@ $('.search_map').on('stop_add_search',function(){
 
     $('a#viewUser').click(function(){
          $( "#menu_panel" ).panel( "close" );
-    //     ttown.panTo(ttown.user.position);
-    //   ttown.user.setAnimation(google.maps.Animation.DROP);
+         $('.search_map').trigger("show_user");
     });    
 
     $('a#clearLayers').click(function(){
         $( "#menu_panel" ).panel( "close" );
-        ttown= new googleMap(document.getElementById('map_content'));
-        ttown.searches={};
+        $('.search_map').trigger("clear_map");
     });    
 
 

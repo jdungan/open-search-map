@@ -26,3 +26,33 @@ NOTE:  GeoJSON.js, markerwithclusterer_compiled.js, and markerwithlabel.js are u
 _
 
 
+Map Object Rules
+Contruct  e.g  coolmap = new coolMap(document.getElementById('map_content'))
+
+Properties
+    .searches -- Array of map markers 
+
+Methods
+    .addSearch   e.g.  ttown.addSearch(response);
+    adds a marker to the map and triggers a display_search event for other map objects
+    response is a the valid geoloqi response for a new place
+    
+Events
+    Listeners
+    
+        start_add_search: adds onetime listenter for next click on map, 
+        triggers a 'stop_add_search' event and includes an object with
+        latitude and longitude e.g.  {latitude:00.00,longitude:00.00}
+        
+        show_user: center map on user location
+        
+        clear_map: remove all markers from the map, clears the search_list
+        
+        display_search: receive a valid geoloqi place response in the trigger.  
+        Place it on the map. Add the marker to the search_list
+        
+        
+        
+        
+        
+            
