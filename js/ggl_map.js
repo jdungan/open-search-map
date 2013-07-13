@@ -46,6 +46,7 @@ var googleMap= function (element) {
     },    
 
     search_info = function (key,info_obj) {
+        
         var response = [];
         i=0;
         for (var p in info_obj){
@@ -53,6 +54,7 @@ var googleMap= function (element) {
             i+=1;
         };
         content_text=response.join("") 
+        
         if (!info_obj.end_time){
             content_text +="</br><button id='"+key+"_button'>End Search</button"
         }
@@ -60,6 +62,7 @@ var googleMap= function (element) {
     },
 
     set_search_click = function (marker, key, info_obj) {
+        
         var infowindow = new google.maps.InfoWindow({
                 content:  search_info(key, info_obj),
                 position: marker.LatLng                     
@@ -104,12 +107,8 @@ var googleMap= function (element) {
         
         var position= new google.maps.LatLng(response.latitude,response.longitude),
         key=response.place_id;
-        
-        if (response.extra){
-            search_icon= (response.extra.end_time && "./img/search_end.svg") || "./img/search_start.svg";
-        } else{
-            search_icon = "./img/search_start.svg";
-        }
+        response.extra = response.extra || {};
+        search_icon= (response.extra.end_time && "./img/search_end.svg") || "./img/search_start.svg";
         
         if (!search_list[key]) {
             var marker = new google.maps.Marker({
@@ -123,9 +122,8 @@ var googleMap= function (element) {
                       url: search_icon+'# '+key
                   }
               });
-              console.log(key);
             marker.search_key=key;
-            marker.search_window= set_search_click(marker, key, response.extra);
+            // marker.search_window= set_search_click(marker, key, response.extra);
             search_list[key]=marker;
         }
     };
@@ -181,17 +179,12 @@ var googleMap= function (element) {
         for (var m in search_list){
             search_list[m].setMap(null);
         };        
-        ttown.searches={};
+        search_list={};
     });
 
-    $(element).on('display_search', function(response){
+    $(element).on('display_search', function(e,response){
         this_map.addSearch(response);                
     });
-
-
-
-
-
     
     google.maps.event.addListener(this.map, 'zoom_changed',function () {
         // scaledSize: new google.maps.Size(64,64,'px','px')

@@ -20,11 +20,6 @@ jQuery(document).ready(function() {
       $('#mapbox_content').hide();
 
 
-      // ttown.map(options);
-      // ttown.addMapListeners();
-
-
-
 // init search data
     var search_data = search_data || new search_db();
 
@@ -108,13 +103,15 @@ jQuery(document).ready(function() {
             $("li.viewLayer").on('click',function(){
                 $( "#layer_panel" ).panel( "close" );
                 layer_id=$(this).data('layer_id')
+
                 displayLayer(layer_id);
             });
         });
 
     function displayLayer(layer_id){
         search_data.places.each({layer_id:layer_id},function(response){
-            $('.search_map').trigger('display_search',response);            
+            
+            $('.search_map').trigger('display_search',[response]);            
         })
         .done(function(){
             $('a#viewSearches').trigger('click');

@@ -36,23 +36,23 @@ var search_db = function (){
      
  
 
-    geoloqi.newSearch = function(this_map,lat,lng){
-        geoloqi.post("place/create", {
-          latitude: lat,
-          longitude: lng,
-          layer_id: geoloqi.layer_id,
-          name:lat+lng,
-          radius: 100,
-          extra: {start_time:Date()}
-        }, function(response, error){
-            if(!error){
-               console.log(response); 
-               var search_loc = [response.latitude, response.longitude];
-                this_map.searches[response.place_id]=this_map.addSearch(search_loc,response.place_id,response.extra);
-                return response;
-            }
-        });
-    };
+    // geoloqi.newSearch = function(this_map,lat,lng){
+    //     geoloqi.post("place/create", {
+    //       latitude: lat,
+    //       longitude: lng,
+    //       layer_id: geoloqi.layer_id,
+    //       name:lat+lng,
+    //       radius: 100,
+    //       extra: {start_time:Date()}
+    //     }, function(response, error){
+    //         if(!error){
+    //            console.log(response); 
+    //            var search_loc = [response.latitude, response.longitude];
+    //             this_map.searches[response.place_id]=this_map.addSearch(search_loc,response.place_id,response.extra);
+    //             return response;
+    //         }
+    //     });
+    // };
     
     
     var place = function(){
@@ -66,8 +66,7 @@ var search_db = function (){
 
         this.delete = function(place_id,options){
             return GEODB("post",'place/delete/'+place_id,options)
-        };
-        
+        };        
     };
 
     var places = function(){
@@ -75,6 +74,7 @@ var search_db = function (){
         function get_all(options){
             get_all.dfd = get_all.dfd || new $.Deferred();
             get_all.all_places= get_all.all_places || [];
+            
             if (!options.layer_id){
                 get_all.dfd.reject("layer_id required");
             }
@@ -90,6 +90,7 @@ var search_db = function (){
                     };
                     if (!response.paging.next_offset){
                         get_all.dfd.resolve({places:get_all.all_places});
+                        get_all.dfd = new $.Deferred();
                         get_all.all_places=[];
                     } else {
                         options.offset=response.paging.next_offset;
@@ -108,6 +109,7 @@ var search_db = function (){
             var this_callback=callback;
             get_all(options)
               .done(function(response){
+                  console.log(response);
                 for (var i = 0; i < response.places.length; i++){
                    var place=response.places[i];
                     if (this_callback){
@@ -123,7 +125,6 @@ var search_db = function (){
         };
 
         this.each= each_place;
-        this.all= get_all;
         return this;
     };
     
