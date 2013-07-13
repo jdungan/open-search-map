@@ -1,5 +1,5 @@
 //  map object 
-var search_map= function (element) {    
+var googleMap= function (element) {    
     // 'tulsa 36.1539,-95.9925'
         var this_map,
         search_overlay,
@@ -30,12 +30,23 @@ var search_map= function (element) {
                 position: google.maps.ControlPosition.RIGHT_CENTER,
             },
         },
-       
-    geo=google.maps.geometry.spherical,    
-    
+           
     search_list = {},
+    
+    searchBounds = function (){        
+        // Based on Google Maps API v3 
+        // Purpose: given an array of Latlng's return a LatlngBounds
+        // Why: This is helpful when using fitBounds, panTo
+        var newBounds = new google.maps.LatLngBounds;
+
+        for (var m in search_list){
+            newBounds.extend(search_list[m].position);
+        };
+        return newBounds;
+    },    
 
     search_info = function (key,info_obj) {
+        
         var response = [];
         i=0;
         for (var p in info_obj){
@@ -43,6 +54,7 @@ var search_map= function (element) {
             i+=1;
         };
         content_text=response.join("") 
+        
         if (!info_obj.end_time){
             content_text +="</br><button id='"+key+"_button'>End Search</button"
         }
@@ -50,6 +62,7 @@ var search_map= function (element) {
     },
 
     set_search_click = function (marker, key, info_obj) {
+        
         var infowindow = new google.maps.InfoWindow({
                 content:  search_info(key, info_obj),
                 position: marker.LatLng                     
@@ -76,7 +89,7 @@ var search_map= function (element) {
          );
 
          google.maps.event.addListener(marker, 'dragend',function () {
-              $.event.trigger("search_position_changed",marker.search_key);
+              $.event.trigger("markerMove",marker.search_key);
              }
          );
          
@@ -90,9 +103,12 @@ var search_map= function (element) {
          return infowindow;  
     },
 
-    addSearch = function (position,key,info_obj) {
+    addSearch = function (response) {
         
-        search_icon= (info_obj.end_time && "./img/search_end.svg") || "./img/search_start.svg";
+        var position= new google.maps.LatLng(response.latitude,response.longitude),
+        key=response.place_id;
+        response.extra = response.extra || {};
+        search_icon= (response.extra.end_time && "./img/search_end.svg") || "./img/search_start.svg";
         
         if (!search_list[key]) {
             var marker = new google.maps.Marker({
@@ -102,38 +118,44 @@ var search_map= function (element) {
                   visible:true,
                   icon:{
                       anchor: new google.maps.Point(32, 32),
-                      scaledSize: new google.maps.Size(50,50,'px','px'),
-                      url: search_icon
-                      
+                      scaledSize: new google.maps.Size(64,64,'px','px'),
+                      url: search_icon+'# '+key
                   }
               });
             marker.search_key=key;
-            marker.search_window= set_search_click(marker, key, info_obj);
+            marker.search_window= set_search_click(marker, key, response.extra);
+            search_list[key]=marker;
         }
-        return marker;
     };
         
     if (element !== map_element){
         map_element = element;
         google.maps.visualRefresh=true;
         this.map = new google.maps.Map(element, searchMapOptions); 
+        
+        
+        $(element).on('start_add_search', function(){
+            this_map.setOptions({ draggableCursor : "url(http://s3.amazonaws.com/besport.com_images/status-pin.png) 64 64, auto" })
+            google.maps.event.addListenerOnce(this_map,'click', function(e){
+               this_map.setOptions({ draggableCursor : "" })
+               search_location={
+                   latitude:e.latLng.lat(),
+                   longitude:e.latLng.lng()
+               };
+               $('.search_map').trigger("stop_add_search",[search_location])
+            });
+        });
+
 
        var user_marker = user_marker || new google.maps.Marker({
             map: this.map,
-            visible:false,
+            visible:true,
+            icon:{
+                anchor: new google.maps.Point(32,32),
+                scaledSize: new google.maps.Size(64,64,'px','px'),
+                url: "./img/searcher.svg"                
+            }
         });
-
-        // user circle
-         var user_circle = new google.maps.Circle({
-           map: this.map,
-           radius: 2,  
-           fillColor: 'blue',
-           fillOpacity: 1,
-           strokeColor:"white",
-           strokeOpacity:1
-         });
-         user_circle.bindTo('center', user_marker, 'position');
-
         // Add circle overlay and bind to marker
          var user_accuracy_circle = new google.maps.Circle({
            map: this.map,
@@ -144,10 +166,62 @@ var search_map= function (element) {
            strokeOpacity:0
          });
          user_accuracy_circle.bindTo('center', user_marker, 'position');        
+
     }
+    
+// listenters    
+    $(element).on('show_user', function(){
+        this_map.panTo(ttown.user.position);
+        this_map.setZoom(18);
+        this_map.user.setAnimation(google.maps.Animation.BOUNCE);
+        window.setTimeout(function(){ this_map.user.setAnimation(null); }, 3000);
+    });
+    
+    $(element).on('clear_map', function(){
+        for (var m in search_list){
+            search_list[m].setMap(null);
+        };        
+        search_list={};
+    });
+
+    $(element).on('display_search', function(e,response){
+        this_map.addSearch(response);                
+    });
+    
+    $(element).on('display_all', function(e,response){
+        this_map.fitBounds(this_map.searchBounds());                
+    });
+    
+    
+    
+    google.maps.event.addListener(this.map, 'zoom_changed',function () {
+        // scaledSize: new google.maps.Size(64,64,'px','px')
+        var setzoom = function(z){
+            setzoom.answers= setzoom.answers || {};
+            if (!setzoom.answers[z]){
+                var ns=Math.floor(64*(z/21));
+                var na=Math.floor(32*(z/21));
+                setzoom.answers[z] ={
+                    scale  : new google.maps.Size(ns,ns,'px','px'),
+                    anchor : new google.maps.Point(na,na)
+                };
+            }   
+            return setzoom.answers[z]
+        };
+
+        for (var m in search_list){
+            (function (zoom){
+                search_list[m].icon.scaledSize = setzoom(zoom).scale;
+                search_list[m].icon.size = setzoom(zoom).scale;
+                search_list[m].icon.anchor = setzoom(zoom).anchor;
+            })(this_map.zoom);
+        };
+    });
     
     this.map.user = user_marker;
     this.map.user.accuracy=user_accuracy_circle.radius;
+    this.map.searches=search_list;
+    this.map.searchBounds=searchBounds;
     this.map.addSearch = addSearch;      
     this_map=this.map;
     return this.map;
