@@ -2,16 +2,16 @@ jQuery(document).ready(function() {
     
 //init the maps
       
-      var map_types={};
-      var mb_options = {
-         center: [36.1539, -95.9925],
-         zoomLevel: 18,
-         mapElement: document.getElementById("mapbox_content")
-      };
+      // var map_types={};
+      // var mb_options = {
+      //    center: [36.1539, -95.9925],
+      //    zoomLevel: 18,
+      //    mapElement: document.getElementById("mapbox_content")
+      // };
 
       ttown= new googleMap(document.getElementById('map_content'));
 
-      mbtown = new mapboxMap().map(mb_options);
+      // mbtown = new mapboxMap().map(mb_options);
       
       $('#mapbox_content').hide();
 
