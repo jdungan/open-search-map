@@ -111,9 +111,17 @@ var search_db = function (){
 
     var layers = function (){
         
-        this.add = function (options){
+        this.add = function (layer_name){
+            var options={};
+            options.name=layer_name;
             if(options.name){
                 return GEODB('post','layer/create',options);
+            }
+        };
+        
+        this.delete = function (layer_id) {
+            if(layer_id){
+                return GEODB('post','layer/delete/'+layer_id);
             }
         };
 
@@ -154,10 +162,6 @@ var search_db = function (){
         };
     };
    
-    geoloqi.groups = new groups();  
-    geoloqi.layers = new layers();
-    geoloqi.places = new places();
-
     var user = function(){
         var client_id = client_id || 'd8fa36c91c761155e82795a6745b4e23',
             client_secret='eb3c1d6ce7af8beb717b658743f4d139';
@@ -191,7 +195,7 @@ var search_db = function (){
     };
 
 
-    
+    geo_db.groups = new groups();      
     geo_db.layers = new layers();
     geo_db.place = new place();
     geo_db.places = new places();

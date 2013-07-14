@@ -82,13 +82,15 @@ jQuery(document).ready(function() {
 
 // layer panel
 
-    function get_layer_list(args) {
+    function refresh_layer_list() {
         $('.layer_item').remove();
         search_data.layers.each(function(layer){
             $('#layer_list').append( 
                "<li class='layer_item' data-layer_id="+layer.layer_id+">\
                    <a  data-role='button' data-rel='dialog'>\
-                       <i class='icon-copy' ></i>&nbsp;"+layer.name+"&nbsp; </a>\
+                       <i class='icon-copy' data-layer_id="+layer.layer_id+"\
+                        data-layer_name='"+layer.name+"'></i>&nbsp;"+layer.name+"&nbsp;\
+                   </a>\
                </li>"           
             )})
             .done(function(){
@@ -102,8 +104,6 @@ jQuery(document).ready(function() {
                 });
             });
     };
-    
-    get_layer_list();
 
     function displayLayer(layer_id){
         search_data.places.each({layer_id:layer_id},function(response){
@@ -115,13 +115,37 @@ jQuery(document).ready(function() {
     };
 
     $('button#save_new_layer').click(function(e){        
-        var new_layer={}; new_layer.name = $('input#layer_name').val();
-        search_data.layers.add(new_layer)
+        layer_name = $('input#layer_name').val();
+        search_data.layers.add(layer_name)
         .done(function(){
-            get_layer_list();
+            $('input#layer_name').val('');
+            refresh_layer_list();
             $('#new_layer_popup').popup( "close" );
         });
-    });    
+    });
+
+    $('a#delLayer').on('click',function(e){
+        e.stopImmediatePropagation();
+        $('.layer_item i').attr('class','icon-remove-sign')
+        $('.layer_item i').on('click',function(e){
+            $('#delete_layer_name').text( $(this).data('layer_name'));
+            $('#delete_layer_name').data('layer_id',$(this).data('layer_id'))
+            $('#delete_layer_popup').popup( "open" );
+        });
+    });
+    
+    $('button#submit_delete_layer').on('click',function(e){
+        layer_id = $('#delete_layer_name').data('layer_id');
+        search_data.layers.delete(layer_id)
+        .done(function(){
+            $('.layer_item i').on('click',null);
+            $('#delete_layer_name').data('layer_id','');
+            $('#delete_layer_name').text( '' );
+            $('.layer_item i').attr('class','icon-copy');
+            refresh_layer_list();
+            $('#delete_layer_popup').popup( "close" );
+        });
+    });
 
 //map events
 $('#map_holder').on('stop_add_search',function(e,search_location){
@@ -266,6 +290,7 @@ $('#map_holder').on('stop_add_search',function(e,search_location){
  
 
 // GO!
+    refresh_layer_list();
     // $.mobile.changePage('#signin_page');
     $('#mapPage').trigger('pageshow');
 });

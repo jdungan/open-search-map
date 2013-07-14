@@ -136,11 +136,19 @@
                     <li>Search Groups</li>
 
                     <li>
-                        <a id='addLayer' href="#new_layer_popup"  data-rel="popup" data-position-to="window" >
-                               <i class="icon-plus-sign icon-2x"></i>
-                         </a>
+                        <div class="ui-grid-a">
+                          <div class="ui-block-a">
+                              <a id='addLayer' href="#new_layer_popup"  data-rel="popup" data-position-to="window" >
+                                  <i class="icon-plus-sign icon-2x"></i>
+                              </a>
+                          </div>
+                          <div class="ui-block-b">
+                              <a id='delLayer'>
+                                  <i class="icon-remove-sign icon-2x"></i>
+                              </a>
+                          </div>
+                        </div>
                     </li>
-                    
                     
                     <li id='current_layer' data-current-layer=''>
                         <p>New searches will be added to</p>
@@ -157,11 +165,19 @@
                       <div id='new_layer_fields' data-role="fieldcontain" class="ui-hide-label">
                           <input type="text" name="layer_name" id="layer_name" placeholder="Name for this group"> 
                       </div>
-                      <button class="ui-btn-hidden" type="submit" id="save_new_layer"  data-inline="true">Save</button> 
+                      <button class="ui-btn-hidden" type="submit" id="save_new_layer"  data-inline="true">Yes, save it.</button> 
                       <button class="ui-btn-hidden cancel_button" type="submit" data-inline="true">Cancel</button> 
                   </div>
-                  
-            
+            </div>
+            <div  id="delete_layer_popup" data-role="popup">
+                <div data-role="header" data-close-btn="right">
+                    <h2>Do you want to delete this search group?</h2>
+                  </div>
+                  <div data-role="content" >
+                      <p id='delete_layer_name' ></p>
+                      <button class="ui-btn-hidden" type="submit" id="submit_delete_layer"  data-inline="true">Yes, delete it.</button> 
+                      <button class="ui-btn-hidden cancel_button" type="submit" data-inline="true">Cancel</button> 
+                  </div>
             </div>
 
 
