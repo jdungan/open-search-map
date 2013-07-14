@@ -8,12 +8,9 @@ jQuery(document).ready(function() {
          zoomLevel: 18,
          mapElement: document.getElementById("mapbox_content")
       };
-      // var ttown = ttown || openMap;
-
-      // ttown= new googleMap(document.getElementById("map_content"));
 
       ttown= new googleMap(document.getElementById('map_content'));
-      
+
       mbtown = new mapboxMap().map(mb_options);
       
       $('#mapbox_content').hide();
@@ -95,7 +92,7 @@ jQuery(document).ready(function() {
             $("#layer_list").listview('refresh').trigger("create");
             $("li.viewLayer").on('click',function(){
 
-                $( "#layer_panel" ).panel( "close" );
+                
                 layer_id = $(this).data('layer_id');
                 layer_name = $(this).text()
                 $('li#current_layer').data('current-layer',layer_id);
@@ -135,26 +132,27 @@ $('#map_holder').on('stop_add_search',function(e,search_location){
 //panel menu choices
 
 
+    $('.app_panel').on('click',function(){
+        $(this).panel( "close" );            
+    });
+
     $("#addSearch").on('click',function(){
-        $( "#menu_panel" ).panel( "close" );
-        $('.search_map').trigger('start_add_search');
-            
+        $('.search_map').trigger('start_add_search');            
     });
 
     $('a#viewSearches').click(function(){
-        $( "#menu_panel" ).panel( "close" );
         $('.search_map').trigger('display_all');
     });    
 
     $('a#viewUser').click(function(){
-         $( "#menu_panel" ).panel( "close" );
          $('.search_map').trigger("show_user");
     });    
 
     $('a#clearLayers').click(function(){
-        $( "#menu_panel" ).panel( "close" );
         $('.search_map').trigger("clear_map");
     });    
+
+
 
 
 
@@ -257,6 +255,7 @@ $('#map_holder').on('stop_add_search',function(e,search_location){
  
 
 // GO!
+    // $.mobile.changePage('#signin_page');
     $('#mapPage').trigger('pageshow');
 });
 

@@ -207,7 +207,7 @@ var googleMap= function (element) {
         marker.setPosition(search_loc);                      
     });
     
-
+//end map object listeners
     
     google.maps.event.addListener(this.map, 'zoom_changed',function () {
         // scaledSize: new google.maps.Size(64,64,'px','px')

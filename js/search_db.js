@@ -16,7 +16,7 @@ var search_db = function (){
            package_verison: '0.1',
            persist: 'cookies'
          });
-         geoloqi.auth={'access_token':'fb75d-ddf59124a0403299ea67e6c001d14c676806459d'};
+         // geoloqi.auth={'access_token':'fb75d-ddf59124a0403299ea67e6c001d14c676806459d'};
         
          var call = function(type,url,options){
              var dfd = new $.Deferred()
@@ -32,28 +32,7 @@ var search_db = function (){
          return call;
     };
  
-    var GEODB = new geoloqi_caller();
-     
- 
-
-    // geoloqi.newSearch = function(this_map,lat,lng){
-    //     geoloqi.post("place/create", {
-    //       latitude: lat,
-    //       longitude: lng,
-    //       layer_id: geoloqi.layer_id,
-    //       name:lat+lng,
-    //       radius: 100,
-    //       extra: {start_time:Date()}
-    //     }, function(response, error){
-    //         if(!error){
-    //            console.log(response); 
-    //            var search_loc = [response.latitude, response.longitude];
-    //             this_map.searches[response.place_id]=this_map.addSearch(search_loc,response.place_id,response.extra);
-    //             return response;
-    //         }
-    //     });
-    // };
-    
+    var GEODB = new geoloqi_caller();    
     
     var place = function(){
         this.add = function(options){
