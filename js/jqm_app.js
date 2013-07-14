@@ -25,7 +25,7 @@ jQuery(document).ready(function() {
    // var socket = io.connect('http://unleashprometheus.com:8000'); 
    socket.on('message', function (data) {
        console.log(data);
-       $.event.trigger(data.eventType,data.payload);      
+       // $.event.trigger(data.eventType,data.payload);      
        $.event.trigger(data.message.eventType,data.message.payload);      
     });  
 
