@@ -54,35 +54,52 @@
                      data-role="header"
                      data-position="fixed"
                      data-theme="b">
-                     <div data-role='container' >
-                         <a href='#menu_panel' data-role='button'  data-inline='true'>
-                              <span class="icon-stack">
-                                <i class="icon-circle icon-stack-base"></i>
-                                <i class="icon-backward icon-light"></i>
-                              </span>
-                              
-                              Open Search & Rescue Map
-                              
-                          </a>
-<a id="btnToggleMap" data-role="button" data-inline="true">Toggle Map</a>
-                          <a href='#layer_panel' data-role='button'  data-inline='true' style='float:right;margin-right:5%'>
+                         <div data-role='container' >
+                             <a href='#menu_panel' data-role='button'  data-inline='true'>
+                                  <span class="icon-stack">
+                                    <i class="icon-circle icon-stack-base"></i>
+                                    <i class="icon-backward icon-light"></i>
+                                  </span>
+                             </a>                            Open Search & Rescue Map
+                             
+                          
+                             <a href='#layer_panel' data-role='button'  data-inline='true' class='header_button'>
                                 <span class="icon-stack">
-                                  <i class="icon-circle icon-stack-base"></i>
-                                  <i class="icon-forward icon-light"></i>
+                                     <i class="icon-circle icon-stack-base"></i>
+                                     <i class="icon-forward icon-light"></i>
                                 </span>
-                            </a>
+                             </a>
+
+                             <a id="btnToggleMap"  data-role='button'  data-inline='true' class='header_button'>
+                                <span class="icon-stack">
+                                     <i class="icon-circle icon-stack-base"></i>
+                                     <i class="icon-picture icon-light"></i>
+                                </span>
+                             </a>
                         
-                     </div>
+                             <a id='viewUser' data-role="button" data-inline='true'  class='header_button'>
+                                   <i class="icon-user icon-2x"></i></a>
+
+
+                         </div>
+                     
                      </div><!-- end header         -->
 
-               <div id="map_holder">
-                   <div id="map_content"
-                          class="ui-content dark" 
-                          role="main"
-                          data-role="content" 
-                          data-theme="b">
-                     </div>  
-               </div>
+                     <div id="map_holder">
+                         <div id="map_content"
+                                class="ui-content search_map" 
+                                role="main"
+                                data-role="content" 
+                                data-theme="b">
+                           </div>  
+                           <div id="mapbox_content"
+                                  class="ui-content search_map" 
+                                  role="main"
+                                  data-role="content" 
+                                  data-theme="b">
+                             </div>  
+
+                     </div>
 
 
           <div data-role='panel' id='menu_panel' data-position="left"  data-display="push" data-theme='b'>
@@ -100,10 +117,6 @@
                   </li>
 
                   <li>
-                      <a id='viewUser' data-role="button">
-                          <i class="icon-user icon-2x"></i>&nbsp;You</a>
-                  </li>
-                  <li>
                       <a id='clearLayers' data-role="button">
                           <i class="icon-minus-sign icon-2x" ></i>&nbsp;Clear Map</a>
                   </li>
@@ -118,7 +131,13 @@
 
 
             <div data-role='panel' id='layer_panel' data-position="right" data-display="push" data-theme='b'>
-                <ul id='layer_list' class="tour-options" data-role="listview"></ul>
+                <ul id='layer_list' class="tour-options" data-role="listview">
+                    <li>LAYERS</li>
+                    <li id='current_layer' data-current-layer=''>
+                        <p>Editing Layer:</p>
+                        <p id="layer_label"></p>
+                    </li>
+                </ul>
             </div>
 
 
@@ -167,14 +186,13 @@
 
 
     <script type="text/javascript" src="./js/socket.io.min.js"></script>
-    <script type="text/javascript" src="./js/jquery.jrumble.1.3.min.js"></script>
-    <script type="text/javascript" src="./js/search_map.js"></script>
-    <script type="text/javascript" src="./js/search_db.js"></script>
-    <script type="text/javascript" src="./js/jqm_app.js"></script>
     <script src="//api.tiles.mapbox.com/mapbox.js/v1.2.0/mapbox.js"></script>
-    <script src="js/openMap.js"></script>
-    <script src="js/mapboxMap.js"></script>
-    <script src="js/googleMap.js"></script>
+
+    <script type="text/javascript" src="./js/search_db.js"></script>
+    <script type="text/javascript" src="./js/ggl_map.js"></script>
+    <script type="text/javascript" src="./js/mapboxMap.js"></script>
+
+    <script type="text/javascript" src="./js/jqm_app.js"></script>
 
   </body>
 

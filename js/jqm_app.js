@@ -1,70 +1,47 @@
 jQuery(document).ready(function() {
     
 //init the map
-      var currentLatlng = currentLatlng || [36.1539, -95.9925];   
-      var options = {
-         center: currentLatlng,
+      
+      var map_types={};
+      var mb_options = {
+         center: [36.1539, -95.9925],
          zoomLevel: 18,
-         mapElement: $('#map_content')[0]
+         mapElement: document.getElementById("mapbox_content")
       };
-      var ttown = ttown || openMap;
-      ttown.map(options);
-      ttown.addMapListeners();
+      // var ttown = ttown || openMap;
+
+      // ttown= new googleMap(document.getElementById("map_content"));
+
+      ttown= new googleMap(document.getElementById('map_content'));
+      
+      mbtown = new mapboxMap().map(mb_options);
+      
+      $('#mapbox_content').hide();
+
+
 // init search data
     var search_data = search_data || new search_db();
 
-// load layer panel
-    // search_data.layers.each(function(layer){
-    //     $('#layer_list').append( 
-    //        "<li class='viewLayer' data-layer_id="+layer.layer_id+">\
-    //            <a  data-role='button' data-rel='dialog'>\
-    //                <i class='icon-copy' ></i>&nbsp;"+layer.name+"</a>\
-    //        </li>"           
-    //     )})
-    //     .done(function(){
-    //         $("#layer_list").listview('refresh').trigger("create");
-    //         $("li.viewLayer").on('click',function(){
-    //             $( "#layer_panel" ).panel( "close" );
-    //             layer_id=$(this).data('layer_id')
-    //             addLayer(layer_id);
-    //         });
-    //     });
-    // 
-    // function addLayer(layer_id){
-    //     search_data.places.each({layer_id:layer_id},function(p){
-    //         var search_loc = [p.latitude, p.longitude];
-    //         ttown.searches[p.place_id] = ttown.addSearch(search_loc,p.place_id,p.extra);                
-    //     })
-    //     .done(function(){
-    //         $('a#viewSearches').trigger('click');
-    //     });
-    // }
 
 //init socket
-  //  var socket = io.connect('http://206.214.164.229');
-   var socket = io.connect('http://unleashprometheus.com:8000'); 
+   var socket = io.connect('http://206.214.164.229');
+   // var socket = io.connect('http://unleashprometheus.com:8000'); 
    socket.on('message', function (data) {
        console.log(data);
-       $.event.trigger(data.eventType,data.payload);      
+       $.event.trigger(data.message.eventType,data.message.payload);      
     });  
 
 //socket events
     $(document).on("newSearch", function(e,response){
-        var search_loc = [response.latitude,response.longitude];
-        ttown.searches[response.place_id]=ttown.addSearch(search_loc,response.place_id,response.extra);
+        $('.search_map').trigger('display_search',[response]); 
     });
 
     $(document).on("endSearch", function(e,response){
-        marker=ttown.searches[response.place_id];
-        marker.icon.url="./img/search_end.svg";
-        marker.setMap(ttown)// force icon to re-render;
-        marker.search_window.setSearchWindowContent(response.extra)        
+        $('.search_map').trigger('end_search',[response]); 
     });
 
     $(document).on("moveSearch", function(e,response){
-        marker=ttown.searches[response.place_id];
-        var search_loc = new google.maps.LatLng(response.latitude,response.longitude);
-        marker.setPosition(search_loc);
+        $('.search_map').trigger('move_search',[response]); 
     });
 
 //client events
@@ -86,6 +63,20 @@ jQuery(document).ready(function() {
             socket.emit('message',{eventType: 'moveSearch', payload: response});                        
         });        
     });
+    
+    $('#btnToggleMap').on('click',function toggleMap(){
+        toggleMap.map_type=toggleMap.map_type||'google';
+        if (toggleMap.map_type==='google'){
+            $('#map_content').hide();
+            $('#mapbox_content').show();
+            toggleMap.map_type='mapbox'
+        } else {
+            $('#map_content').show();
+            $('#mapbox_content').hide();        
+            toggleMap.map_type='google'
+        }
+        $('#mapPage').trigger('pageshow');        
+    });
 
 //jqm page events 
     $("#mapPage").on("pageshow",function(){
@@ -103,57 +94,66 @@ jQuery(document).ready(function() {
         .done(function(){
             $("#layer_list").listview('refresh').trigger("create");
             $("li.viewLayer").on('click',function(){
+
                 $( "#layer_panel" ).panel( "close" );
-                layer_id=$(this).data('layer_id')
+                layer_id = $(this).data('layer_id');
+                layer_name = $(this).text()
+                $('li#current_layer').data('current-layer',layer_id);
+                $('li p#layer_label').text(layer_name);                
+                
                 displayLayer(layer_id);
             });
         });
 
     function displayLayer(layer_id){
         search_data.places.each({layer_id:layer_id},function(response){
-            var search_loc = new google.maps.LatLng(response.latitude,response.longitude);
-            ttown.addSearch(search_loc,response.place_id,response.extra);                
+            $('.search_map').trigger('display_search',[response]);            
         })
         .done(function(){
-            $('a#viewSearches').trigger('click');
+            $('.search_map').trigger('display_all');
         });   
     }
 
+
+//map events
+$('#map_holder').on('stop_add_search',function(e,search_location){
+    console.log('on stop_add_search')
+    var geoOptions = {
+          layer_id: $('li#current_layer').data('current-layer'),
+          latitude:search_location.latitude,
+          longitude:search_location.longitude,
+          radius:100,
+          extra:{start_time:Date()} 
+    };
+
+    search_data.place.add(geoOptions).done(function(response){
+        $('.search_map').trigger('display_search',[response]);  
+        socket.emit('message', {eventType: 'newSearch', payload: response});
+    });
+})
+
 //panel menu choices
+
+
     $("#addSearch").on('click',function(){
         $( "#menu_panel" ).panel( "close" );
-            ttown.setCursor('http://s3.amazonaws.com/besport.com_images/status-pin.png');
-            ttown.addEventListenerOnce('click', function(e){
-               ttown.setCursor('');
-               var geoOptions = {
-                     latitude:e.latLng.lat(),
-                     longitude:e.latLng.lng(),
-                     name:e.latLng.lat() + e.latLng.lng(),
-                     radius:100,
-                     extra:{start_time:Date()} 
-               };
-               response=search_data.place.add(geoOptions).done(function(res){
-                  socket.emit('message', {eventType: 'newSearch', payload: res});
-               });
-            });
-    
+        $('.search_map').trigger('start_add_search');
+            
     });
-    
+
     $('a#viewSearches').click(function(){
         $( "#menu_panel" ).panel( "close" );
-        ttown.fitBounds(ttown.searchBounds());
+        $('.search_map').trigger('display_all');
     });    
 
     $('a#viewUser').click(function(){
          $( "#menu_panel" ).panel( "close" );
-    //     ttown.panTo(ttown.user.position);
-    //   ttown.user.setAnimation(google.maps.Animation.DROP);
+         $('.search_map').trigger("show_user");
     });    
 
     $('a#clearLayers').click(function(){
         $( "#menu_panel" ).panel( "close" );
-        ttown= new search_map(document.getElementById("map_content"));
-        ttown.searches={};
+        $('.search_map').trigger("clear_map");
     });    
 
 
@@ -239,8 +239,10 @@ jQuery(document).ready(function() {
     }
 
 //watch position init 
-/*    var userPositionChange = function(pos) {
+    var userPositionChange = function(pos) {
         var crd = pos.coords;
+        
+        
         currentLatlng = new google.maps.LatLng(crd.latitude, crd.longitude);          
         ttown.user.setPosition(currentLatlng);
         ttown.user_accuracy=crd.accuracy;        
@@ -251,10 +253,7 @@ jQuery(document).ready(function() {
     
     posOptions = {enableHighAccuracy: true}; 
     distWatchID = navigator.geolocation.watchPosition(userPositionChange, errorPositionChange, posOptions);       
-*/
-    $("#mapPage").on("pageshow",function(){
-        //google.maps.event.trigger(ttown, 'resize');
-    });
+    
  
 
 // GO!
