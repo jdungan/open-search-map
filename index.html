@@ -78,7 +78,8 @@
                              </a>
                         
                              <a id='viewUser' data-role="button" data-inline='true'  class='header_button'>
-                                   <i class="icon-user icon-2x"></i></a>
+                                   <i class="icon-user icon-2x"></i>
+                             </a>
 
 
                          </div>
@@ -132,13 +133,37 @@
 
             <div class='app_panel' data-role='panel' id='layer_panel' data-position="right" data-display="push" data-theme='b'>
                 <ul id='layer_list' class="tour-options" data-role="listview">
-                    <li>LAYERS</li>
+                    <li>Search Groups</li>
+
+                    <li>
+                        <a id='addLayer' href="#new_layer_popup"  data-rel="popup" data-position-to="window" >
+                               <i class="icon-plus-sign icon-2x"></i>
+                         </a>
+                    </li>
+                    
+                    
                     <li id='current_layer' data-current-layer=''>
-                        <p>Editing Layer:</p>
+                        <p>New searches will be added to</p>
                         <p id="layer_label"></p>
                     </li>
                 </ul>
             </div>
+
+            <div  id="new_layer_popup" data-role="popup">
+                <div data-role="header" data-close-btn="right">
+                    <h2>Create a new search group?</h2>
+                  </div>
+                  <div data-role="content" >
+                      <div id='new_layer_fields' data-role="fieldcontain" class="ui-hide-label">
+                          <input type="text" name="layer_name" id="layer_name" placeholder="Name for this group"> 
+                      </div>
+                      <button class="ui-btn-hidden" type="submit" id="save_new_layer"  data-inline="true">Save</button> 
+                      <button class="ui-btn-hidden cancel_button" type="submit" data-inline="true">Cancel</button> 
+                  </div>
+                  
+            
+            </div>
+
 
 
       </div> <!-- end page          -->
@@ -158,7 +183,7 @@
                 <a id="linkDialog" href="#registerDialog" data-rel="dialog" data-transition="flip" style="display:none;" name="linkDialog"></a>
             </div>
             <button class="ui-btn-hidden" type="submit" id="signin"  data-inline="true">Sign In</button> 
-            <button class="ui-btn-hidden" type="submit" id="signin_quit" data-inline="true">Cancel</button> 
+            <button class="ui-btn-hidden cancel_button" type="submit" id="signin_quit" data-inline="true">Cancel</button> 
         </div>
     </div>
 
@@ -178,11 +203,9 @@
     </div>
 
     <div id="newLayerDialog" data-role="page" data-theme="b" >
-        <div data-role="header" data-close-btn="right">
-            <h2>Create a new layer?</h2>
-          </div>
     </div>
 
+   
 
 
     <script type="text/javascript" src="./js/socket.io.min.js"></script>

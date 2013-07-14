@@ -1,6 +1,6 @@
 jQuery(document).ready(function() {
     
-//init the map
+//init the maps
       
       var map_types={};
       var mb_options = {
@@ -80,27 +80,30 @@ jQuery(document).ready(function() {
         google.maps.event.trigger(ttown, 'resize');
     });
 
-// load layer panel
-    search_data.layers.each(function(layer){
-        $('#layer_list').append( 
-           "<li class='viewLayer' data-layer_id="+layer.layer_id+">\
-               <a  data-role='button' data-rel='dialog'>\
-                   <i class='icon-copy' ></i>&nbsp;"+layer.name+"&nbsp; "+layer.layer_id+"  </a>\
-           </li>"           
-        )})
-        .done(function(){
-            $("#layer_list").listview('refresh').trigger("create");
-            $("li.viewLayer").on('click',function(){
+// layer panel
 
-                
-                layer_id = $(this).data('layer_id');
-                layer_name = $(this).text()
-                $('li#current_layer').data('current-layer',layer_id);
-                $('li p#layer_label').text(layer_name);                
-                
-                displayLayer(layer_id);
+    function get_layer_list(args) {
+        $('.layer_item').remove();
+        search_data.layers.each(function(layer){
+            $('#layer_list').append( 
+               "<li class='layer_item' data-layer_id="+layer.layer_id+">\
+                   <a  data-role='button' data-rel='dialog'>\
+                       <i class='icon-copy' ></i>&nbsp;"+layer.name+"&nbsp; </a>\
+               </li>"           
+            )})
+            .done(function(){
+                $("#layer_list").listview('refresh').trigger("create");
+                $("li.layer_item").on('click',function(){
+                    layer_id = $(this).data('layer_id');
+                    layer_name = $(this).text()
+                    $('li#current_layer').data('current-layer',layer_id);
+                    $('li p#layer_label').text(layer_name);                
+                    displayLayer(layer_id);
+                });
             });
-        });
+    };
+    
+    get_layer_list();
 
     function displayLayer(layer_id){
         search_data.places.each({layer_id:layer_id},function(response){
@@ -109,8 +112,16 @@ jQuery(document).ready(function() {
         .done(function(){
             $('.search_map').trigger('display_all');
         });   
-    }
+    };
 
+    $('button#save_new_layer').click(function(e){        
+        var new_layer={}; new_layer.name = $('input#layer_name').val();
+        search_data.layers.add(new_layer)
+        .done(function(){
+            get_layer_list();
+            $('#new_layer_popup').popup( "close" );
+        });
+    });    
 
 //map events
 $('#map_holder').on('stop_add_search',function(e,search_location){
@@ -129,12 +140,18 @@ $('#map_holder').on('stop_add_search',function(e,search_location){
     });
 })
 
-//panel menu choices
 
+//general app events
 
     $('.app_panel').on('click',function(){
         $(this).panel( "close" );            
     });
+
+    $('.cancel_button').on('click',function(){
+        $.mobile.changePage('#mapPage');
+    });    
+
+//panel menu choices
 
     $("#addSearch").on('click',function(){
         $('.search_map').trigger('start_add_search');            
@@ -151,9 +168,6 @@ $('#map_holder').on('stop_add_search',function(e,search_location){
     $('a#clearLayers').click(function(){
         $('.search_map').trigger("clear_map");
     });    
-
-
-
 
 
 //authentication
@@ -191,8 +205,6 @@ $('#map_holder').on('stop_add_search',function(e,search_location){
         } else {
             $('#retypePassword').parent().hide();
         };
-        
-
         $(this).trigger("create");        
     });
 
@@ -215,13 +227,12 @@ $('#map_holder').on('stop_add_search',function(e,search_location){
     $('a#btnStartRegister').on('click',function(){
         $('#signin_page').data('register-user',true);
     });
-        
+
     $('button#signin_quit').on('click',function(){
         $('#signin_page').data('register-user',false);
         $('#signin_msg').text(''); 
         $('#retypePassword').attr('type','hidden').parent().hide();
         $('#signin_page').trigger("create");        
-        $.mobile.changePage('#mapPage');
     });    
     
 
