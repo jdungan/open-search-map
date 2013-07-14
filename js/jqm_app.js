@@ -21,11 +21,12 @@ jQuery(document).ready(function() {
 
 
 //init socket
-   var socket = io.connect('http://206.214.164.229');
-   // var socket = io.connect('http://unleashprometheus.com:8000'); 
+   // var socket = io.connect('http://206.214.164.229');
+   var socket = io.connect('http://unleashprometheus.com:8000'); 
    socket.on('message', function (data) {
        console.log(data);
-       $.event.trigger(data.message.eventType,data.message.payload);      
+       $.event.trigger(data.eventType,data.payload);      
+       // $.event.trigger(data.message.eventType,data.message.payload);      
     });  
 
 //socket events
