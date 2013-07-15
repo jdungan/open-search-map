@@ -56,25 +56,16 @@
                      data-theme="b">
                          <div data-role='container' >
                              <a href='#menu_panel' data-role='button'  data-inline='true'>
-                                  <span class="icon-stack">
-                                    <i class="icon-circle icon-stack-base"></i>
-                                    <i class="icon-backward icon-light"></i>
-                                  </span>
-                             </a>                            Open Search & Rescue Map
-                             
+                                    <i class="icon-chevron-sign-left icon-2x"></i>
+                             </a>
                           
                              <a href='#layer_panel' data-role='button'  data-inline='true' class='header_button'>
-                                <span class="icon-stack">
-                                     <i class="icon-circle icon-stack-base"></i>
-                                     <i class="icon-forward icon-light"></i>
+                                     <i class="icon-chevron-sign-right icon-2x"></i>
                                 </span>
                              </a>
 
                              <a id="btnToggleMap"  data-role='button'  data-inline='true' class='header_button'>
-                                <span class="icon-stack">
-                                     <i class="icon-circle icon-stack-base"></i>
-                                     <i class="icon-picture icon-light"></i>
-                                </span>
+                                     <i class="icon-picture icon-2x"></i>
                              </a>
                         
                              <a id='viewUser' data-role="button" data-inline='true'  class='header_button'>
@@ -93,6 +84,12 @@
                                 data-role="content" 
                                 data-theme="b">
                            </div>  
+                           <div id="map_content"
+                                  class="ui-content search_map" 
+                                  role="main"
+                                  data-role="content" 
+                                  data-theme="b">
+                             </div>  
 
                      </div>
 
@@ -133,12 +130,12 @@
                         <div class="ui-grid-a">
                           <div class="ui-block-a">
                               <a id='addLayer' href="#new_layer_popup"  data-rel="popup" data-position-to="window" >
-                                  <i class="icon-plus-sign icon-2x"></i>
+                                  <i class="icon-plus-sign icon-2x" style="color:black;"></i>
                               </a>
                           </div>
                           <div class="ui-block-b">
                               <a id='delLayer'>
-                                  <i class="icon-remove-sign icon-2x"></i>
+                                  <i class="icon-remove-sign icon-2x" style="color:black;"></i>
                               </a>
                           </div>
                         </div>

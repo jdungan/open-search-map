@@ -78,6 +78,7 @@ var search_db = function (){
                 })
                 .fail(function(error){
                     get_all.all_places=[];
+                    get_all.dfd = new $.Deferred();
                     get_all.dfd.reject(error);
                 });
 
@@ -107,7 +108,15 @@ var search_db = function (){
         return this;
     };
     
-    
+    var layer = function(){
+        
+        this.get = function (layer_id){
+            if(layer_id){
+                return GEODB('post','layer/info/'+layer_id);
+            }
+        };
+        
+    };
 
     var layers = function (){
         
@@ -195,7 +204,8 @@ var search_db = function (){
     };
 
 
-    geo_db.groups = new groups();      
+    geo_db.groups = new groups();
+    geo_db.layer = new layer();      
     geo_db.layers = new layers();
     geo_db.place = new place();
     geo_db.places = new places();

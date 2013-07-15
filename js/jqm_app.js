@@ -13,7 +13,7 @@ jQuery(document).ready(function() {
 
       // mbtown = new mapboxMap().map(mb_options);
       
-      $('#mapbox_content').hide();
+      // $('#mapbox_content').hide();
 
 
 // init search data
@@ -63,17 +63,17 @@ jQuery(document).ready(function() {
     });
     
     $('#btnToggleMap').on('click',function toggleMap(){
-        toggleMap.map_type=toggleMap.map_type||'google';
-        if (toggleMap.map_type==='google'){
-            $('#map_content').hide();
-            $('#mapbox_content').show();
-            toggleMap.map_type='mapbox'
-        } else {
-            $('#map_content').show();
-            $('#mapbox_content').hide();        
-            toggleMap.map_type='google'
-        }
-        $('#mapPage').trigger('pageshow');        
+        // toggleMap.map_type=toggleMap.map_type||'google';
+        // if (toggleMap.map_type==='google'){
+        //     $('#map_content').hide();
+        //     $('#mapbox_content').show();
+        //     toggleMap.map_type='mapbox'
+        // } else {
+        //     $('#map_content').show();
+        //     $('#mapbox_content').hide();        
+        //     toggleMap.map_type='google'
+        // }
+        // $('#mapPage').trigger('pageshow');        
     });
 
 //jqm page events 
@@ -152,6 +152,7 @@ jQuery(document).ready(function() {
            $('#delete_layer_popup').popup( "close" );
         });
     });
+
 
 //map events
 $('#map_holder').on('stop_add_search',function(e,search_location){
