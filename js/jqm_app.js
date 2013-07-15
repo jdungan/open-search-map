@@ -281,12 +281,11 @@ $('#map_holder').on('stop_add_search',function(e,search_location){
 //watch position init 
     var userPositionChange = function(pos) {
         var crd = pos.coords;
-        
+        currentLatlng = new google.maps.LatLng(crd.latitude, crd.longitude);          
         window.setTimeout(function(){ 
-            currentLatlng = new google.maps.LatLng(crd.latitude, crd.longitude);          
             ttown.user.setPosition(currentLatlng);
             ttown.user_accuracy=crd.accuracy;        
-        }, 3000);
+        }, 30);
         
     };
      var errorPositionChange = function (err) {
