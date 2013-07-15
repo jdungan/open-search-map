@@ -135,16 +135,21 @@ jQuery(document).ready(function() {
         });
     });
     
+    $('#layer_panel').on( "panelclose", function( event, ui ) {
+        $('.layer_item i').on('click',null);
+        $('.layer_item i').attr('class','icon-copy');
+    });
+
+    $( "#delete_layer_popup" ).on( "popupafterclose",function(){
+        $('#delete_layer_name').data('layer_id','');
+        $('#delete_layer_name').text( '' );
+    });
+
     $('button#submit_delete_layer').on('click',function(e){
         layer_id = $('#delete_layer_name').data('layer_id');
         search_data.layers.delete(layer_id)
         .done(function(){
-            $('.layer_item i').on('click',null);
-            $('#delete_layer_name').data('layer_id','');
-            $('#delete_layer_name').text( '' );
-            $('.layer_item i').attr('class','icon-copy');
-            refresh_layer_list();
-            $('#delete_layer_popup').popup( "close" );
+           $('#delete_layer_popup').popup( "close" );
         });
     });
 
