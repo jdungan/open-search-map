@@ -175,8 +175,8 @@ var googleMap= function (element) {
     $(element).on('show_user', function(){
         this_map.panTo(ttown.user.position);
         this_map.setZoom(18);
-        this_map.user.setAnimation(google.maps.Animation.BOUNCE);
-        window.setTimeout(function(){ this_map.user.setAnimation(null); }, 3000);
+        this_map.user.setAnimation(google.maps.Animation.DROP);
+        // window.setTimeout(function(){ this_map.user.setAnimation(null); }, 3000);
     });
     
     $(element).on('clear_map', function(){
