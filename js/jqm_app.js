@@ -282,10 +282,12 @@ $('#map_holder').on('stop_add_search',function(e,search_location){
     var userPositionChange = function(pos) {
         var crd = pos.coords;
         
+        window.setTimeout(function(){ 
+            currentLatlng = new google.maps.LatLng(crd.latitude, crd.longitude);          
+            ttown.user.setPosition(currentLatlng);
+            ttown.user_accuracy=crd.accuracy;        
+        }, 3000);
         
-        currentLatlng = new google.maps.LatLng(crd.latitude, crd.longitude);          
-        ttown.user.setPosition(currentLatlng);
-        ttown.user_accuracy=crd.accuracy;        
     };
      var errorPositionChange = function (err) {
       console.warn('ERROR(' + err.code + '): ' + err.message);
