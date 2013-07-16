@@ -218,8 +218,14 @@ var googleMap= function (element) {
     }); 
 
     var _toggled = _toggled || false;
-    $(element).on('toggle_map', function () {
-        console.log(_toggled);
+    this.map.toggled = function(){
+        if(_toggled)
+            return true; 
+        else 
+            return false;
+    };
+    $(element).on('toggle_map', function (e, response) {
+        console.log(response);
 
         if (!_toggled) {
             $(element).hide();
@@ -229,6 +235,9 @@ var googleMap= function (element) {
             $(element).show();
              _toggled = false;
         }
+
+        this_map.setCenter(new google.maps.LatLng(response.latitude, response.longitude));
+        this_map.setZoom(response.zoom);
     });
 
     google.maps.event.addListener(this.map, 'zoom_changed',function () {

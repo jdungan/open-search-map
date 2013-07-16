@@ -3,19 +3,40 @@ var mapboxMap = function (element) {
         _zoom = _zoom || 18;
 
     var m = new L.mapbox.map(element, 'jdungan.map-lc7x2770').setView(_latlng, _zoom);
+    var search_list = {};
 
     m.setCurrentPosition = function (pos) { _latlng = new L.LatLng(pos.latitude, pos.longitude); };
     m.getCurrentPosition = function () { return _latlng; };
 
     m.add_Search = function (response) {
-        var mbIcon = L.icon({
-            iconUrl: (response.extra.end_time && './img/search_end.svg') || './img/search_start.svg',
-            iconSize: [32, 32],
-            iconAnchor: [32, 32]
-        });
-        var mbMarker = L.marker([response.latitude, response.longitude], { icon: mbIcon }).addTo(this);
+        var key = response.place_id;
+        response.extra = response.extra || {};
+        var search_icon = (response.extra.end_time && "./img/search_end.svg") || "./img/search_start.svg";
+
+        if (!search_list[key]) {
+            var mbIcon = L.icon({
+                iconUrl: search_icon,
+                iconSize: [32, 32],
+                iconAnchor: [32, 32]
+            });
+            var mbMarker = L.marker([response.latitude, response.longitude], { icon: mbIcon }).addTo(this);
+        }
+
+        search_list[key] = mbMarker;
         return mbMarker;
     };
+
+    m.searchBounds = function () {
+        // Based on Google Maps API v3 
+        // Purpose: given an array of Latlng's return a LatlngBounds
+        // Why: This is helpful when using fitBounds, panTo
+        var newBounds = new L.LatLngBounds;
+
+        for (var m in search_list) {
+            newBounds.extend(search_list[m].position);
+        };
+        return newBounds;
+    }
 
     $('#' + element.attributes['id'].value).on('start_add_search', function () {
         $(this).css('cursor', 'url("http://s3.amazonaws.com/besport.com_images/status-pin.png")');
@@ -32,7 +53,12 @@ var mapboxMap = function (element) {
     $(element).on('display_search', function (e, response) {
         if ($('#' + element.attributes['id'].value).css('cursor') != 'pointer')
             $('#' + element.attributes['id'].value).css('cursor', 'pointer');
+        console.log(response);
         m.add_Search(response);
+    });
+
+    $(element).on('display_all', function (e, response) {
+
     });
 
     $(element).on('show_user', function () {
@@ -49,9 +75,14 @@ var mapboxMap = function (element) {
     });
 
     var _toggled = _toggled || true;
-    $(element).on('toggle_map', function () {
-        console.log(_toggled);
+    m.toggled = function () {
+        if (_toggled)
+            return true;
+        else
+            return false;
+    };
 
+    $(element).on('toggle_map', function (e, response) {
         if (!_toggled) {
             $(element).hide();
             _toggled = true;
@@ -61,6 +92,7 @@ var mapboxMap = function (element) {
             _toggled = false;
         }
 
+        m.setView(new L.LatLng(response.latitude, response.longitude), response.zoom);
         m.invalidateSize();
     });
 

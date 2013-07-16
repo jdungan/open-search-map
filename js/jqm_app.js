@@ -57,7 +57,20 @@ jQuery(document).ready(function () {
     });
 
     $('#btnToggleMap').on('click', function toggleMap() {
-        $('.search_map').trigger('toggle_map', {});
+        var view = {};
+        console.log(ttown.toggled());
+        if (!ttown.toggled()) {
+            view.latitude = ttown.getCenter().jb;
+            view.longitude = ttown.getCenter().kb;
+            view.zoom = ttown.getZoom();
+        }
+        else {
+            view.latitude = mbtown.getCenter().lat;
+            view.longitude = mbtown.getCenter().lng;
+            view.zoom = mbtown.getZoom();
+        }
+
+        $('.search_map').trigger('toggle_map', view);
         $('#mapPage').trigger('pageshow');
     });
 
