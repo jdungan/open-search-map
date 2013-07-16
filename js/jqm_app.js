@@ -280,13 +280,11 @@ $('#map_holder').on('stop_add_search',function(e,search_location){
 
 //watch position init 
     var userPositionChange = function(pos) {
-        var crd = pos.coords;
-        currentLatlng = new google.maps.LatLng(crd.latitude, crd.longitude);          
-        window.setTimeout(function(){ 
-            ttown.user.setPosition(currentLatlng);
-            ttown.user_accuracy=crd.accuracy;        
-        }, 30);
-        
+
+        new_position = {latitude:pos.coords.latitude, 
+                        longitude:pos.coords.longitude,
+                        accuracy:pos.coords.accuracy};          
+        $('.search_map').trigger('new_user_position',new_position);    
     };
      var errorPositionChange = function (err) {
       console.warn('ERROR(' + err.code + '): ' + err.message);
