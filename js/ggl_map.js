@@ -175,15 +175,21 @@ var googleMap= function (element) {
     $(element).on('show_user', function(){
         this_map.panTo(ttown.user.position);
         this_map.setZoom(18);
-        this_map.user.setAnimation(google.maps.Animation.BOUNCE);
-        window.setTimeout(function(){ this_map.user.setAnimation(null); }, 2000);
+        // this_map.user.animating_marker=true;
+        // 
+        // this_map.user.setAnimation(google.maps.Animation.BOUNCE);
+        // window.setTimeout(function(){ this_map.user.setAnimation(null);
+        //       this_map.user.animating_marker=false;
+        //      }, 2000);
     });
     
     $(element).on('new_user_position', function(e,response){
-        var user_loc = new google.maps.LatLng(response.latitude,response.longitude);
-        this_map.user.setPosition(user_loc);
-        this_map.user_accuracy=response.accuracy;        
-
+        // if (!this_map.user.animating_marker){
+            console.log(response);            
+            var user_loc = new google.maps.LatLng(response.latitude,response.longitude);
+            this_map.user.setPosition(user_loc);
+            this_map.user_accuracy=response.accuracy;        
+        // }
     });
     
     $(element).on('clear_map', function(){
