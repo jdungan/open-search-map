@@ -3,18 +3,10 @@ jQuery(document).ready(function() {
 //init the map
       
       var map_types={};
-      var mb_options = {
-         center: [36.1539, -95.9925],
-         zoomLevel: 18,
-         mapElement: document.getElementById("mapbox_content")
-      };
-      // var ttown = ttown || openMap;
-
-      // ttown= new googleMap(document.getElementById("map_content"));
 
       ttown= new googleMap(document.getElementById('map_content'));
       
-      mbtown = new mapboxMap().map(mb_options);
+      mbtown = new mapboxMap($('#mapbox_content')[0]);
       
       $('#mapbox_content').hide();
 
@@ -25,7 +17,7 @@ jQuery(document).ready(function() {
 
 //init socket
    var socket = io.connect('http://206.214.164.229');
-   // var socket = io.connect('http://unleashprometheus.com:8000'); 
+   
    socket.on('message', function (data) {
        console.log(data);
        $.event.trigger(data.message.eventType,data.message.payload);      
@@ -83,6 +75,9 @@ jQuery(document).ready(function() {
         google.maps.event.trigger(ttown, 'resize');
     });
 
+    $(window).on('mbCenterChanged', function(){
+        this.map.setCenter();
+    });        
 // load layer panel
     search_data.layers.each(function(layer){
         $('#layer_list').append( 
@@ -138,7 +133,6 @@ $('#map_holder').on('stop_add_search',function(e,search_location){
     $("#addSearch").on('click',function(){
         $( "#menu_panel" ).panel( "close" );
         $('.search_map').trigger('start_add_search');
-            
     });
 
     $('a#viewSearches').click(function(){

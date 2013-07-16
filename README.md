@@ -33,7 +33,7 @@ Contruct  e.g  coolmap = new coolMap(document.getElementById('map_content'))
 Listen for these events:
     
         start_add_search: adds onetime listenter for next click on map, 
-        triggers a 'stop_add_search' event and includes an object with
+        triggers a 'stop_add_search' event that includes an object with
         latitude and longitude e.g.  {latitude:00.00,longitude:00.00}
         
         show_user: center map on user location
