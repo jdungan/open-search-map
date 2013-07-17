@@ -282,6 +282,7 @@ var googleMap= function (element) {
         };
     });
     
+    
     this.map.user = user_marker;
     this.map.user.accuracy=user_accuracy_circle.radius;
     this.map.addSearch = addSearch;      

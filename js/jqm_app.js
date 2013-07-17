@@ -17,7 +17,7 @@ jQuery(document).ready(function () {
     //init socket
     var socket = io.connect('http://206.214.164.229');
 
-   socket.on('message', function (data) {
+    socket.on('message', function (data) {
        $.event.trigger(data.message.eventType,data.message.payload);      
     });  
 
@@ -59,8 +59,9 @@ jQuery(document).ready(function () {
         var view = {};
         console.log(ttown.toggled());
         if (!ttown.toggled()) {
-            view.latitude = ttown.getCenter().jb;
-            view.longitude = ttown.getCenter().kb;
+            var this_center=ttown.getCenter();
+            view.latitude = this_center.lat();
+            view.longitude = this_center.lng();
             view.zoom = ttown.getZoom();
         }
         else {
@@ -165,6 +166,7 @@ jQuery(document).ready(function () {
             radius: 100,
             extra: { start_time: Date() }
         };
+    });
 
 //map events
     $('#map_holder').on('stop_add_search',function(e,search_location){
@@ -284,11 +286,11 @@ jQuery(document).ready(function () {
     geoloqi.onLoginError = function (error) {
         console.log("You are not a user!");
         $('#linkDialog').click();
-    }
+    };
 
 //watch position init 
     var userPositionChange = function(pos) {
-
+        crd=pos.coords;
         new_position = {latitude:pos.coords.latitude, 
                         longitude:pos.coords.longitude,
                         accuracy:pos.coords.accuracy};          
