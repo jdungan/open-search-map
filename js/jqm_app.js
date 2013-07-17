@@ -43,18 +43,17 @@ jQuery(document).ready(function() {
     });
 
 //client events
-    $(document).on("endSearch_click", function(e,marker_key){
-        search_data.place.update(marker_key,
+    $(document).on("end_search_request", function(e,marker){
+        search_data.place.update(marker.search_key,
             {extra: {end_time:Date()}})
         .done(function(response){
-            $.event.trigger("endSearch",response);
+            $('.search_map').trigger("end_search",response);
             socket.emit('message',{eventType: 'endSearch', payload: response});                        
         });        
     });        
 
-    $(document).on("markerMove", function(e,marker_key){
-        marker=ttown.searches[marker_key];
-        search_data.place.update(marker_key,
+    $(document).on("markerMove", function(e,marker){
+        search_data.place.update(marker.search_key,
             {latitude:  marker.position.lat(),
             longitude: marker.position.lng()})
         .done(function(response){
@@ -156,7 +155,6 @@ jQuery(document).ready(function() {
 
 //map events
 $('#map_holder').on('stop_add_search',function(e,search_location){
-    console.log('on stop_add_search')
     var geoOptions = {
           layer_id: $('li#current_layer').data('current-layer'),
           latitude:search_location.latitude,

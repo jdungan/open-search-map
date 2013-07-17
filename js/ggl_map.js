@@ -72,8 +72,7 @@ var googleMap= function (element) {
              var endButton = document.getElementById(marker.search_key+'_button');
              if(endButton){
                  google.maps.event.addDomListener(endButton,'click', function(event){
-                     event.preventDefault();
-                     $.event.trigger("endSearch_click",marker.search_key);
+                     $.event.trigger("end_search_request",marker);
                      infowindow.close();
                  });
              }
@@ -89,7 +88,7 @@ var googleMap= function (element) {
          );
 
          google.maps.event.addListener(marker, 'dragend',function () {
-              $.event.trigger("markerMove",marker.search_key);
+              $.event.trigger("markerMove",marker);
              }
          );
          
@@ -173,7 +172,7 @@ var googleMap= function (element) {
     
 // listenters    
     $(element).on('show_user', function(){
-        this_map.panTo(ttown.user.position);
+        this_map.panTo(this_map.user.position);
         this_map.setZoom(18);
         // this_map.user.animating_marker=true;
         // 
@@ -184,8 +183,7 @@ var googleMap= function (element) {
     });
     
     $(element).on('new_user_position', function(e,response){
-        // if (!this_map.user.animating_marker){
-            console.log(response);            
+        // if (!this_map.user.animating_marker){         
             var user_loc = new google.maps.LatLng(response.latitude,response.longitude);
             this_map.user.setPosition(user_loc);
             this_map.user_accuracy=response.accuracy;        
@@ -204,20 +202,24 @@ var googleMap= function (element) {
     });
     
     $(element).on('display_all', function(e,response){
-        this_map.fitBounds(this_map.searchBounds());                
+        this_map.fitBounds(searchBounds());                
     });
 
     $(element).on('end_search', function(e,response){
-        marker=this_map.searches[response.place_id];
-        marker.icon.url="./img/search_end.svg";
-        marker.setMap(this_map)// force icon to re-render;
-        marker.search_window.setSearchWindowContent(response.extra)        
+        marker=search_list[response.place_id];
+        if(marker){
+            marker.icon.url="./img/search_end.svg";
+            marker.setMap(this_map)// force icon to re-render;
+            marker.search_window.setSearchWindowContent(response.extra)        
+        }
     });
     
     $(element).on('move_search', function(e,response){
-        marker=this_map.searches[response.place_id];
-        var search_loc = new google.maps.LatLng(response.latitude,response.longitude);
-        marker.setPosition(search_loc);                      
+        marker=search_list[response.place_id];
+        if (marker){
+            var search_loc = new google.maps.LatLng(response.latitude,response.longitude);
+            marker.setPosition(search_loc);                      
+        }
     });
     
     
@@ -249,8 +251,6 @@ var googleMap= function (element) {
     
     this.map.user = user_marker;
     this.map.user.accuracy=user_accuracy_circle.radius;
-    this.map.searches=search_list;
-    this.map.searchBounds=searchBounds;
     this.map.addSearch = addSearch;      
     this_map=this.map;
     return this.map;
