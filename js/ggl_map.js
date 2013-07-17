@@ -221,10 +221,43 @@ var googleMap= function (element) {
             marker.setPosition(search_loc);                      
         }
     });
-    
-    
+
 //end map object listeners
     
+
+    // $(element).on('begin_tracking', function(e,response){
+    //     var currentLatlng = new google.maps.LatLng(response.latitude, response.longitude);
+    //     this_map.user.setPosition(currentLatlng);
+    //     this_map.user_accuracy = response.accuracy;       
+    //     this_map.panTo(ttown.user.position);
+    //     this_map.setZoom(18);
+    //     this_map.user.setAnimation(google.maps.Animation.BOUNCE);
+    //     window.setTimeout(function(){ this_map.user.setAnimation(null); }, 3000);              
+    // }); 
+
+    // var _toggled = _toggled || false;
+    // this.map.toggled = function(){
+    //     if(_toggled)
+    //         return true; 
+    //     else 
+    //         return false;
+    // };
+    // $(element).on('toggle_map', function (e, response) {
+    //     console.log(response);
+    // 
+    //     if (!_toggled) {
+    //         $(element).hide();
+    //         _toggled = true;
+    //     }
+    //     else {
+    //         $(element).show();
+    //          _toggled = false;
+    //     }
+    // 
+    //     this_map.setCenter(new google.maps.LatLng(response.latitude, response.longitude));
+    //     this_map.setZoom(response.zoom);
+    // });
+
     google.maps.event.addListener(this.map, 'zoom_changed',function () {
         // scaledSize: new google.maps.Size(64,64,'px','px')
         var setzoom = function(z){

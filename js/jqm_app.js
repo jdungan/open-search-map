@@ -1,82 +1,80 @@
-jQuery(document).ready(function() {
-    
-//init the maps
-      
-      // var map_types={};
-      // var mb_options = {
-      //    center: [36.1539, -95.9925],
-      //    zoomLevel: 18,
-      //    mapElement: document.getElementById("mapbox_content")
-      // };
+jQuery(document).ready(function () {
 
-      ttown= new googleMap(document.getElementById('map_content'));
+    //init the map
 
-      // mbtown = new mapboxMap().map(mb_options);
-      
-      // $('#mapbox_content').hide();
+    var map_types = {};
+
+    ttown = new googleMap(document.getElementById('map_content'));
+
+    mbtown = new mapboxMap($('#mapbox_content')[0]);
+
+    $('#mapbox_content').hide();
 
 
-// init search data
+    // init search data
     var search_data = search_data || new search_db();
 
+    //init socket
+    var socket = io.connect('http://206.214.164.229');
 
-//init socket
-   var socket = io.connect('http://206.214.164.229');
-   // var socket = io.connect('http://unleashprometheus.com:8000'); 
    socket.on('message', function (data) {
-       console.log(data);
-       // $.event.trigger(data.eventType,data.payload);      
        $.event.trigger(data.message.eventType,data.message.payload);      
     });  
 
-//socket events
-    $(document).on("newSearch", function(e,response){
-        $('.search_map').trigger('display_search',[response]); 
+    //socket events
+    $(document).on("newSearch", function (e, response) {
+        $('.search_map').trigger('display_search', [response]);
     });
 
-    $(document).on("endSearch", function(e,response){
-        $('.search_map').trigger('end_search',[response]); 
+    $(document).on("endSearch", function (e, response) {
+        $('.search_map').trigger('end_search', [response]);
     });
 
-    $(document).on("moveSearch", function(e,response){
-        $('.search_map').trigger('move_search',[response]); 
+    $(document).on("moveSearch", function (e, response) {
+        $('.search_map').trigger('move_search', [response]);
     });
 
-//client events
-    $(document).on("end_search_request", function(e,marker){
-        search_data.place.update(marker.search_key,
-            {extra: {end_time:Date()}})
-        .done(function(response){
-            $('.search_map').trigger("end_search",response);
-            socket.emit('message',{eventType: 'endSearch', payload: response});                        
-        });        
-    });        
-
-    $(document).on("markerMove", function(e,marker){
-        search_data.place.update(marker.search_key,
-            {latitude:  marker.position.lat(),
-            longitude: marker.position.lng()})
-        .done(function(response){
-            socket.emit('message',{eventType: 'moveSearch', payload: response});                        
-        });        
-    });
-    
-    $('#btnToggleMap').on('click',function toggleMap(){
-        // toggleMap.map_type=toggleMap.map_type||'google';
-        // if (toggleMap.map_type==='google'){
-        //     $('#map_content').hide();
-        //     $('#mapbox_content').show();
-        //     toggleMap.map_type='mapbox'
-        // } else {
-        //     $('#map_content').show();
-        //     $('#mapbox_content').hide();        
-        //     toggleMap.map_type='google'
-        // }
-        // $('#mapPage').trigger('pageshow');        
+    //client events
+    $(document).on("endSearch_click", function (e, marker_key) {
+        search_data.place.update(marker_key,
+            { extra: { end_time: Date()} })
+        .done(function (response) {
+            $.event.trigger("endSearch", response);
+            socket.emit('message', { eventType: 'endSearch', payload: response });
+        });
     });
 
-//jqm page events 
-    $("#mapPage").on("pageshow",function(){
+    $(document).on("markerMove", function (e, marker_key) {
+        marker = ttown.searches[marker_key];
+        search_data.place.update(marker_key,
+            { latitude: marker.position.lat(),
+                longitude: marker.position.lng()
+            })
+        .done(function (response) {
+            socket.emit('message', { eventType: 'moveSearch', payload: response });
+        });
+    });
+
+    $('#btnToggleMap').on('click', function toggleMap() {
+        var view = {};
+        console.log(ttown.toggled());
+        if (!ttown.toggled()) {
+            view.latitude = ttown.getCenter().jb;
+            view.longitude = ttown.getCenter().kb;
+            view.zoom = ttown.getZoom();
+        }
+        else {
+            view.latitude = mbtown.getCenter().lat;
+            view.longitude = mbtown.getCenter().lng;
+            view.zoom = mbtown.getZoom();
+        }
+
+        $('.search_map').trigger('toggle_map', view);
+        $('#mapPage').trigger('pageshow');
+    });
+
+    //jqm page events 
+    $("#mapPage").on("pageshow", function () {
         google.maps.event.trigger(ttown, 'resize');
     });
 
@@ -105,11 +103,16 @@ jQuery(document).ready(function() {
             });
     };
 
-    function displayLayer(layer_id){
-        search_data.places.each({layer_id:layer_id},function(response){
-            $('.search_map').trigger('display_search',[response]);            
+    $(window).on('mbCenterChanged', function () {
+        this.map.setCenter();
+    });
+
+
+    function displayLayer(layer_id) {
+        search_data.places.each({ layer_id: layer_id }, function (response) {
+            $('.search_map').trigger('display_search', [response]);
         })
-        .done(function(){
+        .done(function () {
             $('.search_map').trigger('display_all');
         });   
     };
@@ -152,22 +155,32 @@ jQuery(document).ready(function() {
         });
     });
 
+    //map events
+    $('#map_holder').on('stop_add_search', function (e, search_location) {
+        console.log('on stop_add_search')
+        var geoOptions = {
+            layer_id: $('li#current_layer').data('current-layer'),
+            latitude: search_location.latitude,
+            longitude: search_location.longitude,
+            radius: 100,
+            extra: { start_time: Date() }
+        };
 
 //map events
-$('#map_holder').on('stop_add_search',function(e,search_location){
-    var geoOptions = {
-          layer_id: $('li#current_layer').data('current-layer'),
-          latitude:search_location.latitude,
-          longitude:search_location.longitude,
-          radius:100,
-          extra:{start_time:Date()} 
-    };
+    $('#map_holder').on('stop_add_search',function(e,search_location){
+        var geoOptions = {
+              layer_id: $('li#current_layer').data('current-layer'),
+              latitude:search_location.latitude,
+              longitude:search_location.longitude,
+              radius:100,
+              extra:{start_time:Date()} 
+        };
 
-    search_data.place.add(geoOptions).done(function(response){
-        $('.search_map').trigger('display_search',[response]);  
-        socket.emit('message', {eventType: 'newSearch', payload: response});
-    });
-})
+        search_data.place.add(geoOptions).done(function(response){
+            $('.search_map').trigger('display_search',[response]);  
+            socket.emit('message', {eventType: 'newSearch', payload: response});
+        });
+    })
 
 
 //general app events
@@ -182,13 +195,11 @@ $('#map_holder').on('stop_add_search',function(e,search_location){
 
 //panel menu choices
 
-    $("#addSearch").on('click',function(){
-        $('.search_map').trigger('start_add_search');            
-    });
+    //panel menu choices
 
-    $('a#viewSearches').click(function(){
+    $('a#viewSearches').click(function () {
         $('.search_map').trigger('display_all');
-    });    
+    });
 
     $('a#viewUser').click(function(){
          $('.search_map').trigger("show_user");
@@ -203,58 +214,54 @@ $('#map_holder').on('stop_add_search',function(e,search_location){
     function newUser(auth){
         this_auth=auth;
         search_data.user.create(
-            {   username:auth.username,
-                email:auth.username,
-                password:auth.password
+            { username: auth.username,
+                email: auth.username,
+                password: auth.password
             })
-        .done(function(response){
-            $(this).data('register-user',false);
+        .done(function (response) {
+            $(this).data('register-user', false);
             search_data.login(this_auth);
         })
-        .fail(function(error){
-            $('#signin_msg').text(error.error_description);   
+        .fail(function (error) {
+            $('#signin_msg').text(error.error_description);
         });
-        
+
     };
 
-    $('#signin_page').on('pagebeforeshow',function(){
-        var register_user =$(this).data('register-user');
-        
+    $('#signin_page').on('pagebeforeshow', function () {
+        var register_user = $(this).data('register-user');
+
         retype_type = register_user && "password" || "hidden";
         signin_title = register_user && "Registration" || "Sign In";
         signin_btn_text = register_user && "Sign Me Up!" || "Sign In";
-        
-        
-        $('#retypePassword').attr('type',retype_type);
-        $('#signin_title').text(signin_title)
-        $('button#signin').text(signin_btn_text).button( "refresh" );
 
-        if (register_user){
+
+        $('#retypePassword').attr('type', retype_type);
+        $('#signin_title').text(signin_title)
+        $('button#signin').text(signin_btn_text).button("refresh");
+
+        if (register_user) {
             $('#retypePassword').parent().show();
         } else {
             $('#retypePassword').parent().hide();
         };
-        $(this).trigger("create");        
+        $(this).trigger("create");
     });
 
-    $('button#signin').click(function(e){        
-        var auth={}; auth.username = $('input#email').val(),
+    $('button#signin').click(function (e) {
+        var auth = {}; auth.username = $('input#email').val(),
         auth.password = $('input#password').val();
-        $('#signin_msg').text('');       
-          if ($('#retypePassword').attr('type')==='password'){
-              auth.retype=$('input#retypePassword').val();
-              if (auth.password!=auth.retype){
-                  $('#signin_msg').text('Passwords do not match')                  
-              } else {
+        $('#signin_msg').text('');
+        if ($('#retypePassword').attr('type') === 'password') {
+            auth.retype = $('input#retypePassword').val();
+            if (auth.password != auth.retype) {
+                $('#signin_msg').text('Passwords do not match')
+            } else {
                 newUser(auth);
-              }
-          } else {
-              search_data.login(auth);
-          }          
-    });    
-
-    $('a#btnStartRegister').on('click',function(){
-        $('#signin_page').data('register-user',true);
+            }
+        } else {
+            search_data.login(auth);
+        }
     });
 
     $('button#signin_quit').on('click',function(){
@@ -264,16 +271,19 @@ $('#map_holder').on('stop_add_search',function(e,search_location){
         $('#signin_page').trigger("create");        
     });    
     
+    $('a#btnStartRegister').on('click', function () {
+        $('#signin_page').data('register-user', true);
+    });
 
-    geoloqi.onAuthorize = function(response, error){
-      console.log("You are a user!");
-      
-      $.mobile.changePage('#mapPage');
+
+    geoloqi.onAuthorize = function (response, error) {
+        console.log("You are a user!");
+        $.mobile.changePage('#mapPage');
     };
-    
-    geoloqi.onLoginError = function(error){
-      console.log("You are not a user!");
-      $('#linkDialog').click();
+
+    geoloqi.onLoginError = function (error) {
+        console.log("You are not a user!");
+        $('#linkDialog').click();
     }
 
 //watch position init 
@@ -282,20 +292,20 @@ $('#map_holder').on('stop_add_search',function(e,search_location){
         new_position = {latitude:pos.coords.latitude, 
                         longitude:pos.coords.longitude,
                         accuracy:pos.coords.accuracy};          
+
+//TODO: STANDARDIZE THESE EVENTS
         $('.search_map').trigger('new_user_position',new_position);    
+        $('.search_map').trigger('begin_tracking', crd);
     };
-     var errorPositionChange = function (err) {
-      console.warn('ERROR(' + err.code + '): ' + err.message);
+
+    var errorPositionChange = function (err) {
+        console.warn('ERROR(' + err.code + '): ' + err.message);
     };
-    
-    posOptions = {enableHighAccuracy: true}; 
-    distWatchID = navigator.geolocation.watchPosition(userPositionChange, errorPositionChange, posOptions);       
-    
- 
 
 // GO!
     refresh_layer_list();
-    // $.mobile.changePage('#signin_page');
+    posOptions = { enableHighAccuracy: true };
+    distWatchID = navigator.geolocation.watchPosition(userPositionChange, errorPositionChange, posOptions);
     $('#mapPage').trigger('pageshow');
 });
 
