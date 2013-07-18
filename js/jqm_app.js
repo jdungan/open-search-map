@@ -2,14 +2,23 @@ jQuery(document).ready(function () {
 
     //init the map
 
-    var map_types = {};
+    var map_list = {
+        list:[],
+        first: function(){ 
+            return this.list[0];
+        },
+        next:  function(){
+            n=this.list.shift();
+            this.list.push(n);
+            return n;
+        }
+    };
+    
+    map_list.list.push(new googleMap(document.getElementById('map_content')));
 
-    ttown = new googleMap(document.getElementById('map_content'));
+    map_list.list.push(new mapboxMap($('#mapbox_content')[0]));
 
-    mbtown = new mapboxMap($('#mapbox_content')[0]);
-
-    $('#mapbox_content').hide();
-
+    map_list.first().show_div();
 
     // init search data
     var search_data = search_data || new search_db();
@@ -56,27 +65,41 @@ jQuery(document).ready(function () {
     });
 
     $('#btnToggleMap').on('click', function toggleMap() {
-        var view = {};
-        console.log(ttown.toggled());
-        if (!ttown.toggled()) {
-            var this_center=ttown.getCenter();
-            view.latitude = this_center.lat();
-            view.longitude = this_center.lng();
-            view.zoom = ttown.getZoom();
-        }
-        else {
-            view.latitude = mbtown.getCenter().lat;
-            view.longitude = mbtown.getCenter().lng;
-            view.zoom = mbtown.getZoom();
-        }
+        
 
-        $('.search_map').trigger('toggle_map', view);
-        $('#mapPage').trigger('pageshow');
+        current_map=map_list.next();
+        next_map=map_list.first();
+        next_map.zoom_frame(current_map.zoom_frame());
+        current_map.hide_div()
+        next_map.show_div()
+
+
+
+        
+        // 
+        // var view = {};
+        // console.log(ttown.toggled());
+        // if (!ttown.toggled()) {
+        //     var this_center=ttown.getCenter();
+        //     view.latitude = this_center.lat();
+        //     view.longitude = this_center.lng();
+        //     view.zoom = ttown.getZoom();
+        // }
+        // else {
+        //     view.latitude = mbtown.getCenter().lat;
+        //     view.longitude = mbtown.getCenter().lng;
+        //     view.zoom = mbtown.getZoom();
+        // }
+
+        // $('.search_map').trigger('toggle_map', view);
+        // $('#mapPage').trigger('pageshow');
     });
 
     //jqm page events 
     $("#mapPage").on("pageshow", function () {
-        google.maps.event.trigger(ttown, 'resize');
+        
+        $('.search_map').trigger('page_resize');
+        
     });
 
 // layer panel

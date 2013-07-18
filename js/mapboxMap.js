@@ -74,27 +74,56 @@ var mapboxMap = function (element) {
         var marker = new L.Marker(_latlng, new L.Icon.Default).addTo(m);
     });
 
-    var _toggled = _toggled || true;
-    m.toggled = function () {
-        if (_toggled)
-            return true;
-        else
-            return false;
-    };
-
-    $(element).on('toggle_map', function (e, response) {
-        if (!_toggled) {
-            $(element).hide();
-            _toggled = true;
-        }
-        else {
-            $(element).show();
-            _toggled = false;
-        }
-
-        m.setView(new L.LatLng(response.latitude, response.longitude), response.zoom);
+    $(element).on('page_resize', function(e,response){
         m.invalidateSize();
     });
+
+
+    m.zoom_frame = function (frame){
+      if(frame){
+          m.setView(new L.LatLng(frame.latitude, frame.longitude), frame.zoom);
+          m.invalidateSize();
+      } else{
+          frame={};
+          this_center=m.getCenter();
+          frame.latitude=this_center.lat;
+          frame.longitude=this_center.lng;
+          frame.zoom = m.getZoom();
+          return frame;
+      }
+    };
+
+    m.show_div = function (){
+        $(m.getContainer()).show();
+        m.invalidateSize();
+    };
+    
+    m.hide_div = function(){
+        $(m.getContainer()).hide();          
+    };
+    
+    // var _toggled = _toggled || true;
+    // m.toggled = function () {
+    //     if (_toggled)
+    //         return true;
+    //     else
+    //         return false;
+    // };
+
+
+    // $(element).on('toggle_map', function (e, response) {
+    //     if (!_toggled) {
+    //         $(element).hide();
+    //         _toggled = true;
+    //     }
+    //     else {
+    //         $(element).show();
+    //         _toggled = false;
+    //     }
+    // 
+    //     m.setView(new L.LatLng(response.latitude, response.longitude), response.zoom);
+    //     m.invalidateSize();
+    // });
 
     return m;
 

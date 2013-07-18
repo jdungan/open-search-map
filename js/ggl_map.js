@@ -125,8 +125,29 @@ var googleMap= function (element) {
             marker.search_window= set_search_click(marker, key, response.extra);
             search_list[key]=marker;
         }
+    },
+    zoom_frame = function (frame){
+      if(frame){
+          this_map.setCenter(new google.maps.LatLng(frame.latitude, frame.longitude));
+          this_map.setZoom(frame.zoom);          
+      } else{
+          frame={};
+          this_center=this_map.getCenter();
+          frame.latitude=this_center.lat();
+          frame.longitude=this_center.lng();
+          frame.zoom = this_map.getZoom();
+          return frame;
+      }
+    },
+    show_div = function (){
+      $(this_map.getDiv()).show();
+      google.maps.event.trigger(this_map, 'resize');  
+    }
+
+    hide_div = function (){
+      $(this_map.getDiv()).hide();  
     };
-        
+            
     if (element !== map_element){
         map_element = element;
         google.maps.visualRefresh=true;
@@ -169,6 +190,7 @@ var googleMap= function (element) {
          user_accuracy_circle.bindTo('center', user_marker, 'position');        
 
     }
+    
     
 // listenters    
     $(element).on('show_user', function(){
@@ -222,6 +244,13 @@ var googleMap= function (element) {
         }
     });
 
+    $(element).on('page_resize', function(e,response){
+        google.maps.event.trigger(this_map, 'resize');
+    });
+
+
+
+
 //end map object listeners
     
 
@@ -254,8 +283,6 @@ var googleMap= function (element) {
     //          _toggled = false;
     //     }
     // 
-    //     this_map.setCenter(new google.maps.LatLng(response.latitude, response.longitude));
-    //     this_map.setZoom(response.zoom);
     // });
 
     google.maps.event.addListener(this.map, 'zoom_changed',function () {
@@ -283,6 +310,10 @@ var googleMap= function (element) {
     });
     
     
+    
+    this.map.zoom_frame = zoom_frame;
+    this.map.show_div = show_div;
+    this.map.hide_div = hide_div;
     this.map.user = user_marker;
     this.map.user.accuracy=user_accuracy_circle.radius;
     this.map.addSearch = addSearch;      
