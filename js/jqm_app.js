@@ -16,8 +16,9 @@ jQuery(document).ready(function () {
     
     map_list.list.push(new googleMap(document.getElementById('map_content')));
 
-    map_list.list.push(new mapboxMap($('#mapbox_content')[0]));
-
+    map_list.list.push(new mapboxMap($('#mapbox_content')[0],'jdungan.map-lc7x2770'));
+    
+    
     map_list.first().show_div();
 
     // init search data
@@ -77,6 +78,8 @@ jQuery(document).ready(function () {
         $('.search_map').trigger('page_resize');
     });
 
+
+
 // layer panel
 
     function refresh_layer_list() {
@@ -101,6 +104,10 @@ jQuery(document).ready(function () {
                 });
             });
     };
+
+    // $(window).on('mbCenterChanged', function () {
+    //     this.map.setCenter();
+    // });
 
 
     function displayLayer(layer_id) {
@@ -150,16 +157,6 @@ jQuery(document).ready(function () {
         });
     });
 
-    //map events
-    $('#map_holder').on('stop_add_search', function (e, search_location) {
-        var geoOptions = {
-            layer_id: $('li#current_layer').data('current-layer'),
-            latitude: search_location.latitude,
-            longitude: search_location.longitude,
-            radius: 100,
-            extra: { start_time: Date() }
-        };
-    });
 
 //map events
     $('#map_holder').on('stop_add_search',function(e,search_location){
@@ -270,7 +267,6 @@ jQuery(document).ready(function () {
         $('#signin_page').data('register-user', true);
     });
 
-
     geoloqi.onAuthorize = function (response, error) {
         console.log("You are a user!");
         $.mobile.changePage('#mapPage');
@@ -283,14 +279,13 @@ jQuery(document).ready(function () {
 
 //watch position init 
     var userPositionChange = function(pos) {
-        crd=pos.coords;
-        new_position = {latitude:pos.coords.latitude, 
-                        longitude:pos.coords.longitude,
-                        accuracy:pos.coords.accuracy};          
+        new_position = {latitude  : pos.coords.latitude, 
+                        longitude : pos.coords.longitude,
+                        accuracy  : pos.coords.accuracy};          
 
-//TODO: STANDARDIZE THESE EVENTS
+        new_position.accuracy = new_position.accuracy > 90 && 90 || new_position.accuracy;
+        console.log(new_position);
         $('.search_map').trigger('new_user_position',new_position);    
-        // $('.search_map').trigger('begin_tracking', crd);
     };
 
     var errorPositionChange = function (err) {

@@ -151,23 +151,9 @@ var googleMap= function (element) {
         map_element = element;
         google.maps.visualRefresh=true;
         this.map = new google.maps.Map(element, searchMapOptions); 
-        
-        
-        $(element).on('start_add_search', function(){
-            this_map.setOptions({ draggableCursor : "url(http://s3.amazonaws.com/besport.com_images/status-pin.png) 64 64, auto" })
-            google.maps.event.addListenerOnce(this_map,'click', function(e){
-            
-               this_map.setOptions({ draggableCursor : "" })
-               search_location={
-                   latitude:e.latLng.lat(),
-                   longitude:e.latLng.lng()
-               };
-               $('#map_holder').trigger("stop_add_search",[search_location])
-            });
-        });
 
 
-       var user_marker = user_marker || new google.maps.Marker({
+       this.map.user_marker = new google.maps.Marker({
             map: this.map,
             visible:true,
             icon:{
@@ -177,7 +163,7 @@ var googleMap= function (element) {
             }
         });
         // Add circle overlay and bind to marker
-         var user_accuracy_circle = new google.maps.Circle({
+         this.map.user_accuracy_circle = new google.maps.Circle({
            map: this.map,
            clickable:false,
            radius: 10,  
@@ -185,14 +171,28 @@ var googleMap= function (element) {
            fillOpacity: 0.3,
            strokeOpacity:0
          });
-         user_accuracy_circle.bindTo('center', user_marker, 'position');        
+         
+         this.map.user_accuracy_circle.bindTo('center', this.map.user_marker, 'position');        
 
     }
     
     
-// listenters    
+// listenters   
+    $(element).on('start_add_search', function(){
+        this_map.setOptions({ draggableCursor : "url(http://s3.amazonaws.com/besport.com_images/status-pin.png) 64 64, auto" })
+        google.maps.event.addListenerOnce(this_map,'click', function(e){
+    
+           this_map.setOptions({ draggableCursor : "" })
+           search_location={
+               latitude:e.latLng.lat(),
+               longitude:e.latLng.lng()
+           };
+           $('#map_holder').trigger("stop_add_search",[search_location])
+        });
+    });
+ 
     $(element).on('show_user', function(){
-        this_map.panTo(this_map.user.position);
+        this_map.panTo(this_map.user_marker.position);
         this_map.setZoom(18);
         // this_map.user.animating_marker=true;
         // 
@@ -202,11 +202,11 @@ var googleMap= function (element) {
         //      }, 2000);
     });
     
-    $(element).on('new_user_position', function(e,response){
+    $(element).on('new_user_position', function(e,position){
         // if (!this_map.user.animating_marker){         
-            var user_loc = new google.maps.LatLng(response.latitude,response.longitude);
-            this_map.user.setPosition(user_loc);
-            this_map.user_accuracy=response.accuracy;        
+            var user_loc = new google.maps.LatLng(position.latitude,position.longitude);
+            this_map.user_marker.setPosition(user_loc);
+            this_map.user_accuracy_circle.setRadius(position.accuracy);        
         // }
     });
     
@@ -243,53 +243,19 @@ var googleMap= function (element) {
     });
 
     $(element).on('page_resize', function(e,response){
-        google.maps.event.trigger(this_map, 'resize');
+            google.maps.event.trigger(this_map, 'resize');            
     });
-
-
 
 
 //end map object listeners
     
 
-    // $(element).on('begin_tracking', function(e,response){
-    //     var currentLatlng = new google.maps.LatLng(response.latitude, response.longitude);
-    //     this_map.user.setPosition(currentLatlng);
-    //     this_map.user_accuracy = response.accuracy;       
-    //     this_map.panTo(ttown.user.position);
-    //     this_map.setZoom(18);
-    //     this_map.user.setAnimation(google.maps.Animation.BOUNCE);
-    //     window.setTimeout(function(){ this_map.user.setAnimation(null); }, 3000);              
-    // }); 
-
-    // var _toggled = _toggled || false;
-    // this.map.toggled = function(){
-    //     if(_toggled)
-    //         return true; 
-    //     else 
-    //         return false;
-    // };
-    // $(element).on('toggle_map', function (e, response) {
-    //     console.log(response);
-    // 
-    //     if (!_toggled) {
-    //         $(element).hide();
-    //         _toggled = true;
-    //     }
-    //     else {
-    //         $(element).show();
-    //          _toggled = false;
-    //     }
-    // 
-    // });
-
     google.maps.event.addListener(this.map, 'zoom_changed',function () {
-        // scaledSize: new google.maps.Size(64,64,'px','px')
         var setzoom = function(z){
             setzoom.answers= setzoom.answers || {};
             if (!setzoom.answers[z]){
-                var ns=Math.floor(64*(z/21));
-                var na=Math.floor(32*(z/21));
+                var ns=Math.floor(64*(z/22));
+                var na=Math.floor(32*(z/22));
                 setzoom.answers[z] ={
                     scale  : new google.maps.Size(ns,ns,'px','px'),
                     anchor : new google.maps.Point(na,na)
@@ -312,8 +278,6 @@ var googleMap= function (element) {
     this.map.zoom_frame = zoom_frame;
     this.map.show_div = show_div;
     this.map.hide_div = hide_div;
-    this.map.user = user_marker;
-    this.map.user.accuracy=user_accuracy_circle.radius;
     this.map.addSearch = addSearch;      
     this_map=this.map;
     return this.map;

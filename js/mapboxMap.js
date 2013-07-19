@@ -1,9 +1,30 @@
-var mapboxMap = function (element) {
+var mapboxMap = function (element,mapbox_url) {
     var _latlng = _latlng || new L.LatLng(36.1539, -95.9925),
-        _zoom = _zoom || 18;
-
-    var m = new L.mapbox.map(element, 'jdungan.map-lc7x2770').setView(_latlng, _zoom);
+        _zoom = _zoom || 18,map_element;
     var search_list = {};
+
+    if (element !== map_element){
+
+        var m = new L.mapbox.map(element,mapbox_url ).setView(_latlng, _zoom);
+
+        m.map_element = element;
+        
+        m.user_marker = new L.Marker(_latlng, 
+            {icon: new L.icon({
+                iconAnchor: [32,32],
+                iconSize : [64,64],
+                iconUrl : "./img/searcher.svg"
+                })
+            }).addTo(m);
+
+        m.user_accuracy_circle = new L.circle(_latlng,100,
+             {
+             fillColor: 'aqua',
+             fillOpacity: 0.3,
+             opacity:0
+            }).addTo(m);
+         
+    }
 
     m.setCurrentPosition = function (pos) { _latlng = new L.LatLng(pos.latitude, pos.longitude); };
     m.getCurrentPosition = function () { return _latlng; };
@@ -27,13 +48,11 @@ var mapboxMap = function (element) {
     };
 
     m.searchBounds = function () {
-        // Based on Google Maps API v3 
-        // Purpose: given an array of Latlng's return a LatlngBounds
-        // Why: This is helpful when using fitBounds, panTo
+        debugger;
         var newBounds = new L.LatLngBounds;
 
         for (var m in search_list) {
-            newBounds.extend(search_list[m].position);
+            newBounds.extend(search_list[m].getLatLng());
         };
         return newBounds;
     }
@@ -56,8 +75,8 @@ var mapboxMap = function (element) {
         m.add_Search(response);
     });
 
-    $(element).on('display_all', function (e, response) {
-
+    $(element).on('display_all', function (e, response) {        
+        m.fitBounds(m.searchBounds());                
     });
 
     $(element).on('show_user', function () {
@@ -66,11 +85,11 @@ var mapboxMap = function (element) {
         m.invalidateSize();
     });
 
-    $(element).on('begin_tracking', function (e, response) {
-        _latlng = new L.LatLng(response.latitude, response.longitude);
-        m.panTo(_latlng);
-        m.setZoom(18);
-        var marker = new L.Marker(_latlng, new L.Icon.Default).addTo(m);
+    $(element).on('new_user_position', function (e, position) {
+        _latlng = new L.LatLng(position.latitude, position.longitude);
+        m.user_marker.setLatLng(_latlng);
+        m.user_accuracy_circle.setLatLng(_latlng);
+        m.user_accuracy_circle.setRadius(position.accuracy);
     });
 
     $(element).on('page_resize', function(e,response){
@@ -101,29 +120,7 @@ var mapboxMap = function (element) {
         $(m.getContainer()).hide();          
     };
     
-    // var _toggled = _toggled || true;
-    // m.toggled = function () {
-    //     if (_toggled)
-    //         return true;
-    //     else
-    //         return false;
-    // };
-
-
-    // $(element).on('toggle_map', function (e, response) {
-    //     if (!_toggled) {
-    //         $(element).hide();
-    //         _toggled = true;
-    //     }
-    //     else {
-    //         $(element).show();
-    //         _toggled = false;
-    //     }
-    // 
-    //     m.setView(new L.LatLng(response.latitude, response.longitude), response.zoom);
-    //     m.invalidateSize();
-    // });
-
+    
     return m;
 
 }; 
