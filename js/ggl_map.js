@@ -141,7 +141,6 @@ var googleMap= function (element) {
     },
     show_div = function (){
       $(this_map.getDiv()).show();
-      google.maps.event.trigger(this_map, 'resize');  
     }
 
     hide_div = function (){
@@ -155,7 +154,6 @@ var googleMap= function (element) {
         
         
         $(element).on('start_add_search', function(){
-            console.log('ggl start_add_search')
             this_map.setOptions({ draggableCursor : "url(http://s3.amazonaws.com/besport.com_images/status-pin.png) 64 64, auto" })
             google.maps.event.addListenerOnce(this_map,'click', function(e){
             

@@ -53,7 +53,6 @@ var mapboxMap = function (element) {
     $(element).on('display_search', function (e, response) {
         if ($('#' + element.attributes['id'].value).css('cursor') != 'pointer')
             $('#' + element.attributes['id'].value).css('cursor', 'pointer');
-        console.log(response);
         m.add_Search(response);
     });
 

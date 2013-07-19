@@ -65,41 +65,16 @@ jQuery(document).ready(function () {
     });
 
     $('#btnToggleMap').on('click', function toggleMap() {
-        
-
         current_map=map_list.next();
         next_map=map_list.first();
         next_map.zoom_frame(current_map.zoom_frame());
         current_map.hide_div()
         next_map.show_div()
-
-
-
-        
-        // 
-        // var view = {};
-        // console.log(ttown.toggled());
-        // if (!ttown.toggled()) {
-        //     var this_center=ttown.getCenter();
-        //     view.latitude = this_center.lat();
-        //     view.longitude = this_center.lng();
-        //     view.zoom = ttown.getZoom();
-        // }
-        // else {
-        //     view.latitude = mbtown.getCenter().lat;
-        //     view.longitude = mbtown.getCenter().lng;
-        //     view.zoom = mbtown.getZoom();
-        // }
-
-        // $('.search_map').trigger('toggle_map', view);
-        // $('#mapPage').trigger('pageshow');
     });
 
     //jqm page events 
-    $("#mapPage").on("pageshow", function () {
-        
+    $("#mapPage").on("pageshow", function () {        
         $('.search_map').trigger('page_resize');
-        
     });
 
 // layer panel
@@ -126,10 +101,6 @@ jQuery(document).ready(function () {
                 });
             });
     };
-
-    $(window).on('mbCenterChanged', function () {
-        this.map.setCenter();
-    });
 
 
     function displayLayer(layer_id) {
@@ -181,7 +152,6 @@ jQuery(document).ready(function () {
 
     //map events
     $('#map_holder').on('stop_add_search', function (e, search_location) {
-        console.log('on stop_add_search')
         var geoOptions = {
             layer_id: $('li#current_layer').data('current-layer'),
             latitude: search_location.latitude,
@@ -320,7 +290,7 @@ jQuery(document).ready(function () {
 
 //TODO: STANDARDIZE THESE EVENTS
         $('.search_map').trigger('new_user_position',new_position);    
-        $('.search_map').trigger('begin_tracking', crd);
+        // $('.search_map').trigger('begin_tracking', crd);
     };
 
     var errorPositionChange = function (err) {
