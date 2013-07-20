@@ -2,24 +2,54 @@ jQuery(document).ready(function () {
 
     //init the map
 
-    var map_list = {
-        list:[],
+    var search_app = {
+        user_position : {latitude:0,longitude:0},
+        map_list:[],
         first: function(){ 
-            return this.list[0];
+            return this.map_list[0];
         },
         next:  function(){
-            n=this.list.shift();
-            this.list.push(n);
+            n=this.map_list.shift();
+            this.map_list.push(n);
             return n;
         }
-    };
+    };    
     
-    map_list.list.push(new googleMap(document.getElementById('map_content')));
+    var map_template= ['<div id="','" class="ui-content search_map" role="main" data-role="content" data-theme="b"></div>'];
+            
+    var map_config = {
+        {id : 'google_road',
+         map_maker : googleMap}};
+    //      ,
+    //     {id : 'mapbox',
+    //      map_maker:mapboxMap,
+    //      options:{map_url:'jdungan.map-lc7x2770'}},
+    //     {id : 'google_sattellite',
+    //      map_maker:googleMap}
+    // };
+    
+    for each (m in map_config) {
 
-    map_list.list.push(new mapboxMap($('#mapbox_content')[0],'jdungan.map-lc7x2770'));
+        m.options=m.options||{};
+        $('#map_holder').append(map_template.join(m.id));
+        new m.map_maker(document.getElementById(m.id),m.options);
+        search_app.map_list.push($('#'+m.id).detach());
+    };
+
+    debugger;
+
+    // search_app.map_list.push(new googleMap(document.getElementById('google_road')));
+    // search_app.map_list.push(new googleMap(map_template));
+
+    // search_app.map_list.push(new mapboxMap(document.getElementById('mapbox'),'jdungan.map-lc7x2770'));
     
+    // var ml=map_list.map_list.push(new googleMap(document.getElementById('google_sat')));
+
+    // map_list.map_list[ml-1].setMapTypeId(google.maps.MapTypeId.SATELLITE);
     
-    map_list.first().show_div();
+    // search_app.first().show_div();
+
+
 
     // init search data
     var search_data = search_data || new search_db();
@@ -65,20 +95,20 @@ jQuery(document).ready(function () {
         });
     });
 
-    $('#btnToggleMap').on('click', function toggleMap() {
-        current_map=map_list.next();
-        next_map=map_list.first();
+    $('a#toggle_map').on('click', function toggleMap() {
+        current_map=search_app.next();
+        next_map=search_app.first();
         next_map.zoom_frame(current_map.zoom_frame());
         current_map.hide_div()
         next_map.show_div()
+        $('.search_map').trigger('page_resize');
+        
     });
 
     //jqm page events 
     $("#mapPage").on("pageshow", function () {        
         $('.search_map').trigger('page_resize');
     });
-
-
 
 // layer panel
 
@@ -104,11 +134,6 @@ jQuery(document).ready(function () {
                 });
             });
     };
-
-    // $(window).on('mbCenterChanged', function () {
-    //     this.map.setCenter();
-    // });
-
 
     function displayLayer(layer_id) {
         search_data.places.each({ layer_id: layer_id }, function (response) {
@@ -194,7 +219,8 @@ jQuery(document).ready(function () {
     });
 
     $('a#viewUser').click(function(){
-         $('.search_map').trigger("show_user");
+        
+         $('.search_map').trigger("show_user",search_app.user_position);
     });    
 
     $('a#clearLayers').click(function(){
@@ -277,25 +303,25 @@ jQuery(document).ready(function () {
         $('#linkDialog').click();
     };
 
-//watch position init 
+//watch position 
+
+    var posOptions = { enableHighAccuracy: true};
     var userPositionChange = function(pos) {
         new_position = {latitude  : pos.coords.latitude, 
                         longitude : pos.coords.longitude,
                         accuracy  : pos.coords.accuracy};          
-
         new_position.accuracy = new_position.accuracy > 90 && 90 || new_position.accuracy;
-        console.log(new_position);
+        search_app.user_position=new_position;
         $('.search_map').trigger('new_user_position',new_position);    
     };
-
     var errorPositionChange = function (err) {
         console.warn('ERROR(' + err.code + '): ' + err.message);
     };
+    distWatchID = navigator.geolocation.watchPosition(userPositionChange, errorPositionChange, posOptions);
 
 // GO!
     refresh_layer_list();
-    posOptions = { enableHighAccuracy: true };
-    distWatchID = navigator.geolocation.watchPosition(userPositionChange, errorPositionChange, posOptions);
+
     $('#mapPage').trigger('pageshow');
 });
 

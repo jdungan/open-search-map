@@ -1,11 +1,13 @@
-var mapboxMap = function (element,mapbox_url) {
+var mapboxMap = function (element,options) {
     var _latlng = _latlng || new L.LatLng(36.1539, -95.9925),
         _zoom = _zoom || 18,map_element;
+    options = options ||{};
+        
     var search_list = {};
 
     if (element !== map_element){
 
-        var m = new L.mapbox.map(element,mapbox_url ).setView(_latlng, _zoom);
+        var m = new L.mapbox.map(element,options.map_url ).setView(_latlng, _zoom);
 
         m.map_element = element;
         
@@ -26,8 +28,6 @@ var mapboxMap = function (element,mapbox_url) {
          
     }
 
-    m.setCurrentPosition = function (pos) { _latlng = new L.LatLng(pos.latitude, pos.longitude); };
-    m.getCurrentPosition = function () { return _latlng; };
 
     m.add_Search = function (response) {
         var key = response.place_id;
@@ -48,7 +48,6 @@ var mapboxMap = function (element,mapbox_url) {
     };
 
     m.searchBounds = function () {
-        debugger;
         var newBounds = new L.LatLngBounds;
 
         for (var m in search_list) {
@@ -80,6 +79,7 @@ var mapboxMap = function (element,mapbox_url) {
     });
 
     $(element).on('show_user', function () {
+       console.log("mapbox fired");
         m.panTo(_latlng);
         m.setZoom(18);
         m.invalidateSize();
@@ -94,6 +94,13 @@ var mapboxMap = function (element,mapbox_url) {
 
     $(element).on('page_resize', function(e,response){
         m.invalidateSize();
+    });
+
+    $(element).on('clear_map', function(){
+        for (var m in search_list){
+            search_list[m].setMap(null);
+        };        
+        search_list={};
     });
 
 
@@ -120,7 +127,7 @@ var mapboxMap = function (element,mapbox_url) {
         $(m.getContainer()).hide();          
     };
     
-    
+    m.map_div = m.getContainer;
     return m;
 
 }; 
