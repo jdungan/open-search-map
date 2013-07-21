@@ -31,10 +31,9 @@ jQuery(document).ready(function () {
 
 
     var map_config = { 
-        mapbox1: {id : 'mapbox_road1', maker:mapboxMap,options:{map_url:'jdungan.map-lc7x2770'}},
+        mapbox1: {id : 'mapbox_road1', maker:mapboxMap,options:{map_url:'jdungan.map-y7hj3ir7'}},
         mapbox2: {id : 'mapbox_road2', maker:mapboxMap,options:{map_url:'jdungan.map-147y2axb'}},
         mapbox3: {id : 'mapbox_road1', maker:mapboxMap,options:{map_url:'jdungan.map-lc7x2770'}},
-        mapbox4: {id : 'mapbox_road2', maker:mapboxMap,options:{map_url:'jdungan.map-147y2axb'}},
 
     };
     
