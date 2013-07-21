@@ -68,35 +68,35 @@ var mapboxMap = function (element,options) {
         });
     });
 
-    $(element).on('display_search', function (e, response) {
+    $(document).on('display_search', function (e, response) {
         if ($('#' + element.attributes['id'].value).css('cursor') != 'pointer')
             $('#' + element.attributes['id'].value).css('cursor', 'pointer');
         m.add_Search(response);
     });
 
-    $(element).on('display_all', function (e, response) {        
+    $(document).on('display_all', function (e, response) {        
         m.fitBounds(m.searchBounds());                
     });
 
-    $(element).on('show_user', function () {
+    $(document).on('show_user', function () {
        console.log("mapbox fired");
         m.panTo(_latlng);
         m.setZoom(18);
         m.invalidateSize();
     });
 
-    $(element).on('new_user_position', function (e, position) {
+    $(document).on('new_user_position', function (e, position) {
         _latlng = new L.LatLng(position.latitude, position.longitude);
         m.user_marker.setLatLng(_latlng);
         m.user_accuracy_circle.setLatLng(_latlng);
         m.user_accuracy_circle.setRadius(position.accuracy);
     });
 
-    $(element).on('page_resize', function(e,response){
+    $(document).on('page_resize', function(e,response){
         m.invalidateSize();
     });
 
-    $(element).on('clear_map', function(){
+    $(document).on('clear_map', function(){
         for (var m in search_list){
             search_list[m].setMap(null);
         };        

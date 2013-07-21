@@ -11,45 +11,30 @@ jQuery(document).ready(function () {
         next:  function(){
             n=this.map_list.shift();
             this.map_list.push(n);
-            return n;
+            return this.first();
         }
     };    
     
-    var map_template= ['<div id="','" class="ui-content search_map" role="main" data-role="content" data-theme="b"></div>'];
+    var map_template = ['<div id="','" class="ui-content search_map" role="main" data-role="content" data-theme="b"></div>'];
             
-    var map_config = {
-        {id : 'google_road',
-         map_maker : googleMap}};
-    //      ,
-    //     {id : 'mapbox',
-    //      map_maker:mapboxMap,
-    //      options:{map_url:'jdungan.map-lc7x2770'}},
-    //     {id : 'google_sattellite',
-    //      map_maker:googleMap}
-    // };
+    var map_config = { 
+        google_road:{id : 'google_road',maker : googleMap},
+        mapbox: {id : 'mapbox', maker:mapboxMap,options:{map_url:'jdungan.map-lc7x2770'}},
+        google_sattellite : {id : 'google_sattellite', maker:googleMap}
+    };
     
-    for each (m in map_config) {
-
-        m.options=m.options||{};
-        $('#map_holder').append(map_template.join(m.id));
-        new m.map_maker(document.getElementById(m.id),m.options);
-        search_app.map_list.push($('#'+m.id).detach());
+    for (var m in map_config) {
+        map_config[m].options = map_config[m].options || {};
+        $('#map_holder').append(map_template.join(map_config[m].id));
+        search_app.map_list.push(
+            new map_config[m].maker(document.getElementById(map_config[m].id),
+            map_config[m].options));
+        $('#'+map_config[m].id).remove();
     };
 
-    debugger;
+    $('#map_holder').append(search_app.first().map_div());
 
-    // search_app.map_list.push(new googleMap(document.getElementById('google_road')));
-    // search_app.map_list.push(new googleMap(map_template));
-
-    // search_app.map_list.push(new mapboxMap(document.getElementById('mapbox'),'jdungan.map-lc7x2770'));
-    
-    // var ml=map_list.map_list.push(new googleMap(document.getElementById('google_sat')));
-
-    // map_list.map_list[ml-1].setMapTypeId(google.maps.MapTypeId.SATELLITE);
-    
-    // search_app.first().show_div();
-
-
+    // $('#map_holder').append(search_app.first());
 
     // init search data
     var search_data = search_data || new search_db();
@@ -95,14 +80,14 @@ jQuery(document).ready(function () {
         });
     });
 
-    $('a#toggle_map').on('click', function toggleMap() {
-        current_map=search_app.next();
-        next_map=search_app.first();
+    $('a#toggle_map').on('click', function () {
+        current_map=search_app.first();
+        next_map=search_app.next();
         next_map.zoom_frame(current_map.zoom_frame());
-        current_map.hide_div()
-        next_map.show_div()
-        $('.search_map').trigger('page_resize');
         
+        $(current_map.map_div()).remove()
+        $('#map_holder').append(next_map.map_div());
+        $('#map_holder').trigger('page_resize');        
     });
 
     //jqm page events 

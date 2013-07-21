@@ -129,7 +129,8 @@ var googleMap= function (element) {
     zoom_frame = function (frame){
       if(frame){
           this_map.setCenter(new google.maps.LatLng(frame.latitude, frame.longitude));
-          this_map.setZoom(frame.zoom);          
+          this_map.setZoom(frame.zoom);
+                    
       } else{
           frame={};
           this_center=this_map.getCenter();
@@ -177,7 +178,7 @@ var googleMap= function (element) {
     }   
     
 // listenters   
-    $(element).on('start_add_search', function(){
+    $(document).on('start_add_search', function(){
         this_map.setOptions({ draggableCursor : "url(http://s3.amazonaws.com/besport.com_images/status-pin.png) 64 64, auto" })
         google.maps.event.addListenerOnce(this_map,'click', function(e){
     
@@ -190,7 +191,7 @@ var googleMap= function (element) {
         });
     });
  
-    $(element).on('show_user', function (e,position){
+    $(document).on('show_user', function (e,position){
             console.log("google fired")
             // var user_loc=this_map.user_marker.getPosition();
             var user_loc=new google.maps.LatLng(position.latitude,position.longitude);
@@ -198,29 +199,29 @@ var googleMap= function (element) {
             this_map.setZoom(18);
     });
     
-    $(element).on('new_user_position', function (e,position){
+    $(document).on('new_user_position', function (e,position){
             var user_loc = new google.maps.LatLng(position.latitude,position.longitude);
             this_map.user_marker.setPosition(user_loc);
             this_map.user_accuracy_circle.setCenter(user_loc);
             this_map.user_accuracy_circle.setRadius(position.accuracy);        
     });
     
-    $(element).on('clear_map', function(){
+    $(document).on('clear_map', function(){
         for (var m in search_list){
             search_list[m].setMap(null);
         };        
         search_list={};
     });
 
-    $(element).on('display_search', function(e,response){
+    $(document).on('display_search', function(e,response){
         this_map.addSearch(response);                
     });
     
-    $(element).on('display_all', function(e,response){
+    $(document).on('display_all', function(e,response){
         this_map.fitBounds(searchBounds());                
     });
 
-    $(element).on('end_search', function(e,response){
+    $(document).on('end_search', function(e,response){
         marker=search_list[response.place_id];
         if(marker){
             marker.icon.url="./img/search_end.svg";
@@ -229,7 +230,7 @@ var googleMap= function (element) {
         }
     });
     
-    $(element).on('move_search', function(e,response){
+    $(document).on('move_search', function(e,response){
         marker=search_list[response.place_id];
         if (marker){
             var search_loc = new google.maps.LatLng(response.latitude,response.longitude);
@@ -237,7 +238,7 @@ var googleMap= function (element) {
         }
     });
 
-    $(element).on('page_resize', function(e,response){
+    $(document).on('page_resize', function(e,response){
             google.maps.event.trigger(this_map, 'resize');            
     });
 
