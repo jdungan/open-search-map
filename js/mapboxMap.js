@@ -78,11 +78,12 @@ var mapboxMap = function (element,options) {
         m.fitBounds(m.searchBounds());                
     });
 
-    $(document).on('show_user', function () {
+    m. show_user = function (position){
+    // $(document).on('show_user', function () {
        console.log("mapbox show_user fired");
         m.setView(_latlng,18);
         // m.invalidateSize();
-    });
+    };
 
     $(document).on('new_user_position', function (e, position) {
         console.log('mapbox new user position');

@@ -23,10 +23,19 @@ jQuery(document).ready(function () {
     
     var map_template = ['<div id="','" class="ui-content search_map" role="main" data-role="content" data-theme="b"></div>'];
             
+    // var map_config = { 
+    //     google_road:{id : 'google_road',maker : googleMap,options:roadmap_options},
+    //     mapbox: {id : 'mapbox_road', maker:mapboxMap,options:{map_url:'jdungan.map-lc7x2770'}},
+    //     google_sattellite : {id : 'google_satellite', maker:googleMap,options:satellite_options}
+    // };
+
+
     var map_config = { 
-        google_road:{id : 'google_road',maker : googleMap,options:roadmap_options},
-        mapbox: {id : 'mapbox_road', maker:mapboxMap,options:{map_url:'jdungan.map-lc7x2770'}},
-        google_sattellite : {id : 'google_satellite', maker:googleMap,options:satellite_options}
+        mapbox1: {id : 'mapbox_road1', maker:mapboxMap,options:{map_url:'jdungan.map-lc7x2770'}},
+        mapbox2: {id : 'mapbox_road2', maker:mapboxMap,options:{map_url:'jdungan.map-147y2axb'}},
+        mapbox3: {id : 'mapbox_road1', maker:mapboxMap,options:{map_url:'jdungan.map-lc7x2770'}},
+        mapbox4: {id : 'mapbox_road2', maker:mapboxMap,options:{map_url:'jdungan.map-147y2axb'}},
+
     };
     
     for (var m in map_config) {
@@ -93,7 +102,7 @@ jQuery(document).ready(function () {
         $('#map_holder').append(next_map.map_div());
         $('#map_holder').trigger('page_resize');        
         next_map.zoom_frame(current_map.zoom_frame());
-                $(current_map.map_div()).remove()
+        $(current_map.map_div()).remove()
     });
 
     //jqm page events 
@@ -204,14 +213,18 @@ jQuery(document).ready(function () {
 //panel menu choices
 
     //panel menu choices
+    
+    $("#addSearch").on('click',function(){
+            $('.search_map').trigger('start_add_search');            
+    });
 
     $('a#viewSearches').on('click', function () {
         $('.search_map').trigger('display_all');
     });
 
     $('a#viewUser').on('click', function(){
-        
-         $('.search_map').trigger("show_user",search_app.user_position);
+        search_app.first().show_user(search_app.user_position)
+         // $('.search_map').trigger("show_user",search_app.user_position);
     });    
 
     $('a#clearLayers').on('click', function(){
@@ -302,14 +315,26 @@ jQuery(document).ready(function () {
                         longitude : pos.coords.longitude,
                         accuracy  : pos.coords.accuracy};          
         new_position.accuracy = new_position.accuracy > 90 && 90 || new_position.accuracy;
+        
         search_app.user_position=new_position;
         
-        $(search_app.first().map_div()).trigger('new_user_position',new_position);    
+        $('#map_holder').trigger('new_user_position',new_position);
+        // search_app.first().map_div().new_user_position(new_position);    
     };
     var errorPositionChange = function (err) {
         console.warn('ERROR(' + err.code + '): ' + err.message);
     };
     distWatchID = navigator.geolocation.watchPosition(userPositionChange, errorPositionChange, posOptions);
+
+    window.onerror = function myErrorHandler(errorMsg, url, lineNumber) {
+        debugger;
+      if (gOldOnError)
+        // Call previous handler.
+        return gOldOnError(errorMsg, url, lineNumber);
+
+      // Just let default handler run.
+      return false;
+    }
 
 // GO!
     refresh_layer_list();

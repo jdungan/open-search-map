@@ -195,7 +195,7 @@ var googleMap= function (element,options) {
                 url: "./img/searcher.svg"                
             }
         });
-        // Add circle overlay and bind to marker
+        // Add circle overlay 
          this.map.user_accuracy_circle = new google.maps.Circle({
            map: this.map,
            clickable:false,
@@ -221,13 +221,15 @@ var googleMap= function (element,options) {
         });
     });
  
-    $(document).on('show_user', function (e,position){
-            console.log("google fired")
+
+    //converted to object method to avoid exceeding mem stack on iOS6
+    function show_user(position){
+            console.log("google show user fired")
             // var user_loc=this_map.user_marker.getPosition();
             var user_loc=new google.maps.LatLng(position.latitude,position.longitude);
             this_map.panTo(user_loc);
             this_map.setZoom(18);
-    });
+    };
     
     $(document).on('new_user_position', function (e,position){
         console.log('google new user position');
@@ -306,7 +308,7 @@ var googleMap= function (element,options) {
     this.map.show_div = show_div;
     this.map.hide_div = hide_div;
     this.map.addSearch = addSearch;
-          
+    this.map.show_user = show_user;      
     this_map=this.map;
     return this.map;
 };
