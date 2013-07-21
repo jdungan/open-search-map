@@ -79,21 +79,22 @@ var mapboxMap = function (element,options) {
     });
 
     $(document).on('show_user', function () {
-       console.log("mapbox fired");
+       console.log("mapbox show_user fired");
         m.setView(_latlng,18);
         // m.invalidateSize();
     });
 
     $(document).on('new_user_position', function (e, position) {
+        console.log('mapbox new user position');
         _latlng = new L.LatLng(position.latitude, position.longitude);
         m.user_marker.setLatLng(_latlng);
         m.user_accuracy_circle.setLatLng(_latlng);
         m.user_accuracy_circle.setRadius(position.accuracy);
     });
-
-    $(document).on('page_resize', function(e,response){
-        // m.invalidateSize();
-    });
+    
+    // $(document).on('page_resize', function(e,response){
+    //     // m.invalidateSize();
+    // });
 
     $(document).on('clear_map', function(){
         for (var m in search_list){

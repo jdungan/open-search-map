@@ -1,37 +1,67 @@
+
+var tulsaLatlng =  tulsaLatlng ||  new google.maps.LatLng(36.1539,-95.9925)
+
+var roadmap_options = {
+    visualRefresh:true,
+    zoom: 18,
+    mapTypeId: google.maps.MapTypeId.ROADMAP,
+    center:tulsaLatlng,
+    panControl: false,
+    scaleControl: false,
+    overviewMapControl: false,
+
+    streetViewControl: true,
+    streetViewControlOptions: {
+        position: google.maps.ControlPosition.LEFT_CENTER,
+    },
+
+    mapTypeControl: true,
+    mapTypeControlOptions: {
+        position: google.maps.ControlPosition.LEFT_BOTTOM,
+    },
+
+    zoomControl: true,
+    zoomControlOptions: {
+        style: google.maps.ZoomControlStyle.SMALL,
+        position: google.maps.ControlPosition.RIGHT_CENTER,
+    },
+},
+satellite_options = {
+    visualRefresh:true,
+    backgroundColor: 'grey',
+    zoom: 18,
+    tilt: 0,
+    mapTypeId: google.maps.MapTypeId.SATELLITE,
+    center:tulsaLatlng,
+    panControl: false,
+    scaleControl: false,
+    overviewMapControl: false,
+
+    streetViewControl: false,
+    streetViewControlOptions: {
+        position: google.maps.ControlPosition.LEFT_CENTER,
+    },
+
+    mapTypeControl: false,
+    mapTypeControlOptions: {
+        position: google.maps.ControlPosition.LEFT_BOTTOM,
+    },
+
+    zoomControl: false,
+    zoomControlOptions: {
+        style: google.maps.ZoomControlStyle.SMALL,
+        position: google.maps.ControlPosition.RIGHT_CENTER,
+    },
+};
+
+
 //  map object 
-var googleMap= function (element) {    
+
+var googleMap= function (element,options) {    
     // 'tulsa 36.1539,-95.9925'
-        var this_map,
-        search_overlay,
+    var this_map,
         map_element = null,
-        tulsaLatlng =  tulsaLatlng ||  new google.maps.LatLng(36.1539,-95.9925),
-        searchMapOptions = {
-            visualRefresh:true,
-            zoom: 18,
-            mapTypeId: google.maps.MapTypeId.ROADMAP,
-            center:tulsaLatlng,
-            panControl: false,
-            scaleControl: false,
-            overviewMapControl: false,
-
-            streetViewControl: true,
-            streetViewControlOptions: {
-                position: google.maps.ControlPosition.LEFT_CENTER,
-            },
-
-            mapTypeControl: true,
-            mapTypeControlOptions: {
-                position: google.maps.ControlPosition.LEFT_BOTTOM,
-            },
-
-            zoomControl: true,
-            zoomControlOptions: {
-                style: google.maps.ZoomControlStyle.SMALL,
-                position: google.maps.ControlPosition.RIGHT_CENTER,
-            },
-        },
-           
-    search_list = {},
+        search_list = {},
     
     searchBounds = function (){        
         // Based on Google Maps API v3 
@@ -151,7 +181,7 @@ var googleMap= function (element) {
     if (element !== map_element){
         map_element = element;
         google.maps.visualRefresh=true;
-        this.map = new google.maps.Map(element, searchMapOptions); 
+        this.map = new google.maps.Map(element, options); 
 
         this.map.map_div=this.map.getDiv;
         
@@ -200,10 +230,11 @@ var googleMap= function (element) {
     });
     
     $(document).on('new_user_position', function (e,position){
-            var user_loc = new google.maps.LatLng(position.latitude,position.longitude);
-            this_map.user_marker.setPosition(user_loc);
-            this_map.user_accuracy_circle.setCenter(user_loc);
-            this_map.user_accuracy_circle.setRadius(position.accuracy);        
+        console.log('google new user position');
+        var user_loc = new google.maps.LatLng(position.latitude,position.longitude);
+        this_map.user_marker.setPosition(user_loc);
+        this_map.user_accuracy_circle.setCenter(user_loc);
+        this_map.user_accuracy_circle.setRadius(position.accuracy);        
     });
     
     $(document).on('clear_map', function(){

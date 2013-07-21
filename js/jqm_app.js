@@ -24,9 +24,9 @@ jQuery(document).ready(function () {
     var map_template = ['<div id="','" class="ui-content search_map" role="main" data-role="content" data-theme="b"></div>'];
             
     var map_config = { 
-        google_road:{id : 'google_road',maker : googleMap},
+        google_road:{id : 'google_road',maker : googleMap,options:roadmap_options},
         mapbox: {id : 'mapbox_road', maker:mapboxMap,options:{map_url:'jdungan.map-lc7x2770'}},
-        google_sattellite : {id : 'google_satellite', maker:googleMap}
+        google_sattellite : {id : 'google_satellite', maker:googleMap,options:satellite_options}
     };
     
     for (var m in map_config) {
@@ -37,7 +37,7 @@ jQuery(document).ready(function () {
             map_config[m].options));
         $('#'+map_config[m].id).remove();
     };
-
+    
     $('#map_holder').append(search_app.first().map_div());
 
     // $('#map_holder').append(search_app.first());
@@ -92,8 +92,8 @@ jQuery(document).ready(function () {
         next_map=search_app.next();
         $('#map_holder').append(next_map.map_div());
         $('#map_holder').trigger('page_resize');        
-        $(current_map.map_div()).remove()
         next_map.zoom_frame(current_map.zoom_frame());
+                $(current_map.map_div()).remove()
     });
 
     //jqm page events 
@@ -135,7 +135,7 @@ jQuery(document).ready(function () {
         });   
     };
 
-    $('button#save_new_layer').click(function(e){        
+    $('button#save_new_layer').on('click', function(e){        
         layer_name = $('input#layer_name').val();
         search_data.layers.add(layer_name)
         .done(function(){
@@ -205,16 +205,16 @@ jQuery(document).ready(function () {
 
     //panel menu choices
 
-    $('a#viewSearches').click(function () {
+    $('a#viewSearches').on('click', function () {
         $('.search_map').trigger('display_all');
     });
 
-    $('a#viewUser').click(function(){
+    $('a#viewUser').on('click', function(){
         
          $('.search_map').trigger("show_user",search_app.user_position);
     });    
 
-    $('a#clearLayers').click(function(){
+    $('a#clearLayers').on('click', function(){
         $('.search_map').trigger("clear_map");
     });    
 
@@ -303,7 +303,8 @@ jQuery(document).ready(function () {
                         accuracy  : pos.coords.accuracy};          
         new_position.accuracy = new_position.accuracy > 90 && 90 || new_position.accuracy;
         search_app.user_position=new_position;
-        $('.search_map').trigger('new_user_position',new_position);    
+        
+        $(search_app.first().map_div()).trigger('new_user_position',new_position);    
     };
     var errorPositionChange = function (err) {
         console.warn('ERROR(' + err.code + '): ' + err.message);
