@@ -128,8 +128,8 @@ var googleMap= function (element) {
     },
     zoom_frame = function (frame){
       if(frame){
-          this_map.setCenter(new google.maps.LatLng(frame.latitude, frame.longitude));
           this_map.setZoom(frame.zoom);
+          this_map.panTo(new google.maps.LatLng(frame.latitude, frame.longitude));
                     
       } else{
           frame={};

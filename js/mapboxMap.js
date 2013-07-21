@@ -1,5 +1,5 @@
 var mapboxMap = function (element,options) {
-    var _latlng = _latlng || new L.LatLng(36.1539, -95.9925),
+    var _latlng = _latlng || new L.LatLng(36.1539, -95.9925,{trackResize:true}),
         _zoom = _zoom || 18,map_element;
     options = options ||{};
         
@@ -80,9 +80,8 @@ var mapboxMap = function (element,options) {
 
     $(document).on('show_user', function () {
        console.log("mapbox fired");
-        m.panTo(_latlng);
-        m.setZoom(18);
-        m.invalidateSize();
+        m.setView(_latlng,18);
+        // m.invalidateSize();
     });
 
     $(document).on('new_user_position', function (e, position) {
@@ -93,7 +92,7 @@ var mapboxMap = function (element,options) {
     });
 
     $(document).on('page_resize', function(e,response){
-        m.invalidateSize();
+        // m.invalidateSize();
     });
 
     $(document).on('clear_map', function(){
@@ -107,7 +106,7 @@ var mapboxMap = function (element,options) {
     m.zoom_frame = function (frame){
       if(frame){
           m.setView(new L.LatLng(frame.latitude, frame.longitude), frame.zoom);
-          m.invalidateSize();
+          // m.invalidateSize();
       } else{
           frame={};
           this_center=m.getCenter();
@@ -120,7 +119,7 @@ var mapboxMap = function (element,options) {
 
     m.show_div = function (){
         $(m.getContainer()).show();
-        m.invalidateSize();
+        // m.invalidateSize();
     };
     
     m.hide_div = function(){

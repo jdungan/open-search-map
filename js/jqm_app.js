@@ -2,25 +2,31 @@ jQuery(document).ready(function () {
 
     //init the map
 
-    var search_app = {
+    search_app = {
         user_position : {latitude:0,longitude:0},
         map_list:[],
-        first: function(){ 
+        first : function(){ 
             return this.map_list[0];
         },
-        next:  function(){
+        next : function(){
             n=this.map_list.shift();
             this.map_list.push(n);
             return this.first();
-        }
+        },
+        zoom_frames : function(){
+            for (var i = 0, len = this.map_list.length; i < len; ++i){
+                console.log($(this.map_list[i].map_div()).attr('id'),
+                    this.map_list[i].zoom_frame());
+            }
+        } 
     };    
     
     var map_template = ['<div id="','" class="ui-content search_map" role="main" data-role="content" data-theme="b"></div>'];
             
     var map_config = { 
         google_road:{id : 'google_road',maker : googleMap},
-        mapbox: {id : 'mapbox', maker:mapboxMap,options:{map_url:'jdungan.map-lc7x2770'}},
-        google_sattellite : {id : 'google_sattellite', maker:googleMap}
+        mapbox: {id : 'mapbox_road', maker:mapboxMap,options:{map_url:'jdungan.map-lc7x2770'}},
+        google_sattellite : {id : 'google_satellite', maker:googleMap}
     };
     
     for (var m in map_config) {
@@ -81,19 +87,19 @@ jQuery(document).ready(function () {
     });
 
     $('a#toggle_map').on('click', function () {
+
         current_map=search_app.first();
         next_map=search_app.next();
-        next_map.zoom_frame(current_map.zoom_frame());
-        
-        $(current_map.map_div()).remove()
         $('#map_holder').append(next_map.map_div());
         $('#map_holder').trigger('page_resize');        
+        $(current_map.map_div()).remove()
+        next_map.zoom_frame(current_map.zoom_frame());
     });
 
     //jqm page events 
-    $("#mapPage").on("pageshow", function () {        
-        $('.search_map').trigger('page_resize');
-    });
+    // $("#mapPage").on("pageshow", function () {        
+    //     $('.search_map').trigger('page_resize');
+    // });
 
 // layer panel
 
