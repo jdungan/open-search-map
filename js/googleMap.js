@@ -118,8 +118,18 @@ var googleMap= function (element,options) {
          );
 
          google.maps.event.addListener(marker, 'dragend',function () {
-              $.event.trigger("markerMove",marker);
-             }
+             
+             //TODO: UPDATE TO PASS MOVE_DETAILS OBJECT
+             // mbMarker.on('dragend',function () {
+             //     move_details={key:key,
+             //         latitude:this.getLatLng().lat,
+             //         longitude:this.getLatLng().lng}
+             //      $.event.trigger("markerMove",move_details);
+             //     }
+             // );
+             // 
+             //  $.event.trigger("markerMove",marker);
+             // }
          );
          
          

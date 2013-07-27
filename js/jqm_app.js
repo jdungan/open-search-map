@@ -31,10 +31,9 @@ jQuery(document).ready(function () {
 
 
     var map_config = { 
-        mapbox1: {id : 'mapbox_road1', maker:mapboxMap,options:{map_url:'jdungan.map-y7hj3ir7'}},
-        mapbox2: {id : 'mapbox_road2', maker:mapboxMap,options:{map_url:'jdungan.map-147y2axb'}},
-        mapbox3: {id : 'mapbox_road1', maker:mapboxMap,options:{map_url:'jdungan.map-lc7x2770'}},
-
+        mapbox1: {id : 'mapbox_satellite', maker:mapboxMap,options:{map_url:'jdungan.map-y7hj3ir7'}},
+        mapbox2: {id : 'mapbox_buildings', maker:mapboxMap,options:{map_url:'jdungan.map-147y2axb'}},
+        mapbox3: {id : 'mapbox_terrain', maker:mapboxMap,options:{map_url:'jdungan.map-lc7x2770'}}
     };
     
     for (var m in map_config) {
@@ -47,8 +46,6 @@ jQuery(document).ready(function () {
     };
     
     $('#map_holder').append(search_app.first().map_div());
-
-    // $('#map_holder').append(search_app.first());
 
     // init search data
     var search_data = search_data || new search_db();
@@ -74,28 +71,19 @@ jQuery(document).ready(function () {
     });
 
     //client events
-    $(document).on("endSearch_click", function (e, marker_key) {
-        search_data.place.update(marker_key,
-            { extra: { end_time: Date()} })
-        .done(function (response) {
-            $.event.trigger("endSearch", response);
-            socket.emit('message', { eventType: 'endSearch', payload: response });
-        });
-    });
-
-    $(document).on("markerMove", function (e, marker_key) {
-        marker = ttown.searches[marker_key];
-        search_data.place.update(marker_key,
-            { latitude: marker.position.lat(),
-                longitude: marker.position.lng()
+    
+   $(document).on("markerMove", function (e, move_details) {
+        search_data.place.update(move_details.key,
+            { latitude: move_details.latitude,
+                longitude: move_details.longitude
             })
         .done(function (response) {
+            $.event.trigger('move_search',response)
             socket.emit('message', { eventType: 'moveSearch', payload: response });
         });
     });
 
     $('a#toggle_map').on('click', function () {
-
         current_map=search_app.first();
         next_map=search_app.next();
         $('#map_holder').append(next_map.map_div());
@@ -104,6 +92,16 @@ jQuery(document).ready(function () {
         $(current_map.map_div()).remove()
     });
 
+
+    $('#map_holder').on('click', 'button.end_search', function() {
+        search_data.place.update($(this).data('key'),
+            { extra: { end_time: Date()} })
+        .done(function (response) {
+            $('.search_map').trigger("end_search", response);
+            socket.emit('message', { eventType: 'endSearch', payload: response });
+        });
+    });
+    
     //jqm page events 
     // $("#mapPage").on("pageshow", function () {        
     //     $('.search_map').trigger('page_resize');
@@ -181,7 +179,6 @@ jQuery(document).ready(function () {
         });
     });
 
-
 //map events
     $('#map_holder').on('stop_add_search',function(e,search_location){
         var geoOptions = {
@@ -197,7 +194,6 @@ jQuery(document).ready(function () {
             socket.emit('message', {eventType: 'newSearch', payload: response});
         });
     })
-
 
 //general app events
 
@@ -269,7 +265,7 @@ jQuery(document).ready(function () {
         $(this).trigger("create");
     });
 
-    $('button#signin').click(function (e) {
+    $('button#signin').on('click', function (e) {
         var auth = {}; auth.username = $('input#email').val(),
         auth.password = $('input#password').val();
         $('#signin_msg').text('');
@@ -325,15 +321,15 @@ jQuery(document).ready(function () {
     };
     distWatchID = navigator.geolocation.watchPosition(userPositionChange, errorPositionChange, posOptions);
 
-    window.onerror = function myErrorHandler(errorMsg, url, lineNumber) {
-        debugger;
-      if (gOldOnError)
-        // Call previous handler.
-        return gOldOnError(errorMsg, url, lineNumber);
-
-      // Just let default handler run.
-      return false;
-    }
+    // window.onerror = function myErrorHandler(errorMsg, url, lineNumber) {
+    //     debugger;
+    //   if (gOldOnError)
+    //     // Call previous handler.
+    //     return gOldOnError(errorMsg, url, lineNumber);
+    // 
+    //   // Just let default handler run.
+    //   return false;
+    // }
 
 // GO!
     refresh_layer_list();
