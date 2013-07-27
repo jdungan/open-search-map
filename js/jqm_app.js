@@ -87,9 +87,10 @@ jQuery(document).ready(function () {
         current_map=search_app.first();
         next_map=search_app.next();
         $('#map_holder').append(next_map.map_div());
-        $('#map_holder').trigger('page_resize');        
+        $('#map_holder').trigger('page_resize');  
         next_map.zoom_frame(current_map.zoom_frame());
         $(current_map.map_div()).remove()
+        $('#map_holder').trigger('page_resize');  
     });
 
 
