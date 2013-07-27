@@ -72,7 +72,8 @@ jQuery(document).ready(function () {
 
     //client events
     
-   $(document).on("markerMove", function (e, move_details) {
+    
+    $(document).on("markerMove", function (e, move_details) {
         search_data.place.update(move_details.key,
             { latitude: move_details.latitude,
                 longitude: move_details.longitude
@@ -83,7 +84,9 @@ jQuery(document).ready(function () {
         });
     });
 
-    $('a#toggle_map').on('click', function () {
+//toggle maps
+
+    var rotate_maps = function(){
         current_map=search_app.first();
         next_map=search_app.next();
         $('#map_holder').append(next_map.map_div());
@@ -91,8 +94,11 @@ jQuery(document).ready(function () {
         next_map.zoom_frame(current_map.zoom_frame());
         $(current_map.map_div()).remove()
         $('#map_holder').trigger('page_resize');  
-    });
+    };
 
+    $('#mapPage').on('swipeleft', rotate_maps);
+
+    $('a#toggle_map').on('click', rotate_maps);
 
     $('#map_holder').on('click', 'button.end_search', function() {
         search_data.place.update($(this).data('key'),
