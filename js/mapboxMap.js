@@ -50,7 +50,7 @@ var mapboxMap = function (element,options) {
                     {icon: new L.icon({
                             iconAnchor: [32,32],
                             iconSize : [64,64],
-                            iconUrl : "./img/user.svg"
+                            iconUrl : "./img/users.svg"
                         })
                     });
                 
