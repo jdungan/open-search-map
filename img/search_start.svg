@@ -7,7 +7,6 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
-   xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="64px"
@@ -45,7 +44,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -63,26 +62,5 @@
        transform="matrix(0.49755121,-0.8674346,0.74420015,-0.66795669,0,0)"
        inkscape:transform-center-x="-4.4527986"
        inkscape:transform-center-y="16.371275" />
-    <use
-       x="0"
-       y="0"
-       xlink:href="#rect4605"
-       inkscape:transform-center-x="-4.4527986"
-       inkscape:transform-center-y="16.371275"
-       id="use3035" />
-    <use
-       x="0"
-       y="0"
-       xlink:href="#use3035"
-       inkscape:transform-center-x="-4.4527986"
-       inkscape:transform-center-y="16.371275"
-       id="use3037" />
-    <use
-       x="0"
-       y="0"
-       xlink:href="#use3037"
-       inkscape:transform-center-x="-4.4527986"
-       inkscape:transform-center-y="16.371275"
-       id="use3039" />
   </g>
 </svg>

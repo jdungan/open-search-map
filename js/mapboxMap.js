@@ -1,12 +1,12 @@
 var mapboxMap = function (element,options) {
-    var _latlng = _latlng || new L.LatLng(36.1539, -95.9925,{trackResize:true}),
+    var _latlng = _latlng || new L.LatLng(36.1539, -95.9925),
         _zoom = _zoom || 18,map_element;
-    options = options ||{};
+        options = options ||{};
         
-    var search_list = {};
+    var search_list = {}; user_list={};
 
     if (element !== map_element){
-
+        options.trackResize=true;
         var m = new L.mapbox.map(element,options.map_url ).setView(_latlng, _zoom);
 
         m.map_element = element;
@@ -18,7 +18,8 @@ var mapboxMap = function (element,options) {
                     iconUrl : "./img/searcher.svg"
                 })
             }).addTo(m);
-
+            
+        user_list['this_user']=m.user_marker;
 
         m.user_accuracy_circle = new L.circle(_latlng,100,
              {
@@ -39,6 +40,27 @@ var mapboxMap = function (element,options) {
                         }));
                 marker.setPopupContent(search_popup(response.place_id,response.extra));
             }
+        });
+
+        $(document).on('move_remote_user', function(e,response){
+            var this_user=response.user.user_id;
+            if(!user_list[this_user]){     
+                user_list[this_user]=new L.Marker(
+                    new L.LatLng(response.latitude,response.longitude), 
+                    {icon: new L.icon({
+                            iconAnchor: [32,32],
+                            iconSize : [64,64],
+                            iconUrl : "./img/user.svg"
+                        })
+                    });
+                
+                user_list[this_user].setPopupContent(response.user.display_name);
+                user_list[this_user].addTo(m);
+            } else {
+                               
+               user_list[this_user].setLatLng ([response.latitude,response.longitude]);
+            }
+
         });
         
         $(document).on('clear_map', function(){
@@ -103,15 +125,6 @@ var mapboxMap = function (element,options) {
         return mbMarker;
     };
 
-    m.searchBounds = function () {
-        var newBounds = new L.LatLngBounds;
-
-        for (var mk in search_list) {
-            newBounds.extend(search_list[mk].getLatLng());
-        };
-        return newBounds;
-    }
-
     $(document).on('start_add_search', function () {
         $(this).css('cursor', 'url("http://s3.amazonaws.com/besport.com_images/status-pin.png")');
         m.addOneTimeEventListener('click', function (e) {
@@ -130,9 +143,25 @@ var mapboxMap = function (element,options) {
         m.add_Search(response);
     });
 
-    $(document).on('display_all', function (e, response) {        
-        m.fitBounds(m.searchBounds());                
+    m.searchBounds = function (marker_list) {
+        var newBounds = new L.LatLngBounds;
+
+        for (var mk in marker_list) {
+            newBounds.extend(marker_list[mk].getLatLng());
+        };
+        return newBounds;
+    }
+
+
+    $(document).on('display_searches', function (e, response) {        
+        m.fitBounds(m.searchBounds(search_list));                
     });
+
+    $(document).on('display_users', function (e, response) {        
+        m.fitBounds(m.searchBounds(user_list));                
+    });
+    
+    
 
     m. show_user = function (position){
     // $(document).on('show_user', function () {
@@ -171,7 +200,7 @@ var mapboxMap = function (element,options) {
           console.log('invalidateSize')
           m.setView(new L.LatLng(frame.latitude, frame.longitude), frame.zoom);
           m.invalidateSize();
-      } else{
+       } else{
           frame={};
           this_center=m.getCenter();
           frame.latitude=this_center.lat;

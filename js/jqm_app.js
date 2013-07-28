@@ -4,6 +4,7 @@ jQuery(document).ready(function () {
 
     search_app = {
         user_position : {latitude:0,longitude:0},
+        user_response:null,
         map_list:[],
         first : function(){ 
             return this.map_list[0];
@@ -50,13 +51,6 @@ jQuery(document).ready(function () {
     // init search data
     var search_data = search_data || new search_db();
 
-    //init socket
-    var socket = io.connect('http://206.214.164.229');
-
-    socket.on('message', function (data) {
-       $.event.trigger(data.message.eventType,data.message.payload);      
-    });  
-
     //socket events
     $(document).on("newSearch", function (e, response) {
         $('.search_map').trigger('display_search', [response]);
@@ -69,6 +63,12 @@ jQuery(document).ready(function () {
     $(document).on("moveSearch", function (e, response) {
         $('.search_map').trigger('move_search', [response]);
     });
+    
+
+    $(document).on("moveUser", function (e, response) {
+        $('.search_map').trigger('move_remote_user', [response]);
+    });
+
 
     //client events
     
@@ -89,10 +89,9 @@ jQuery(document).ready(function () {
     var rotate_maps = function(){
         current_map=search_app.first();
         next_map=search_app.next();
-        $('#map_holder').append(next_map.map_div());
-        $('#map_holder').trigger('page_resize');  
-        next_map.zoom_frame(current_map.zoom_frame());
         $(current_map.map_div()).remove()
+        next_map.zoom_frame(current_map.zoom_frame());
+        $('#map_holder').append(next_map.map_div());
         $('#map_holder').trigger('page_resize');  
     };
 
@@ -144,7 +143,7 @@ jQuery(document).ready(function () {
             $('.search_map').trigger('display_search', [response]);
         })
         .done(function () {
-            $('.search_map').trigger('display_all');
+            $('.search_map').trigger('display_searches');
         });   
     };
 
@@ -220,8 +219,12 @@ jQuery(document).ready(function () {
             $('.search_map').trigger('start_add_search');            
     });
 
+    $('a#viewUsers').on('click', function () {
+         $('.search_map').trigger('display_users');
+     });
+
     $('a#viewSearches').on('click', function () {
-        $('.search_map').trigger('display_all');
+        $('.search_map').trigger('display_searches');
     });
 
     $('a#viewUser').on('click', function(){
@@ -258,7 +261,6 @@ jQuery(document).ready(function () {
         retype_type = register_user && "password" || "hidden";
         signin_title = register_user && "Registration" || "Sign In";
         signin_btn_text = register_user && "Sign Me Up!" || "Sign In";
-
 
         $('#retypePassword').attr('type', retype_type);
         $('#signin_title').text(signin_title)
@@ -300,7 +302,8 @@ jQuery(document).ready(function () {
     });
 
     geoloqi.onAuthorize = function (response, error) {
-        console.log("You are a user!");
+        search_app.user_response=response
+        console.log("You are a user:"+response.display_name);
         $.mobile.changePage('#mapPage');
     };
 
@@ -317,15 +320,26 @@ jQuery(document).ready(function () {
                         longitude : pos.coords.longitude,
                         accuracy  : pos.coords.accuracy};          
         new_position.accuracy = new_position.accuracy > 90 && 90 || new_position.accuracy;
-        
-        search_app.user_position=new_position;
-        
+
+        if (search_app.user_response){
+            
+            new_position.user=search_app.user_response;
+            new_position.user.access_token=null;
+            socket.emit('message', { eventType: 'moveUser', payload: new_position });
+        } 
         $('#map_holder').trigger('new_user_position',new_position);
-        // search_app.first().map_div().new_user_position(new_position);    
     };
     var errorPositionChange = function (err) {
         console.warn('ERROR(' + err.code + '): ' + err.message);
     };
+    
+    
+    // var posOptions = {
+    //   enableHighAccuracy: true,
+    //   timeout: 3000,
+    //   maximumAge: 0
+    // };
+    
     distWatchID = navigator.geolocation.watchPosition(userPositionChange, errorPositionChange, posOptions);
 
     // window.onerror = function myErrorHandler(errorMsg, url, lineNumber) {
@@ -339,8 +353,17 @@ jQuery(document).ready(function () {
     // }
 
 // GO!
+
     refresh_layer_list();
 
     $('#mapPage').trigger('pageshow');
+    
+    //init socket
+    var socket = io.connect('http://206.214.164.229');
+
+    socket.on('message', function (data) {
+       $.event.trigger(data.message.eventType,data.message.payload);      
+    });  
+    
 });
 
