@@ -225,8 +225,67 @@ jQuery(document).ready(function () {
 
     $('a#clearLayers').on('click', function(){
         $('.search_map').trigger("clear_map");
-    });    
+    });   
+    
 
+    $('#btnViewGroups').on('click', function(){
+        var data = search_data.groups.all();
+        data.done(function(res){
+            var group_ul = $('#groupList');
+            if(group_ul.children().length == 0){
+                group_ul.append('<li><a>Add Group</a></li>').click(function(){
+                    //search_data.groups.create();
+                    data = search_data.users.all();
+                    data.done(function(res){
+                        json = res;
+                        console.log(json);
+                    });
+                });
+            }
+            var json = res;
+
+            json.groups.forEach(function(el){
+                console.log(el);
+                var group_li = $('<li>');
+                var group_a = $('<a href="#viewGroupMembers">');
+                group_a.text(el.title);
+                group_li.append(group_a);
+                group_ul.append(group_li);
+                group_li.click(function(){
+                    data = search_data.groups.members(el.group_token);
+                    data.done(function(res){
+                        var member_ul = $('#memberList');
+
+                        if(member_ul.children().length == 0){
+                            member_ul.append('<li><a>Add Member</a></li>').click(function(){
+                                //search_data.groups.join();
+                            });
+                        }
+
+                        json = res;
+
+                        json.members.forEach(function(el){
+                            var member_li = $('<li>');
+                            var member_a = $('<a>');
+                            member_a.text('test');
+                            member_li.append(member_a);
+                            member_ul.append(member_li);
+                        });
+
+                        $('#membersContainer').trigger('create');    
+                        $('#membersContainer').append(member_ul);
+                        member_ul.listview();
+                        member_ul.listview('refresh');
+                    });
+                });
+            });
+
+            $('#groupsContainer').trigger('create');
+            $('#groupsContainer').append(group_ul);
+            group_ul.listview();
+            group_ul.listview('refresh');
+        });
+    });     
 
 //authentication
     function newUser(auth){
