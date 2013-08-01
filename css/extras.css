@@ -9,9 +9,14 @@ i{
     padding: 1%;
 }
 
+<<<<<<< HEAD
 
 
 .search_map {
+=======
+#map_content, #mapbox_content, #map_holder {
+    padding: 1%;
+>>>>>>> 6b3bf7055fe39c09ace899d41829ea740a464728
     width: 100%;
     height: 100%;
     overflow: hidden;

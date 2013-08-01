@@ -32,7 +32,32 @@ var search_db = function (){
          return call;
     };
  
+<<<<<<< HEAD
     var GEODB = new geoloqi_caller();    
+=======
+    var GEODB = new geoloqi_caller();
+     
+ 
+
+    // geoloqi.newSearch = function(this_map,lat,lng){
+    //     geoloqi.post("place/create", {
+    //       latitude: lat,
+    //       longitude: lng,
+    //       layer_id: geoloqi.layer_id,
+    //       name:lat+lng,
+    //       radius: 100,
+    //       extra: {start_time:Date()}
+    //     }, function(response, error){
+    //         if(!error){
+    //            console.log(response); 
+    //            var search_loc = [response.latitude, response.longitude];
+    //             this_map.searches[response.place_id]=this_map.addSearch(search_loc,response.place_id,response.extra);
+    //             return response;
+    //         }
+    //     });
+    // };
+    
+>>>>>>> 6b3bf7055fe39c09ace899d41829ea740a464728
     
     var place = function(){
         this.add = function(options){

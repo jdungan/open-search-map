@@ -56,6 +56,7 @@
                      data-theme="b">
                          <div data-role='container' >
                              <a href='#menu_panel' data-role='button'  data-inline='true'>
+<<<<<<< HEAD
                                     <i class="icon-chevron-sign-left icon-2x"></i>
                              </a>
                           
@@ -75,12 +76,54 @@
                              <a href='#viewGroups' id='btnViewGroups' data-role="button" data-inline='true'  class='header_button'>
                                    <i class="icon-group icon-2x"></i>
                              </a>
+=======
+                                  <span class="icon-stack">
+                                    <i class="icon-circle icon-stack-base"></i>
+                                    <i class="icon-backward icon-light"></i>
+                                  </span>
+                             </a>                            Open Search & Rescue Map
+                             
+                          
+                             <a href='#layer_panel' data-role='button'  data-inline='true' class='header_button'>
+                                <span class="icon-stack">
+                                     <i class="icon-circle icon-stack-base"></i>
+                                     <i class="icon-forward icon-light"></i>
+                                </span>
+                             </a>
+
+                             <a id="btnToggleMap"  data-role='button'  data-inline='true' class='header_button'>
+                                <span class="icon-stack">
+                                     <i class="icon-circle icon-stack-base"></i>
+                                     <i class="icon-picture icon-light"></i>
+                                </span>
+                             </a>
+                        
+                             <a id='viewUser' data-role="button" data-inline='true'  class='header_button'>
+                                   <i class="icon-user icon-2x"></i></a>
+
+>>>>>>> 6b3bf7055fe39c09ace899d41829ea740a464728
 
                          </div>
                      
                      </div><!-- end header         -->
 
                      <div id="map_holder">
+<<<<<<< HEAD
+=======
+                         <div id="map_content"
+                                class="ui-content search_map" 
+                                role="main"
+                                data-role="content" 
+                                data-theme="b">
+                           </div>  
+                           <div id="mapbox_content"
+                                  class="ui-content search_map" 
+                                  role="main"
+                                  data-role="content" 
+                                  data-theme="b">
+                             </div>  
+
+>>>>>>> 6b3bf7055fe39c09ace899d41829ea740a464728
                      </div>
 
 
@@ -112,6 +155,7 @@
           </div>
 
 
+<<<<<<< HEAD
             <div class='app_panel' data-role='panel' id='layer_panel' data-position="right" data-display="push" data-theme='b'>
                 <ul id='layer_list' class="tour-options" data-role="listview">
                     <li>Search Groups</li>
@@ -133,6 +177,13 @@
                     
                     <li id='current_layer' data-current-layer=''>
                         <p>New searches will be added to</p>
+=======
+            <div data-role='panel' id='layer_panel' data-position="right" data-display="push" data-theme='b'>
+                <ul id='layer_list' class="tour-options" data-role="listview">
+                    <li>LAYERS</li>
+                    <li id='current_layer' data-current-layer=''>
+                        <p>Editing Layer:</p>
+>>>>>>> 6b3bf7055fe39c09ace899d41829ea740a464728
                         <p id="layer_label"></p>
                     </li>
                 </ul>
@@ -224,6 +275,17 @@
 
     <script type="text/javascript" src="./js/socket.io.min.js"></script>
     <script src="//api.tiles.mapbox.com/mapbox.js/v1.2.0/mapbox.js"></script>
+<<<<<<< HEAD
+=======
+
+    <script type="text/javascript" src="./js/search_db.js"></script>
+    <script type="text/javascript" src="./js/ggl_map.js"></script>
+    <script type="text/javascript" src="./js/mapboxMap.js"></script>
+
+    <script type="text/javascript" src="./js/jqm_app.js"></script>
+
+  </body>
+>>>>>>> 6b3bf7055fe39c09ace899d41829ea740a464728
 
     <script type="text/javascript" src="./js/search_db.js"></script>
     <script type="text/javascript" src="./js/googleMap.js"></script>
