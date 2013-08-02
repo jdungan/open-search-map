@@ -227,64 +227,63 @@ jQuery(document).ready(function () {
         $('.search_map').trigger("clear_map");
     });   
     
-
     $('#btnViewGroups').on('click', function(){
-        var data = search_data.groups.all();
-        data.done(function(res){
-            var group_ul = $('#groupList');
-            if(group_ul.children().length == 0){
-                group_ul.append('<li><a>Add Group</a></li>').click(function(){
-                    //search_data.groups.create();
-                    data = search_data.users.all();
-                    data.done(function(res){
-                        json = res;
-                        console.log(json);
+            
+        var userOptions = {
+            groupToken : this.groupToken || null,
+            onEachItem : function(listElem, anchorElem, item){
+                var token = this.groupToken;
+                anchorElem.text(item.display_name).attr('href', '#viewGroupMembers');
+                listElem.click(function(){
+                    search_data.groups.members.add(token, item.user_id);
+                    search_data.groups.members(token).done(function(memRes){
+                        buildList(memRes.members, memOptions);
+                    });  
+                });
+            },
+            list : $('#userList')
+        };
+
+        var memOptions = {
+            groupToken : this.groupToken || null,
+            onEachItem : function(listElem, anchorElem, item){
+                anchorElem.text(item.profile.display_name).attr('href', '#');
+                listElem.click(function(){});
+            },
+            addStaticItem : function(listElem, anchorElem){
+                var token = this.groupToken;
+                anchorElem.text('Invite Member').attr('href', '#viewUsers');
+                listElem.click(function(){
+                    search_data.users.all().done(function(userRes){
+                        userOptions.groupToken = token;
+                        buildList(userRes.users, userOptions);
                     });
                 });
-            }
-            var json = res;
+            },
+            list : $('#memberList')
+        };
 
-            json.groups.forEach(function(el){
-                console.log(el);
-                var group_li = $('<li>');
-                var group_a = $('<a href="#viewGroupMembers">');
-                group_a.text(el.title);
-                group_li.append(group_a);
-                group_ul.append(group_li);
-                group_li.click(function(){
-                    data = search_data.groups.members(el.group_token);
-                    data.done(function(res){
-                        var member_ul = $('#memberList');
-
-                        if(member_ul.children().length == 0){
-                            member_ul.append('<li><a>Add Member</a></li>').click(function(){
-                                //search_data.groups.join();
-                            });
-                        }
-
-                        json = res;
-
-                        json.members.forEach(function(el){
-                            var member_li = $('<li>');
-                            var member_a = $('<a>');
-                            member_a.text('test');
-                            member_li.append(member_a);
-                            member_ul.append(member_li);
-                        });
-
-                        $('#membersContainer').trigger('create');    
-                        $('#membersContainer').append(member_ul);
-                        member_ul.listview();
-                        member_ul.listview('refresh');
-                    });
+        var grpOptions = {
+            onEachItem : function(listElem, anchorElem, item){
+                anchorElem.text(item.title).attr('href', '#viewGroupMembers');
+                listElem.click(function(){
+                    search_data.groups.members(item.group_token).done(function(memRes){
+                        memOptions.groupToken = item.group_token;
+                        buildList(memRes.members, memOptions);
+                    });        
                 });
-            });
+            },
+            addStaticItem : function(listElem, anchorElem){
+                anchorElem.text('Add Group');
+                listElem.click(function(){});
+            },
+            list : $('#groupList')
+        };
 
-            $('#groupsContainer').trigger('create');
-            $('#groupsContainer').append(group_ul);
-            group_ul.listview();
-            group_ul.listview('refresh');
+        search_data.groups.all().done(function(grpJSON){
+            buildList(grpJSON.groups, grpOptions);
         });
+
     });     
 
 //authentication
@@ -397,3 +396,29 @@ jQuery(document).ready(function () {
     $('#mapPage').trigger('pageshow');
 });
 
+function buildList(arr, options){
+    var _ul = options.list;
+    
+    if(_ul.children().length > 0)
+        _ul.children().remove();
+
+    var _li = $('<li>');
+    var _a = $('<a>');
+
+
+    if(typeof options.addStaticItem == 'function'){
+        options.addStaticItem(_li, _a);
+        _ul.append(_li.append(_a));
+    }
+    
+    arr.forEach(function(el){
+        _li = $('<li>');
+        _a = $('<a>');
+        options.onEachItem(_li, _a, el);
+        _li.append(_a);
+        _ul.append(_li);
+    });
+                               
+    _ul.listview();
+    _ul.listview('refresh');
+}

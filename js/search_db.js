@@ -173,6 +173,10 @@ var search_db = function (){
         this.members = function(token){
             return GEODB('get', 'group/members/' + token);
         }
+
+        this.members.add = function(token, user_id){
+            GEODB('post', 'group/join/' + token, {'user_id' : user_id});
+        }
     };
    
     var user = function(){
