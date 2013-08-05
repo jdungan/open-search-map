@@ -38,7 +38,7 @@ var mapboxMap = function (element,options) {
                         iconSize : [64,64],
                         iconUrl : './img/search_end.svg'
                         }));
-                marker.setPopupContent(search_popup(response.place_id,response.extra));
+                marker.setPopupContent(search_popup_content(response.place_id,response.extra));
             }
         });
 
@@ -70,15 +70,15 @@ var mapboxMap = function (element,options) {
             search_list={};
         });
         
-        $(document).on('page_resize', function(e,response){
-                m.invalidateSize();            
-        });
+        // $(document).on('page_resize', function(e,response){
+        //         m.invalidateSize();            
+        // });
         
         
          
     }
 
-     var search_popup = function (key,info_obj) {
+     var search_popup_content = function (key,info_obj) {
         var response = [],content_text,i=0,popup;
         for (var p in info_obj){
             response[i] = "<p>"+p+": "+info_obj[p]+"</p>";
@@ -108,7 +108,7 @@ var mapboxMap = function (element,options) {
                  {   draggable:true,
                      icon: mbIcon }).addTo(this);
 
-            var popupContent = search_popup(key,response.extra);
+            var popupContent = search_popup_content(key,response.extra);
             
             mbMarker.on('dragend',function () {
                 move_details={key:key,

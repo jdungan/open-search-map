@@ -1,28 +1,33 @@
 jQuery(document).ready(function () {
 
+
     //init the map
 
     search_app = {
         user_position : {latitude:0,longitude:0},
         user_response:null,
-        map_list:[],
-        first : function(){ 
-            return this.map_list[0];
+        base_maps:[],
+        add_base : function(layer){
+            this.base_maps.push(layer);
         },
-        next : function(){
-            n=this.map_list.shift();
-            this.map_list.push(n);
-            return this.first();
+        first_base : function(){ 
+            return this.base_maps[0];
         },
-        zoom_frames : function(){
-            for (var i = 0, len = this.map_list.length; i < len; ++i){
-                console.log($(this.map_list[i].map_div()).attr('id'),
-                    this.map_list[i].zoom_frame());
-            }
-        } 
+        base_forward : function(){
+            n=this.base_maps.shift();
+            this.base_maps.push(n);
+            return this.first_base();
+        },
+        base_back : function(){
+            n=this.base_maps.pop()
+            this.base_maps.unshift(n);
+            return this.first_base();
+        },
+        searches : [],
+        
     };    
     
-    var map_template = ['<div id="','" class="ui-content search_map" role="main" data-role="content" data-theme="b"></div>'];
+    // var map_template = ['<div id="','" class="ui-content search_map" role="main" data-role="content" data-theme="b"></div>'];
             
     // var map_config = { 
     //     google_road:{id : 'google_road',maker : googleMap,options:roadmap_options},
@@ -32,21 +37,48 @@ jQuery(document).ready(function () {
 
 
     var map_config = { 
-        mapbox1: {id : 'mapbox_satellite', maker:mapboxMap,options:{map_url:'jdungan.map-y7hj3ir7'}},
-        mapbox2: {id : 'mapbox_buildings', maker:mapboxMap,options:{map_url:'jdungan.map-147y2axb'}},
-        mapbox3: {id : 'mapbox_terrain', maker:mapboxMap,options:{map_url:'jdungan.map-lc7x2770'}}
+        satellite: {id : 'mapbox_satellite', maker:mapboxMap,options:{map_url:'jdungan.map-y7hj3ir7'}},
+        buildings: {id : 'mapbox_buildings', maker:mapboxMap,options:{map_url:'jdungan.map-147y2axb'}},
+        terrain: {id : 'mapbox_terrain', maker:mapboxMap,options:{map_url:'jdungan.map-lc7x2770'}}
     };
     
     for (var m in map_config) {
         map_config[m].options = map_config[m].options || {};
-        $('#map_holder').append(map_template.join(map_config[m].id));
-        search_app.map_list.push(
-            new map_config[m].maker(document.getElementById(map_config[m].id),
-            map_config[m].options));
-        $('#'+map_config[m].id).remove();
+        search_app.add_base(
+            L.mapbox.tileLayer(map_config[m].options.map_url)
+        );
     };
+
+    var map = L.map('map_content').setView([36.1539, -95.9925001], 13);
+
+    search_app.first_base().addTo(map);
+
+
     
-    $('#map_holder').append(search_app.first().map_div());
+//toggle maps
+
+    var rotate_map = function(direction){
+        direction = direction || 'forward';
+        current_map=search_app.first_base();
+        if (direction === 'back') {
+            next_map=search_app.base_back();
+        } else {
+            next_map=search_app.base_forward();
+        }
+        next_map.addTo(map);
+        map.removeLayer(current_map);
+    };
+
+
+    $('#mapPage').on('swipeleft', function(e){
+        rotate_map('forward')
+    });
+    $('#mapPage').on('swiperight', function(e){
+        rotate_map('back')
+    });
+
+    $('a#toggle_map').on('click', rotate_map);
+
 
     // init search data
     var search_data = search_data || new search_db();
@@ -84,20 +116,6 @@ jQuery(document).ready(function () {
         });
     });
 
-//toggle maps
-
-    var rotate_maps = function(){
-        current_map=search_app.first();
-        next_map=search_app.next();
-        $(current_map.map_div()).remove()
-        next_map.zoom_frame(current_map.zoom_frame());
-        $('#map_holder').append(next_map.map_div());
-        $('#map_holder').trigger('page_resize');  
-    };
-
-    $('#mapPage').on('swipeleft', rotate_maps);
-
-    $('a#toggle_map').on('click', rotate_maps);
 
     $('#map_holder').on('click', 'button.end_search', function() {
         search_data.place.update($(this).data('key'),
@@ -188,11 +206,11 @@ jQuery(document).ready(function () {
 //map events
     $('#map_holder').on('stop_add_search',function(e,search_location){
         var geoOptions = {
-              layer_id: $('li#current_layer').data('current-layer'),
-              latitude:search_location.latitude,
-              longitude:search_location.longitude,
-              radius:100,
-              extra:{start_time:Date()} 
+              layer_id : $('li#current_layer').data('current-layer'),
+              latitude : search_location.latitude,
+              longitude : search_location.longitude,
+              radius : 100,
+              extra : {start_time : Date()} 
         };
 
         search_data.place.add(geoOptions).done(function(response){
