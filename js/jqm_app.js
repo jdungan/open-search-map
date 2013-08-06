@@ -3,12 +3,20 @@ jQuery(document).ready(function () {
 
     //init the map
 
+
     search_app = {
+        map : function (){
+            var map = map || L.map('map_content').setView([36.1539, -95.9925001], 13);
+            return map;
+        },
         user_position : {latitude:0,longitude:0},
         user_response:null,
         base_maps:[],
         add_base : function(layer){
-            this.base_maps.push(layer);
+            var len = this.base_maps.push(layer);
+            if (len === 1) {
+                this.first_base().addTo(this.map);
+            }
         },
         first_base : function(){ 
             return this.base_maps[0];
@@ -23,18 +31,22 @@ jQuery(document).ready(function () {
             this.base_maps.unshift(n);
             return this.first_base();
         },
+        rotate_map : function(direction){
+                direction = direction || 'forward';
+                current_map=search_app.first_base();
+                if (direction === 'back') {
+                    next_map=search_app.base_back();
+                } else {
+                    next_map=search_app.base_forward();
+                }
+                next_map.addTo(map);
+                map.removeLayer(current_map);
+        },
+        
         searches : [],
         
     };    
     
-    // var map_template = ['<div id="','" class="ui-content search_map" role="main" data-role="content" data-theme="b"></div>'];
-            
-    // var map_config = { 
-    //     google_road:{id : 'google_road',maker : googleMap,options:roadmap_options},
-    //     mapbox: {id : 'mapbox_road', maker:mapboxMap,options:{map_url:'jdungan.map-lc7x2770'}},
-    //     google_sattellite : {id : 'google_satellite', maker:googleMap,options:satellite_options}
-    // };
-
 
     var map_config = { 
         satellite: {id : 'mapbox_satellite', maker:mapboxMap,options:{map_url:'jdungan.map-y7hj3ir7'}},
@@ -49,35 +61,17 @@ jQuery(document).ready(function () {
         );
     };
 
-    var map = L.map('map_content').setView([36.1539, -95.9925001], 13);
-
-    search_app.first_base().addTo(map);
-
-
     
 //toggle maps
 
-    var rotate_map = function(direction){
-        direction = direction || 'forward';
-        current_map=search_app.first_base();
-        if (direction === 'back') {
-            next_map=search_app.base_back();
-        } else {
-            next_map=search_app.base_forward();
-        }
-        next_map.addTo(map);
-        map.removeLayer(current_map);
-    };
-
-
     $('#mapPage').on('swipeleft', function(e){
-        rotate_map('forward')
+        search_app.rotate_map('forward')
     });
     $('#mapPage').on('swiperight', function(e){
-        rotate_map('back')
+        search_app.rotate_map('back')
     });
 
-    $('a#toggle_map').on('click', rotate_map);
+    $('a#toggle_map').on('click', search_app.rotate_map);
 
 
     // init search data
@@ -139,7 +133,7 @@ jQuery(document).ready(function () {
             $('#layer_list').append( 
                "<li class='layer_item' data-layer_id="+layer.layer_id+">\
                    <a  data-role='button' data-rel='dialog'>\
-                       <i class='icon-copy' data-layer_id="+layer.layer_id+"\
+                       <i class='icon-circle-blank' data-layer_id="+layer.layer_id+"\
                         data-layer_name='"+layer.name+"'></i>&nbsp;"+layer.name+"&nbsp;\
                    </a>\
                </li>"           
@@ -372,7 +366,7 @@ jQuery(document).ready(function () {
 
 // GO!
 
-    refresh_layer_list();
+    // refresh_layer_list();
 
     $('#mapPage').trigger('pageshow');
     
