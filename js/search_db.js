@@ -169,6 +169,14 @@ var search_db = function (){
         this.createGroup = function(){
            return GEODB('post', 'group/create', {'title':'TESTcth', 'visibility':'open', 'publish_access':'open'})
         };
+
+        this.members = function(token){
+            return GEODB('get', 'group/members/' + token);
+        }
+
+        this.members.add = function(token, user_id){
+            GEODB('post', 'group/join/' + token, {'user_id' : user_id});
+        }
     };
    
     var user = function(){
