@@ -1,16 +1,14 @@
 jQuery(document).ready(function () {
 
-
     //init the map
 
-    var map = map || L.mapbox.map('map_content').setView([36.1539, -95.9925001], 13);
-    var search_layer = search_layer || new SearchLayer(L.mapbox.markerLayer())
+    var _map = _map || new L.mapbox.map('map_content').setView([36.1539, -95.9925001], 13);
+    var _search_layer = _search_layer || new SearchLayer(_map);
     
-    
+    _map.searches = _search_layer;
     
     search_app = {
-        map : map,
-        searches : search_layer,
+        map : _map,
         layers: {},
         user_position : {latitude:0,longitude:0},
         user_response:null,
@@ -42,8 +40,8 @@ jQuery(document).ready(function () {
                 } else {
                     next_map=search_app.base_forward();
                 }
-                next_map.addTo(map);
-                map.removeLayer(current_map);
+                next_map.addTo(search_app.map);
+                search_app.map.removeLayer(current_map);
         },
         
         search_groups : {},
@@ -133,11 +131,15 @@ jQuery(document).ready(function () {
 
     var refresh_icons = function(){
         $('#layer_list li.layer_item').each( function (i){
-        
-           is_visible=search_app.layers[$(this).data('layer_id')] && search_app.layers[$(this).data('layer_id')]['visible']; 
-                     
-           icon_class = is_visible && 'icon-circle' || 'icon-circle-blank';
-           $('i',this).attr('class',icon_class);
+            var is_visible;
+            
+            if (search_app.layers[$(this).data('layer_id')]){
+                is_visible = search_app.layers[$(this).data('layer_id')]['visible']; 
+            } else {
+                is_visible = false;
+            }       
+            icon_class = is_visible && 'icon-circle' || 'icon-circle-blank';
+            $('i',this).attr('class',icon_class);
         });
     };
     
@@ -152,21 +154,19 @@ jQuery(document).ready(function () {
             search_app.layers[layer_id].visible=!search_app.layers[layer_id].visible;
 
         }
-        refresh_icons();
-        search_layer.setFilter(function(f) {
+        search_app.map.searches.setFilter(function(f) {
             return search_app.layers[f.layer_id].visibile;
         });
-
-
     };
 
     function display_layer(layer_id) {
         search_data.places.each({ layer_id: layer_id }, function (response) {
             response['layer_id']=layer_id;
-            search_app.searches.add_search(response).addTo(map);   
+            search_app.map.searches.add_search(response).addTo(search_app.map);   
         })
         .done(function () {
             search_app.layers[layer_id] = {visible : true};
+            refresh_icons();
         });   
     };
 

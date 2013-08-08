@@ -1,20 +1,35 @@
-var SearchLayer = function(mbLayer){
-     var this_layer = mbLayer, search_list=[];
+var SearchLayer = function(map){
+     var  search_list=[],
+     this_layer=  new L.mapbox.markerLayer();
      
      this_layer= 
      var search_popup_content = function (key,info_obj) {
-        var response = [],content_text,i=0,popup;
+        var div=document.createElement("p");
+
         for (var p in info_obj){
-            response[i] = "<p>"+p+": "+info_obj[p]+"</p>";
-            i+=1;
+            (function(d){
+                para = document.createElement("p");
+                desc = document.createTextNode(p+": "+info_obj[p]);
+                para.appendChild(desc);
+                d.appendChild(para)
+            })(div);
+
         };
-        content_text=response.join(""); 
-        
+
         if (!info_obj.end_time){
-            content_text +="</br><button data-key='"+key+"' id='"+key+"_button' class='end_search' >End Search</button"
-        }
-        
-        return content_text;
+             para = document.createElement("p");
+             btn = document.createElement('button');
+             btn.id =key+'_button';
+             btn.setAttribute('data-key',key)
+             btn.setAttribute('class','end_search')
+             desc = document.createTextNode('End Search');
+             btn.appendChild(desc);
+             para.appendChild(btn)
+             div.appendChild(para);
+             // content_text +="</br><button data-key='"+key+"' id='"+key+"_button' class='end_search' >End Search</button"
+         }
+                
+        return div;
     };
 
     this_layer.add_search = function (response) {
