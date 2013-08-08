@@ -1,6 +1,7 @@
 var SearchLayer = function(mbLayer){
      var this_layer = mbLayer, search_list=[];
      
+     this_layer= 
      var search_popup_content = function (key,info_obj) {
         var response = [],content_text,i=0,popup;
         for (var p in info_obj){
