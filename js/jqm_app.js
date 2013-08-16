@@ -1,15 +1,14 @@
 jQuery(document).ready(function () {
 
+
     //init the map
 
-    var _map = _map || new L.mapbox.map('map_content').setView([36.1539, -95.9925001], 13);
-    var _search_layer = _search_layer || new SearchLayer(_map);
-    
-    _map.searches = _search_layer;
+    var map = map || new L.mapbox.map('map_content').setView([36.1539, -95.9925001], 13);
+    searches = new searchMarkers(map);
+    search_layer = new L.FeatureGroup(searches).addTo(map);
     
     search_app = {
-        map : _map,
-        layers: {},
+        map : map,
         user_position : {latitude:0,longitude:0},
         user_response:null,
         base_maps:[],
@@ -59,7 +58,7 @@ jQuery(document).ready(function () {
     for (var m in map_config) {
         map_config[m].options = map_config[m].options || {};
         search_app.add_base(
-            L.mapbox.tileLayer(map_config[m].options.map_url)
+            new L.mapbox.tileLayer(map_config[m].options.map_url)
         );
     };
 
@@ -131,41 +130,37 @@ jQuery(document).ready(function () {
 
     var refresh_icons = function(){
         $('#layer_list li.layer_item').each( function (i){
-            var is_visible;
-            
-            if (search_app.layers[$(this).data('layer_id')]){
-                is_visible = search_app.layers[$(this).data('layer_id')]['visible']; 
-            } else {
-                is_visible = false;
-            }       
+            var layer_id = $(this).data('layer_id');
+            var is_visible = searches.layers[layer_id] && searches.layers[layer_id].visible;
             icon_class = is_visible && 'icon-circle' || 'icon-circle-blank';
             $('i',this).attr('class',icon_class);
         });
-    };
-    
+    };   
     
     var toggle_search_layer = function(){
-        var opened_layer =search_app.layers[$(this).data('layer_id')];
+        var layer_id = $(this).data('layer_id');
+        var opened_layer =searches.layers[layer_id];
         
         if (!opened_layer) {
-            layer_id = $(this).data('layer_id');
             display_layer(layer_id);
         } else{
-            search_app.layers[layer_id].visible=!search_app.layers[layer_id].visible;
-
+            searches.layers[layer_id].visible=!searches.layers[layer_id].visible;
         }
-        search_app.map.searches.setFilter(function(f) {
-            return search_app.layers[f.layer_id].visibile;
+        refresh_icons();
+        searches.setFilter(function(m) {
+            m.setOpacity(searches.layers[m.options.layer_id].visible && 1 || 0 );
+            map.fitBounds(searches.visibleBounds());            
         });
     };
 
     function display_layer(layer_id) {
         search_data.places.each({ layer_id: layer_id }, function (response) {
             response['layer_id']=layer_id;
-            search_app.map.searches.add_search(response).addTo(search_app.map);   
+            search_layer.addLayer(searches.add_search(response));
         })
         .done(function () {
-            search_app.layers[layer_id] = {visible : true};
+            map.fitBounds(search_layer.getBounds());
+            searches.layers[layer_id] = {visible : true};
             refresh_icons();
         });   
     };
@@ -173,17 +168,27 @@ jQuery(document).ready(function () {
     function refresh_layer_list() {
         $('.layer_item').remove();
         search_data.layers.each(function(layer){
-            $('#layer_list').append( 
-               "<li class='layer_item' data-layer_id="+layer.layer_id+">\
-                   <a  data-role='button' data-rel='dialog'>\
-                       <i class='icon-circle-blank' data-layer_id="+layer.layer_id+"\
-                        data-layer_name='"+layer.name+"'></i>&nbsp;"+layer.name+"&nbsp;\
-                   </a>\
-               </li>"           
+            $('#layer_list').append(
+                $('<li>')
+                    .attr('class','layer_item' )
+                    .attr('data-layer_id',layer.layer_id)
+                    .html(
+                        $('<a>')
+                            .attr('data-role','button')
+                            .attr('data-rel','dialog')
+                            .html(
+                                $('<i>')
+                                    .attr('class','icon-circle-blank')
+                                    .attr('data-layer_id',layer.layer_id)
+                                    .attr('data-layer_name',layer.name)
+                                    .text(" "+layer.name)
+                                )
+                    )
             )})
             .done(function(){
                 $("#layer_list").listview('refresh').trigger("create");
                 $("li.layer_item").on('click',toggle_search_layer);
+                refresh_icons();
             });
     };
 
@@ -334,6 +339,32 @@ jQuery(document).ready(function () {
         });
 
     });     
+    function buildList(arr, options){
+        var _ul = options.list;
+
+        if(_ul.children().length > 0)
+            _ul.children().remove();
+
+        var _li = $('<li>');
+        var _a = $('<a>');
+
+
+        if(typeof options.addStaticItem == 'function'){
+            options.addStaticItem(_li, _a);
+            _ul.append(_li.append(_a));
+        }
+
+        arr.forEach(function(el){
+            _li = $('<li>');
+            _a = $('<a>');
+            options.onEachItem(_li, _a, el);
+            _li.append(_a);
+            _ul.append(_li);
+        });
+
+        _ul.listview();
+        _ul.listview('refresh');
+    }
 
 //authentication
     function newUser(auth){
@@ -465,29 +496,3 @@ jQuery(document).ready(function () {
     
 });
 
-function buildList(arr, options){
-    var _ul = options.list;
-    
-    if(_ul.children().length > 0)
-        _ul.children().remove();
-
-    var _li = $('<li>');
-    var _a = $('<a>');
-
-
-    if(typeof options.addStaticItem == 'function'){
-        options.addStaticItem(_li, _a);
-        _ul.append(_li.append(_a));
-    }
-    
-    arr.forEach(function(el){
-        _li = $('<li>');
-        _a = $('<a>');
-        options.onEachItem(_li, _a, el);
-        _li.append(_a);
-        _ul.append(_li);
-    });
-                               
-    _ul.listview();
-    _ul.listview('refresh');
-}
