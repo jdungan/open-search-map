@@ -3,24 +3,17 @@ i{
     margin-left:5%;
 }
 
-#mapPage, #map_content {
+#mapPage, #map_content,.search_map {
     width: 100%;
     height: 100%;
     padding: 1%;
-}
-
-
-
-.search_map {
-    width: 100%;
-    height: 100%;
     overflow: hidden;
 }
+
 .header_button{
     float:right;
-    margin-right:5%'
+    margin-right:5%
 }
-
 
 .loc_labels {
   color: green;

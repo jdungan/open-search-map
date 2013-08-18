@@ -2,7 +2,7 @@
 // This object contains all the relevant methods for retrieve information on searches
 // currently this data is stored with geoloqi so this is mainly a wrapper on geoloqi functions
 
-var search_db = function (){
+(function (app){
     var geo_db={}; 
  
     var geoloqi_caller = function (){
@@ -89,7 +89,6 @@ var search_db = function (){
             var this_callback=callback;
             get_all(options)
               .done(function(response){
-                  console.log(response);
                 for (var i = 0; i < response.places.length; i++){
                    var place=response.places[i];
                     if (this_callback){
@@ -220,6 +219,6 @@ var search_db = function (){
     geo_db.user = new user();
     geo_db.users = new users();
     geo_db.login = geoloqi.login;
-    return geo_db;
+    app.data = geo_db;
         
-};
+})(search_app);
