@@ -54,7 +54,7 @@
     };    
 })(search_app);
 
-$('#layer_list').on('layer_visibility_change',function(){
+$(document).on('layer_visibility_change',function(){
     $('#layer_list li.layer_item').each( function (i){
         var layer_id = $(this).data('layer_id'),
         is_visible = search_app.layers[layer_id] && search_app.layers[layer_id].visible,
@@ -62,7 +62,6 @@ $('#layer_list').on('layer_visibility_change',function(){
         $('i',this).attr('class',icon_class);
     });
 });
-
 
 $('button#save_new_layer').on('click', function(e){        
     var layer_name = $('input#layer_name').val();

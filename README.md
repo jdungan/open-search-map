@@ -7,16 +7,19 @@ File descriptions:
 These descriptions are suggestions for managing the code.  We are not above fudging the distinctions in favor of good things.):
 
 index.html  --  Contains markup for jqm pages
-
-search_db.js --  Intermediate object for handling search data, currently we use geoloqi
-
-jqm_app.js -- Any jqm interactions.
+ready.js  -- loads the base maps to the global search_app
 
 
+Description of modules:
 
+search.app  -- creates search_app in the global spaace.  Adds methods for changing the base map
+search.db   -- adds .data to the search app.  This includes all calls to the geoloqi database 
+search.markers -- adds .searches to the search app for manipulating a Leaflet feature collection of search markers
+search.layer.menu -- adds methods to search_app for retrieving saved searches
 
-
-
+Also loaded by not adding to the search_app object:
+search.main.menu -- events for the left panel of the app
+search.messages -- loads socket.io listener and events for incoming messages
 
 
 Libraries:

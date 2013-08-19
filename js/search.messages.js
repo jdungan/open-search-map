@@ -8,7 +8,6 @@ socket.on('message', function (data) {
 //socket events
 $(document).on("newSearch", function (e, response) {
     search_layer.addLayer(searches.add_search(response));
-    // $('.search_map').trigger('display_search', [response]);
 });
 
 $(document).on("endSearch", function (e, response) {

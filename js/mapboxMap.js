@@ -1,3 +1,7 @@
+
+// This file is going away.  It it only for referencing functions
+
+
 var mapboxMap = function (element,options) {
     var _latlng = _latlng || new L.LatLng(36.1539, -95.9925),
         _zoom = _zoom || 18,map_element;

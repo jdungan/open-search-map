@@ -39,7 +39,7 @@ jQuery(document).ready(function () {
 
 
             $(document).on("markerMove", function (e, move_details) {
-                search_data.place.update(move_details.key,
+                search_app.data.place.update(move_details.key,
                     { latitude: move_details.latitude,
                         longitude: move_details.longitude
                     })
@@ -51,7 +51,7 @@ jQuery(document).ready(function () {
 
 
             $('#map_holder').on('click', 'button.end_search', function() {
-                search_data.place.update($(this).data('key'),
+                search_app.data.place.update($(this).data('key'),
                     { extra: { end_time: Date()} })
                 .done(function (response) {
                     $('.search_map').trigger("end_search", response);
@@ -60,25 +60,12 @@ jQuery(document).ready(function () {
             });
 
             //jqm page events 
-            $("#mapPage").on("pageshow", function () {        
-                search_app.map.invalidateSize();
-                $('.search_map').trigger('page_resize');
-            });
+            // $("#mapPage").on("pageshow", function () {        
+            //     search_app.map.invalidateSize();
+            //     $('.search_map').trigger('page_resize');
+            // });
 
         //map events
-            $('#map_holder').on('stop_add_search',function(e,search_location){
-                var geoOptions = {
-                      layer_id : $('li#current_layer').data('current-layer'),
-                      latitude : search_location.latitude,
-                      longitude : search_location.longitude,
-                      radius : 100,
-                      extra : {start_time : Date()} 
-                };
-                search_data.place.add(geoOptions).done(function(response){
-                    $('.search_map').trigger('display_search',[response]);  
-                    socket.emit('message', {eventType: 'newSearch', payload: response});
-                });
-            })
 
         //general app events
 
