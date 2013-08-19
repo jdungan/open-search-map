@@ -1,5 +1,4 @@
 'use strict';
-
 (function(app){
     var searches={},
     search_list={},
@@ -163,12 +162,13 @@ $(document).on('end_search',function(e,response){
 });
 
 $(document).on('clear_map', function(){
-    for (var grp in search_app.search_groups){
-      layers[grp].visible=false;          
-    };
+    for (var grp in search_app.layers){
+      search_app.layers[grp].visible=false;          
+    };    
     search_app.searches.markers.forEach(function(m) {
         m.setOpacity( 0 );
     });
+
     $(document).trigger('layer_visibility_change');      
 });
 
@@ -179,4 +179,24 @@ $(document).on('move_search', function(e,response){
     }
 });
 
+$(document).on("markerMove", function (e, move_details) {
+    search_app.data.place.update(move_details.key,
+        { latitude: move_details.latitude,
+            longitude: move_details.longitude
+        })
+    .done(function (response) {
+        $.event.trigger('move_search',response)
+        socket.emit('message', { eventType: 'moveSearch', payload: response });
+    });
+});
+
+
+$('#map_holder').on('click', 'button.end_search', function() {
+    search_app.data.place.update($(this).data('key'),
+        { extra: { end_time: Date()} })
+    .done(function (response) {
+        $('.search_map').trigger("end_search", response);
+        socket.emit('message', { eventType: 'endSearch', payload: response });
+    });
+});
 

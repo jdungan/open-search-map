@@ -35,9 +35,7 @@ var search_app = (function(pnt,zoom){
                 next_map.addTo(this_app.map);
                 this_app.map.removeLayer(current_map);
         },
-        
-        search_groups : {},
-        
+                
     };
         
     return this_app;

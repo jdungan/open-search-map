@@ -1,9 +1,10 @@
 "use strict";
 (function(app){
-
+    app.search_groups = {};
+    
     app.toggle_search_layer = function(){
         var layer_id = $(this).data('layer_id');
-        var opened_layer =app.layers[layer_id];
+        var opened_layer = app.layers[layer_id];
         
        if (!opened_layer) {
             app.data.places.each({ layer_id: layer_id }, function (response) {
@@ -46,10 +47,8 @@
                     )
             )})
             .done(function(){
-                $("#layer_list").trigger('layer_visibility_change')       
                 $("#layer_list").listview('refresh').trigger("create");
                 $("li.layer_item").on('click',app.toggle_search_layer);
-                
             });
     };    
 })(search_app);
