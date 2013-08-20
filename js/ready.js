@@ -9,7 +9,7 @@ jQuery(document).ready(function () {
     
     for (var m in map_config) {
         map_config[m].options = map_config[m].options || {};
-        search_app.add_base(
+        search_app.base.add_base(
             new L.mapbox.tileLayer(map_config[m].options.map_url)
         );
     };
@@ -21,13 +21,13 @@ jQuery(document).ready(function () {
 //toggle maps
 
     $('#mapPage').on('swipeleft', function(e){
-        search_app.rotate_map('forward')
+        search_app.base.rotate_map('forward')
     });
     $('#mapPage').on('swiperight', function(e){
-        search_app.rotate_map('back')
+        search_app.base.rotate_map('back')
     });
 
-    $('a#toggle_map').on('click', search_app.rotate_map);
+    $('a#toggle_map').on('click', search_app.base.rotate_map);
 
     $('.app_panel').on('click',function(){
         $(this).panel( "close" );            

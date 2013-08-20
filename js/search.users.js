@@ -3,15 +3,15 @@
     var users={};
 
     users.new_user = function (auth){
-        this_auth=auth;
-        search_data.user.create(
+        var this_auth=auth;
+        app.data.user.create(
             { username: auth.username,
                 email: auth.username,
                 password: auth.password
             })
         .done(function (response) {
             $(this).data('register-user', false);
-            search_data.login(this_auth);
+            app.data.login(this_auth);
         })
         .fail(function (error) {
             $('#signin_msg').text(error.error_description);
@@ -20,7 +20,6 @@
     };
 
     geoloqi.onAuthorize = function (response, error) {
-        users.user_response=response
         console.log("You are a user:"+response.display_name);
         $.mobile.changePage('#mapPage');
     };
@@ -61,10 +60,10 @@ $('button#signin').on('click', function (e) {
         if (auth.password != auth.retype) {
             $('#signin_msg').text('Passwords do not match')
         } else {
-            newUser(auth);
+            search_app.users.new_user(auth);
         }
     } else {
-        search_data.login(auth);
+        search_app.data.login(auth);
     }
 });
 
