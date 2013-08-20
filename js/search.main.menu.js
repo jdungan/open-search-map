@@ -13,8 +13,7 @@ $('a#viewSearches').on('click', function () {
 });
 
 $('a#viewUser').on('click', function(){
-    search_app.first_base().show_user(search_app.user_position)
-     // $('.search_map').trigger("show_user",search_app.user_position);
+    search_app.location.show_user();
 });    
 
 $('a#clearLayers').on('click', function(){

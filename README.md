@@ -14,8 +14,10 @@ Description of modules:
 
 search.app  -- creates search_app in the global spaace.  Adds methods for changing the base map
 search.data   -- adds .data to the search app.  This includes all calls to the geoloqi database 
+search.users  -- user login
 search.markers -- adds .searches to the search app for manipulating a Leaflet feature collection of search markers
 search.layer.menu -- adds methods to search_app for retrieving saved searches
+
 
 Also loaded by not adding to the search_app object:
 search.main.menu -- events for the left panel of the app
