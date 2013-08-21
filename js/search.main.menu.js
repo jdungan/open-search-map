@@ -5,11 +5,11 @@ $("#addSearch").on('click',function(){
 });
 
 $('a#viewUsers').on('click', function () {
-     $('.search_map').trigger('display_users');
- });
+    // search_app.users.display_all();
+});
 
 $('a#viewSearches').on('click', function () {
-    $('.search_map').trigger('display_searches');
+    search_app.map.fitBounds(search_app.searches.visibleBounds());
 });
 
 $('a#viewUser').on('click', function(){

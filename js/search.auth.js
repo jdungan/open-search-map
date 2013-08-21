@@ -1,8 +1,8 @@
 'use strict';
 (function(app){
-    var users={};
+    var auth={};
 
-    users.new_user = function (auth){
+    auth.new_user = function (auth){
         var this_auth=auth;
         app.data.user.create(
             { username: auth.username,
@@ -18,7 +18,9 @@
         });
 
     };
-
+    
+    auth.login = app.data.login;
+    
     geoloqi.onAuthorize = function (response, error) {
         console.log("You are a user:"+response.display_name);
         $.mobile.changePage('#mapPage');
@@ -29,7 +31,7 @@
         $('#linkDialog').click();
     };
 
-    app.users = users;
+    app.auth = auth;
 })(search_app);
 
 
@@ -52,7 +54,8 @@ $('#signin_page').on('pagebeforeshow', function () {
 });
 
 $('button#signin').on('click', function (e) {
-    var auth = {}; auth.username = $('input#email').val(),
+    var auth = {};
+    auth.username = $('input#email').val();
     auth.password = $('input#password').val();
     $('#signin_msg').text('');
     if ($('#retypePassword').attr('type') === 'password') {
@@ -60,10 +63,10 @@ $('button#signin').on('click', function (e) {
         if (auth.password != auth.retype) {
             $('#signin_msg').text('Passwords do not match')
         } else {
-            search_app.users.new_user(auth);
+            search_app.auth.new_user(auth);
         }
     } else {
-        search_app.data.login(auth);
+        search_app.auth.login(auth);
     }
 });
 
