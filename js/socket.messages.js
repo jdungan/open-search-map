@@ -19,5 +19,5 @@ $(document).on("moveSearch", function (e, response) {
 });
 
 $(document).on("moveUser", function (e, response) {
-    $('.search_map').trigger('move_remote_user', [response]);
+    search_app.users.move_remote_user(response);
 });
