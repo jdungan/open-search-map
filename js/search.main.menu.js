@@ -5,7 +5,7 @@ $("#addSearch").on('click',function(){
 });
 
 $('a#viewUsers').on('click', function () {
-    // search_app.users.display_all();
+    search_app.map.fitBounds(search_app.users.Bounds());
 });
 
 $('a#viewSearches').on('click', function () {

@@ -27,11 +27,10 @@
         user_accuracy_circle.setLatLng(user_position);
         user_accuracy_circle.setRadius(pos_accuracy);
 
-        // if (search_app.user_response){
-        //     new_position.user=search_app.user_response;
-        //     new_position.user.access_token=null;
-        //     socket.emit('message', { eventType: 'moveUser', payload: new_position });
-        // } 
+        if (app.auth.user_response){
+            user_position.user=app.auth.user_response;
+            socket.emit('message', { eventType: 'moveUser', payload: user_position });
+        } 
 
     },
     position_error = function (err) {
@@ -44,7 +43,7 @@
     
     location.show_user =function(){
         if (user_position){
-            app.map.setView(user_position,16); 
+            app.map.setView(user_position,18); 
         }
     };
     

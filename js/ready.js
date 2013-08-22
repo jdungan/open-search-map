@@ -14,11 +14,12 @@ jQuery(document).ready(function () {
         );
     };
 
-    search_app.map.invalidateSize();
     
     search_app.retrieve_layer_list();
 
-//toggle maps
+    $('#mapPage').on('pageshow',function(){
+        search_app.map.invalidateSize();
+    });
 
     $('#mapPage').on('swipeleft', function(e){
         search_app.base.rotate_map('forward')
@@ -38,5 +39,6 @@ jQuery(document).ready(function () {
     });    
 
     search_app.location.watch_user();
+    search_app.map.invalidateSize();
 
 });

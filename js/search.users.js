@@ -3,19 +3,25 @@
     var users={},
     user_list={},
     user_markers = [],
-    users_layer = search_layer || new L.FeatureGroup(search_markers).addTo(app.map),
-    user_marker = new L.Marker([0,0], 
-        {icon: new L.icon({
+    users_layer = users_layer || new L.FeatureGroup(user_markers).addTo(app.map),
+    user_marker = function (){
+        var new_marker =new L.Marker([0,0], 
+            {icon: new L.icon({
                 iconAnchor: [32,32],
                 iconSize : [64,64],
-                iconUrl : "./img/searcher.svg"
-            })
-        }).addTo(app.map),
-    user_circle = new L.circle([0,0],100,
-         {fillColor: 'red',
-            fillOpacity: 0.7,
-            opacity:0
-        });
+                iconUrl : "./img/users.svg"
+            })});
+        return new_marker;
+    },
+    user_circle = function(){
+        var new_circle = new L.circle([0,0],100,
+             {fillColor: 'red',
+                fillOpacity: 0.7,
+                opacity:0
+            });
+        return new_circle;  
+    };
+    
     
     users.find = function(key){
         return user_list[key];
@@ -39,21 +45,14 @@
     users.move_remote_user = function(response){
         var this_user=response.user.user_id;
         if(!user_list[this_user]){     
-            user_list[this_user]=new user_circle;
-            user_list[this_user].setPopupContent(response.user.display_name);
-            user_list[this_user].addTo(m);
+            user_list[this_user]=new user_marker();
+            user_list[this_user].bindPopup(response.user.display_name);
+            user_markers.push(user_list[this_user]);
+            users_layer.addLayer(user_list[this_user]);
         } else {
-           user_list[this_user].setLatLng ([response.latitude,response.longitude]);
+           user_list[this_user].setLatLng (new L.LatLng(response.lat,response.lng));
         }
-    });
+    };
 
-    
-    searches.markers=search_markers;
-    app.searches=searches;
+    app.users=users;
 })(search_app);
-
-
-//marker events
-
-
-

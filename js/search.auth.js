@@ -1,7 +1,7 @@
 'use strict';
 (function(app){
     var auth={};
-
+    auth.user_response=null;
     auth.new_user = function (auth){
         var this_auth=auth;
         app.data.user.create(
@@ -22,8 +22,11 @@
     auth.login = app.data.login;
     
     geoloqi.onAuthorize = function (response, error) {
+        response.access_token=null;
+        auth.user_response=response
         console.log("You are a user:"+response.display_name);
         $.mobile.changePage('#mapPage');
+        
     };
 
     geoloqi.onLoginError = function (error) {

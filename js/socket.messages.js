@@ -1,6 +1,7 @@
 //init socket
 var socket = io.connect('http://206.214.164.229');
 
+
 socket.on('message', function (data) {
    $.event.trigger(data.message.eventType,data.message.payload);      
 });  
