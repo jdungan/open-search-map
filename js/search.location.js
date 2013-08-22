@@ -41,11 +41,16 @@
         location_WatchID = navigator.geolocation.watchPosition(new_position, position_error, watch_options);
     };
     
-    location.show_user =function(){
+    location.show_user = function(){
         if (user_position){
             app.map.setView(user_position,18); 
         }
     };
     
+    location.user_position = function(){
+        return user_position;
+    };
+    
     app.location=location;
+
 })(search_app);

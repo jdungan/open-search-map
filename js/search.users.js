@@ -36,6 +36,7 @@
     
     users.Bounds = function() {
         var this_bounds = new L.LatLngBounds();
+        this_bounds.extend(app.location.user_position());
         user_markers.forEach(function(m) {
             this_bounds.extend(m.getLatLng());
         });
