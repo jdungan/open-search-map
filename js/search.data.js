@@ -115,6 +115,11 @@
             }
         };
         
+        this.update = function(layer_id,options){
+            return GEODB("post",'layer/update/'+layer_id,options)
+        };
+        
+        
     };
 
     var layers = function (){
@@ -122,7 +127,7 @@
         this.add = function (layer_name){
             var options={};
             options.name=layer_name;
-            option.public=1;
+            options.public=1;
             if(options.name){
                 return GEODB('post','layer/create',options);
             }

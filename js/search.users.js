@@ -50,9 +50,8 @@
             user_list[this_user].bindPopup(response.user.display_name);
             user_markers.push(user_list[this_user]);
             users_layer.addLayer(user_list[this_user]);
-        } else {
-           user_list[this_user].setLatLng (new L.LatLng(response.lat,response.lng));
         }
+        user_list[this_user].setLatLng (new L.LatLng(response.lat,response.lng));
     };
 
     app.users=users;

@@ -1,7 +1,6 @@
 "use strict";
 (function(app){
     app.search_groups = {};
-    
     app.toggle_search_layer = function(){
         var layer_id = $(this).data('layer_id');
         var opened_layer = app.layers[layer_id];
@@ -44,8 +43,10 @@
                                     .attr('data-layer_name',layer.name)
                                     .text(" "+layer.name)
                                 )
-                    )
-            )})
+            
+                    ));
+            
+            })
             .done(function(){
                 $("#layer_list").listview('refresh').trigger("create");
                 $("li.layer_item").on('click',app.toggle_search_layer);
@@ -101,4 +102,11 @@ $('button#submit_delete_layer').on('click',function(e){
 });
 
 
+// //hack to open layeers
+// debugger;
+// var options={};
+// options.public=1;
+// app.data.layer.update(layer.layer_id,options)
+// 
+// // end hack            
 
