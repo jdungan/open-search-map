@@ -122,6 +122,7 @@
         this.add = function (layer_name){
             var options={};
             options.name=layer_name;
+            option.public=1;
             if(options.name){
                 return GEODB('post','layer/create',options);
             }

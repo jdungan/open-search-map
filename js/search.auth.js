@@ -22,7 +22,7 @@
     auth.login = app.data.login;
     
     geoloqi.onAuthorize = function (response, error) {
-        response.access_token=null;
+        // response.access_token=null;
         auth.user_response=response
         console.log("You are a user:"+response.display_name);
         $.mobile.changePage('#mapPage');
@@ -31,56 +31,49 @@
 
     geoloqi.onLoginError = function (error) {
         console.log("You are not a user!");
-        $('#linkDialog').click();
+        $('#signin_failure_popup').popup( "open" );
+        
     };
 
     app.auth = auth;
 })(search_app);
 
 
-$('#signin_page').on('pagebeforeshow', function () {
-    var register_user = $(this).data('register-user'),
-    retype_type = register_user && "password" || "hidden",
-    signin_title = register_user && "Registration" || "Sign In",
-    signin_btn_text = register_user && "Sign Me Up!" || "Sign In";
-
-    $('#retypePassword').attr('type', retype_type);
-    $('#signin_title').text(signin_title)
-    $('button#signin').text(signin_btn_text).button("refresh");
-
-    if (register_user) {
-        $('#retypePassword').parent().show();
-    } else {
-        $('#retypePassword').parent().hide();
-    };
-    $(this).trigger("create");
+$('button#signin').on('click', function (e) {
+    var user_auth = {};
+    user_auth.username = $('input#email','#signin_popup').val();
+    user_auth.password = $('input#password','#signin_popup').val();
+    $('#signin_msg').text('');
+    search_app.auth.login(user_auth);
+    $('#signin_popup').popup( "close" );
 });
 
-$('button#signin').on('click', function (e) {
-    var auth = {};
-    auth.username = $('input#email').val();
-    auth.password = $('input#password').val();
+
+$('button#register').on('click', function (e) {
+    var user_auth = {};
+    user_auth.username = $('input#email','#register_popup').val();
+    user_auth.password = $('input#password','#register_popup').val();
     $('#signin_msg').text('');
-    if ($('#retypePassword').attr('type') === 'password') {
-        auth.retype = $('input#retypePassword').val();
-        if (auth.password != auth.retype) {
-            $('#signin_msg').text('Passwords do not match')
-        } else {
-            search_app.auth.new_user(auth);
-        }
+    user_auth.retype = $('input#retype','#register_popup').val();
+    if (user_auth.password === user_auth.retype) {
+        search_app.auth.new_user(user_auth);
+        $('#register_popup').popup( "open" );
     } else {
-        search_app.auth.login(auth);
+        $('#signin_msg').text('Passwords do not match')
     }
 });
 
-$('button#signin_quit').on('click',function(){
-    $('#signin_page').data('register-user',false);
-    $('#signin_msg').text(''); 
-    $('#retypePassword').attr('type','hidden').parent().hide();
-    $('#signin_page').trigger("create");        
-});    
 
-$('a#btnStartRegister').on('click', function () {
-    $('#signin_page').data('register-user', true);
+$('a#sign_in').on('click', function () {    
+    $('#signin_popup').popup( "open" );
 });
 
+$('a#login_again').on('click', function () {    
+    $('#signin_failure_popup').popup( "close" );
+    setTimeout(function() { $( "#signin_popup" ).popup( "open" ) }, 100 );
+});
+
+$('a#start_register').on('click', function () {    
+    $('#signin_failure_popup').popup( "close" );
+    setTimeout(function() { $( "#register_popup" ).popup( "open" ) }, 100 );
+});

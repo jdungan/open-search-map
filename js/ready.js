@@ -18,6 +18,7 @@ jQuery(document).ready(function () {
     search_app.retrieve_layer_list();
 
     $('#mapPage').on('pageshow',function(){
+        $( ".app_panel" ).trigger( "updatelayout" );
         search_app.map.invalidateSize();
     });
 
