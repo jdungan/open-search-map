@@ -18,6 +18,21 @@
         };
         
         if (!response.extra.end_time){
+            
+            var questions = ['Question_1','Queston_2','Question_3']
+            var form=document.createElement('form');
+            form.setAttribute('id',key);
+            questions.forEach(function(opt){
+               var para = document.createElement("p");
+               var field_name=document.createTextNode(opt);       
+               para.appendChild(field_name);         
+               var input=document.createElement('input');
+               input.setAttribute('data-fieldname',opt)
+               para.appendChild(input);         
+               form.appendChild(para);
+            });             
+            div.appendChild(form);
+            
              var para = document.createElement("p");
              var btn = document.createElement('button');
              btn.id =key+'_button';
@@ -192,8 +207,12 @@ $(document).on("markerMove", function (e, move_details) {
 
 
 $('#map_holder').on('click', 'button.end_search', function() {
-    search_app.data.place.update($(this).data('key'),
-        { extra: { end_time: Date()} })
+    var key = $(this).data('key'), updates={ extra: { end_time: Date()} };
+    $('input','form#'+key).each(function(){
+        var input_fld=$(this);
+        updates.extra[input_fld.data('fieldname')]=input_fld.val();
+    });
+    search_app.data.place.update(key,updates)
     .done(function (response) {
         $('.search_map').trigger("end_search", response);
         socket.emit('message', { eventType: 'endSearch', payload: response });
