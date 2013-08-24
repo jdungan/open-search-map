@@ -53,6 +53,7 @@ $('button#register').on('click', function (e) {
     var user_auth = {};
     user_auth.username = $('input#email','#register_popup').val();
     user_auth.password = $('input#password','#register_popup').val();
+    
     $('#signin_msg').text('');
     user_auth.retype = $('input#retype','#register_popup').val();
     if (user_auth.password === user_auth.retype) {

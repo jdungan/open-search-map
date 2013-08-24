@@ -148,7 +148,7 @@ $(document).on('start_add_search', function () {
     search_app.map.addOneTimeEventListener('click', function (e) {
         $(this).css('cursor', 'pointer');
         var geoOptions = {
-              layer_id : $('li#current_layer').data('current-layer'),
+              layer_id : search_app.edit_layer.layer_id,
               latitude : e.latlng.lat,
               longitude : e.latlng.lng,
               radius : 100,

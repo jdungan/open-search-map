@@ -2,6 +2,7 @@ var search_app = (function(pnt,zoom){
     var map = new L.mapbox.map('map_content').setView(pnt, zoom),    
     this_app = {
         map : map,
+        edit_layer:{layer_id:'A2TH'},
         base : {
             base_maps : [],
             add_base : function(layer){

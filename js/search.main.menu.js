@@ -1,7 +1,8 @@
 //panel menu choices
 
 $("#addSearch").on('click',function(){
-    $('.search_map').trigger('start_add_search');           
+    $('.search_map').trigger('start_add_search');  
+             
 });
 
 $('a#viewUsers').on('click', function () {
