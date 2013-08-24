@@ -1,6 +1,11 @@
 "use strict";
 (function(app){
     app.search_groups = {};
+    
+    var fitSearches = function(){
+        var options ={padding:[200,200]}
+        app.map.fitBounds(app.searches.visibleBounds(),options);            
+    };
     app.toggle_search_layer = function(){
         var layer_id = $(this).data('layer_id');
         var opened_layer = app.layers[layer_id];
@@ -13,12 +18,12 @@
             .done(function () {
                 app.layers[layer_id] = {visible : true};
                 $("#layer_list").trigger('layer_visibility_change')       
-                app.map.fitBounds(app.searches.visibleBounds());            
+                fitSearches();            
             });   
         } else{
             app.layers[layer_id].visible=!app.layers[layer_id].visible;
             $("#layer_list").trigger('layer_visibility_change')       
-            app.map.fitBounds(app.searches.visibleBounds());
+            fitSearches();           
             app.searches.setFilter(function(m) {
                 m.setOpacity(app.layers[m.options.layer_id].visible && 1 || 0 );
             });
