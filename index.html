@@ -57,8 +57,8 @@
                        </li>
 
                        <li>
-                           <a id="viewSearches" data-role="button">
-                               <i class="icon-globe icon-2x"></i>&nbsp;Searches</a>
+                           <a id='viewSearches' data-role="button">
+                               <i class="icon-globe icon-2x" ></i>&nbsp;All Searches</a>
                        </li>
 
                        <li>
@@ -70,6 +70,17 @@
                            <a id='sign_in' data-role="button" data-rel="dialog">
                                <i class="icon-signin icon-2x" ></i>&nbsp;Sign In</a>
                        </li>
+
+                       <li>
+                           <a id="start_register" data-role="button">
+                               <i class="icon-edit-sign icon-2x"></i>&nbsp;Register</a>
+                       </li>
+
+                       <li>
+                           <a id='change_settings' data-role="button" style='display: none;'>
+                               <i class="icon-gear icon-2x" ></i>&nbsp;Settings</a>
+                       </li>
+
                    </ul>
                </div>
 
@@ -100,25 +111,29 @@
                          <div data-role='container' > 
                              
                              
-                             <a href='#menu_panel' data-role='button'  data-inline='true' >
-                                    <i class="icon-chevron-sign-left icon-2x"></i>
-                             </a>
-            
-                             <a href='#layer_panel' data-role='button'  data-inline='true' class='header_button'>
-                                     <i class="icon-chevron-sign-right icon-2x"></i>
-                             </a>
+                        <a href='#menu_panel' data-role='button'  data-inline='true' >
+                            <i class="icon-chevron-sign-left icon-2x"></i>
+                        </a>
+                        <a href='#layer_panel' data-role='button'  data-inline='true' class='header_button'>
+                            <i class="icon-chevron-sign-right icon-2x"></i>
+                        </a>
+                        
 
-                             <a id="toggle_map"  data-role='button'  data-inline='true' class='header_button'>
-                                 <i class="icon-picture icon-2x"></i>
-                             </a>
-                    
-                             <a id='viewUser' data-role="button" data-inline='true'  class='header_button'>
-                                   <i class="icon-user icon-2x"></i>
-                             </a>
+                        <a id="toggle_map"  data-role='button'  data-inline='true' class='header_button'>
+                         <i class="icon-picture icon-2x"></i>
+                        </a>
 
-                             <a id='viewUsers' data-role="button" data-inline='true'  class='header_button'>
-                                   <i class="icon-group icon-2x"></i>
-                             </a>
+                        <a id='viewUser' data-role="button" data-inline='true'  class='header_button'>
+                           <i class="icon-user icon-2x"></i>
+                        </a>
+
+                        <a id='viewUsers' data-role="button" data-inline='true'  class='header_button'>
+                           <i class="icon-group icon-2x"></i>
+                        </a>
+
+                        <!-- <a id='viewSearches' data-role="button" data-inline='true'  class='header_button'>
+                           <i class="icon-globe icon-2x"></i>
+                        </a> -->
 
                          </div>
                      
@@ -173,7 +188,7 @@
                     <h2>Registration</h2>
                 </div>
                 <div data-role="content" >
-                    <p id='signin_msg' ></p>
+                    <p id='register_msg' ></p>
                     <div id='signin_fields' data-role="fieldcontain" class="ui-hide-label">
                         <label for="email">Email</label> <input type="text" name="email" id="email" placeholder="Email"> 
                         <label for="password">Password</label> <input id="password" type="password" name="password"  placeholder="Password"> 
@@ -184,6 +199,19 @@
                 </div>
             </div>
 
+            <div id="settings_popup" data-role='popup' data-theme="b" data-register-user='false'>
+                <div data-role="header" data-add-back-btn="true">
+                    <h2>User Settings</h2>
+                </div>
+                <div data-role="content" >
+                    <p id='register_msg' ></p>
+                    <div id='settings_fields' data-role="fieldcontain" class="ui-hide-label">
+                        <select id='layer_select'><option>Select your search team...</option></select>
+                    </div>
+                    <button id='save_settings' class="ui-btn-hidden" type="submit" data-inline="true">Save</button> 
+                    <button id='register_quit' class="ui-btn-hidden cancel_button" type="submit" data-inline="true">Cancel.</button> 
+                </div>
+            </div>
 
             <div id="signin_failure_popup" data-role="popup" data-theme="b" >
                 <div data-role="header" data-close-btn="right">

@@ -141,8 +141,6 @@
 
 
 //marker events
-
-
 $(document).on('start_add_search', function () {
     $(this).css('cursor', 'url("http://s3.amazonaws.com/besport.com_images/status-pin.png")');
     search_app.map.addOneTimeEventListener('click', function (e) {
@@ -155,6 +153,7 @@ $(document).on('start_add_search', function () {
               extra : {start_time : Date()} 
         };
         search_app.data.place.add(geoOptions).done(function(response){
+            response['layer_id']=search_app.edit_layer.layer_id;
             search_app.search_layer.addLayer(search_app.searches.add_search(response));
             socket.emit('message', {eventType: 'newSearch', payload: response});
         });

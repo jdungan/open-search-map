@@ -1,6 +1,6 @@
 i{
     float:left;
-    margin-left:5%;
+    margin-left:2%;
 }
 
 #mapPage, #map_content,.search_map {
@@ -12,7 +12,7 @@ i{
 
 .header_button{
     float:right;
-    margin-right:5%
+    margin-right:2%
 }
 
 .loc_labels {
