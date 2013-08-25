@@ -3,7 +3,7 @@
     app.search_groups = {};
     
     var fitSearches = function(){
-        var options ={padding:[200,200]};
+        var options ={padding:[5,5]};
         app.map.fitBounds(app.searches.visibleBounds(),options);            
     };
     app.toggle_search_layer = function(){
