@@ -1,9 +1,9 @@
 'use strict';
-(function(app){
-    var users={},
+define(['mapbox','./map','./location'],function(mapbox,map,location){
+    var users=function(){},
     user_list={},
     user_markers = [],
-    users_layer = users_layer || new L.FeatureGroup(user_markers).addTo(app.map),
+    users_layer = users_layer || new L.FeatureGroup(user_markers).addTo(map),
     user_marker = function (){
         var new_marker =new L.Marker([0,0], 
             {icon: new L.icon({
@@ -21,29 +21,30 @@
             });
         return new_circle;  
     };
-    
-    
-    users.find = function(key){
+
+    users.prototype.find = function(key){
         return user_list[key];
     };
     
-    users.setFilter = function (callback){
+    users.prototype.setFilter = function (callback){
         var dfd=new $.Deferred();
             search_markers.forEach(callback)
             dfd.resolve();
         return dfd;
     };
     
-    users.Bounds = function() {
+    users.prototype.Bounds = function() {
         var this_bounds = new L.LatLngBounds();
-        this_bounds.extend(app.location.user_position());
+        if (map.user_position){
+            this_bounds.extend(map.user_position);
+        }
         user_markers.forEach(function(m) {
             this_bounds.extend(m.getLatLng());
         });
-        return user_markers.length>0 && this_bounds || app.map.getBounds();
+        return user_markers.length>0 && this_bounds || map.getBounds();
     };
 
-    users.move_remote_user = function(response){
+    users.prototype.move_remote_user = function(response){
         var this_user=response.user.user_id;
         if(!user_list[this_user]){     
             user_list[this_user]=new user_marker();
@@ -54,5 +55,5 @@
         user_list[this_user].setLatLng (new L.LatLng(response.lat,response.lng));
     };
 
-    app.users=users;
-})(search_app);
+    return users;
+});

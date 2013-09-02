@@ -33,10 +33,7 @@
 
     <title>OS&R Map</title>
 
-<!-- Load jquery and jquerymobile before jqm pages to avoid flash of ugly on loading -->
-    <script src= "http://code.jquery.com/jquery-1.10.0.min.js"></script>
-    <script src= "http://code.jquery.com/mobile/1.3.1/jquery.mobile-1.3.1.min.js"></script>
-    <script src="https://api.geoloqi.com/js/versions/geoloqi-1.0.13.min.js"></script>
+    <script src="js/require.js" data-main="js/app" ></script>
 
   </head>
   <body>
@@ -260,25 +257,6 @@
             <ul id='userList' data-role='listview'></ul>
         </div>
     </div>
-
-    <script type="text/javascript" src="./js/socket.io.min.js"></script>
-    <script src='//api.tiles.mapbox.com/mapbox.js/v1.3.1/mapbox.js'></script>
-
-    <!-- Rudimentary Module Loading - must be in order -->
-    <script type="text/javascript" src="./js/search.app.js"></script>
-    <script type="text/javascript" src="./js/search.data.js"></script>
-    <script type="text/javascript" src="./js/search.auth.js"></script>
-    <script type="text/javascript" src="./js/search.location.js"></script>
-    <script type="text/javascript" src="./js/search.users.js"></script>
-     
-    <script type="text/javascript" src="./js/search.searches.js"></script>
-    <script type="text/javascript" src="./js/search.layer.menu.js"></script>
-    <script type="text/javascript" src="./js/search.main.menu.js"></script>
-
-
-
-    <script type="text/javascript" src="./js/socket.messages.js"></script>
-    <script type="text/javascript" src="./js/ready.js"></script>
     
   </body>
 
