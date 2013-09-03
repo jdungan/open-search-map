@@ -1,5 +1,5 @@
 'use strict';
-define(['jquery','geoloqi','search_app'],function($,geoloqi){
+define(['jquery','geoloqi'],function($,geoloqi){
     var auth=function(){};
     auth.prototype.user_response={};
     auth.prototype.user_profile={};
