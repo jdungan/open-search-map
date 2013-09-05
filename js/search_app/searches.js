@@ -139,6 +139,8 @@ define(['jquery','mapbox','./map'],function($,mapbox,map){
 
     
         searches.prototype.markers=search_markers;
+        
+        
     }
     return searches;
 });
