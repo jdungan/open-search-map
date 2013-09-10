@@ -11,10 +11,13 @@ i{
 }
 
 .header_button{
-    float:right;
     margin-right:2%
 }
 
+
+#header_icons{
+    margin-right:10%;
+}
 .loc_labels {
   color: green;
   font-family: "Lucida Grande", "Arial", sans-serif;

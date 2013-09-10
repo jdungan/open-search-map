@@ -1,4 +1,4 @@
-require(['jquery','search_app'],function($,search_app){
+define(['jquery','search_app'],function($,search_app){
     // layer menu events
     
     
@@ -13,15 +13,15 @@ require(['jquery','search_app'],function($,search_app){
         });
     });
 
-    $('button#save_new_layer').on('click', function(e){        
-        var layer_name = $('input#layer_name').val();
-        search_app.data.layers.add(layer_name)
-        .done(function(){
-            $('input#layer_name').val('');
-            $("#layer_list").trigger('layer_visibility_change')       
-            $('#new_layer_popup').popup( "close" );
-        });
-    });
+    // $('button#save_new_layer').on('click', function(e){        
+    //     var layer_name = $('input#layer_name').val();
+    //     search_app.data.layers.add(layer_name)
+    //     .done(function(){
+    //         $('input#layer_name').val('');
+    //         $("#layer_list").trigger('layer_visibility_change')       
+    //         $('#new_layer_popup').popup( "close" );
+    //     });
+    // });
 
     $('a#delLayer').on('click',function(e){
         e.stopImmediatePropagation();

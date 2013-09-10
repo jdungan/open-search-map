@@ -110,7 +110,7 @@ define(['jquery','mapbox','./map'],function($,mapbox,map){
                     })(key);
             
                     search_marker.bindPopup(popupContent);
-                
+                    search_marker.visible=true;
                     search_list[key] = search_marker;
                     search_markers.push(search_marker);
 

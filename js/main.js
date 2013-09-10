@@ -8,27 +8,24 @@ requirejs.config({
         'mapbox': '//api.tiles.mapbox.com/mapbox.js/v1.3.1/mapbox',
         'socket': 'libs/socket.io.min'
     },
+    packages:['search_app',{name: "search_app",main: "app"}],
     shim: {
         "jquery.mobile": ["jquery"],
         'ui/build':['jquery.mobile'],
         'mapbox' :['jquery.mobile'],
         'geoloqi': {
             exports: 'geoloqi'
-        }
-        
-    },
-    packages:['search_app',{name: "search_app",main: "app"}]
-    
+        }        
+    }
 });
 
-require(['jquery','jquery.mobile','socket','search_app','ui/build'],
-    function($,jqm,socket,search_app,layer_menu){
-
+require(['require','jquery','jquery.mobile','socket','search_app',],
+    function(require,$,jqm,socket,search_app,ui){
 
         $(document).ready(function () {
             $.mobile.linkBindingEnabled = false;
             $.mobile.hashListeningEnabled = false;
-        
+                    
             var map_config = { 
                 satellite: {options:{map_url:'jdungan.map-y7hj3ir7'}},
                 buildings: {options:{map_url:'jdungan.map-147y2axb'}},
@@ -40,50 +37,22 @@ require(['jquery','jquery.mobile','socket','search_app','ui/build'],
                 search_app.base.add_base(map_config[m].options.map_url);
             };
 
-
             search_app.location.watch_user();
 
+            require(['ui/build'],function(ui){
+                ui.init();
+            });
 
 
     //TODO: ORGANIZE THIS EVENT MESS
 
-            $('#mapPage').on('swipeleft', function(e){
-                search_app.base.rotate_map('forward')
-            });
-            $('#mapPage').on('swiperight', function(e){
-                search_app.base.rotate_map('back')
-            });
-
-
-        
-
-            $('#mapPage').on('pageshow',function(){
-                $( ".app_panel" ).trigger( "updatelayout" );
-                search_app.map.invalidateSize();
-            });
-        
-        
-            $('.app_panel').on('click',function(){
-                $(this).panel( "close" );            
-            });
-
-            $('.cancel_button').on('click',function(){
-                $.mobile.changePage('#mapPage');
-            });    
-        
-
-
-        
-        
-            //socket init
+           //socket init
         
             var socket = io.connect('http://206.214.164.229');
 
             socket.on('message', function (data) {
                $.event.trigger(data.message.eventType,data.message.payload);      
             });  
-        
-        
         
             //socket events
             $(document).on("newSearch", function (e, response) {
@@ -102,55 +71,8 @@ require(['jquery','jquery.mobile','socket','search_app','ui/build'],
                 search_app.users.move_remote_user(response);
             });
 
-    //auth events
 
-            $('button#signin').on('click', function (e) {
-                var user_auth = {};
-                user_auth.username = $('input#email','#signin_popup').val();
-                user_auth.password = $('input#password','#signin_popup').val();
-                $('#signin_msg').text('');
-                search_app.auth.login(user_auth);
-                $('#signin_popup').popup( "close" );
-            });
-
-
-            $('button#register').on('click', function (e) {
-                var user_auth = {};
-                user_auth.username = $('input#email','#register_popup').val();
-                user_auth.password = $('input#password','#register_popup').val();
-                user_auth.extra.layer_id = search_app.map.default_edit_layer.layer_id;    
-                $('#signin_msg').text('');
-                user_auth.retype = $('input#retype','#register_popup').val();
-                if (user_auth.password === user_auth.retype) {
-                    search_app.auth.new_user(user_auth);
-                    $('#register_popup').popup( "open" );
-                } else {
-                    $('#register_msg').text('Passwords do not match')
-                }
-            });
-
-
-            $('a#sign_in').on('click', function () {    
-                $('#signin_popup').popup( "open" );
-            });
-
-            $('a#login_again').on('click', function () {    
-                $('#signin_failure_popup').popup( "close" );
-                setTimeout(function() { $('a#sign_in').click()}, 100 );
-            });
-
-
-            $('a#start_register').on('click', function () {    
-                $('#signin_failure_popup').popup( "close" );
-                $('#layer_select','#register_popup').html('')
-                search_app.data.layers.each(function(response){
-                    var layer_option=$('<option>').attr('value',response.layer_id).text(response.name);
-                    $('#layer_select','#register_popup').append(layer_option);
-                });
-                setTimeout(function() { $( "#register_popup" ).popup( "open" ) }, 100 );
-            });
-
-            // initialize the layer list for user settings
+// initialize the layer list for user settings
             search_app.data.layers.each(function(response){
                 var layer_option=$('<option>').attr('value',response.layer_id).text(response.name);
                 $('#layer_select','#settings_popup').append(layer_option);
@@ -177,23 +99,6 @@ require(['jquery','jquery.mobile','socket','search_app','ui/build'],
     
             });
         
-            $(window).on('login_success',function(response,error){
-                search_app.auth.user_response=response
-                search_app.data.user.profile(response.user_id).done(function(response){
-                   search_app.auth.user_profile= response;
-                   if (response.extra.layer_id){
-                       search_app.map.layer_id=response.extra.layer_id;
-                   }
-                });
-                console.log("You are a user:"+response.display_name);
-                $('#change_settings').show();
-                $.mobile.changePage('#mapPage');
-            });
-
-            $(window).on('login_failure',function(error){
-                console.log("You are not a user!");
-                $('#signin_failure_popup').popup( "open" );
-            });
 
             //marker events
             $(document).on('start_add_search', function () {

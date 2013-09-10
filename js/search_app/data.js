@@ -1,6 +1,6 @@
 "use strict";
 // This object contains all the relevant methods for retrieve information on searches
-// currently this data is stored with geoloqi so this is mainly a wrapper on geoloqi functions
+// currently this data is stored with geoloqi so this is mainly a wrapper of geoloqi functions
 define(['geoloqi'],function(geoloqi){
     var geo_db=function(){}; 
  
